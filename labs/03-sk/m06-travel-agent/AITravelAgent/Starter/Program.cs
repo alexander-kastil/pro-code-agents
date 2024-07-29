@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -26,6 +27,17 @@ var kernel = skBuilder.Build();
 // Note: ChatHistory isn't working correctly as of SemanticKernel v 1.4.0
 StringBuilder chatHistory = new();
 
+kernel.ImportPluginFromType<CurrencyConverter>();
 kernel.ImportPluginFromType<ConversationSummaryPlugin>();
 var prompts = kernel.ImportPluginFromPromptDirectory("Prompts");
 
+var result = await kernel.InvokeAsync("CurrencyConverter",
+    "ConvertAmount",
+    new() {
+        {"targetCurrencyCode", "USD"},
+        {"amount", "52000"},
+        {"baseCurrencyCode", "VND"}
+    }
+);
+
+Console.WriteLine(result);

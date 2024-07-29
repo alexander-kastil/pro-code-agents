@@ -19,6 +19,11 @@
         <PackageReference Include="Microsoft.SemanticKernel.Plugins.Core"
                           Version="1.16.1-alpha" />
     </ItemGroup>
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
     <PropertyGroup>
         <NoWarn>$(NoWarn);SKEXP0050</NoWarn>
         <NoWarn>$(NoWarn);SKEXP0060</NoWarn>
