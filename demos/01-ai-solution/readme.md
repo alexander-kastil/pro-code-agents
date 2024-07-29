@@ -53,6 +53,3 @@
 - Operate a responsible generative AI solution
 
 ## Links & Resources
-
-https://github.com/Azure-Samples/miyagi
-

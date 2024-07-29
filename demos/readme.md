@@ -4,7 +4,7 @@ This workshop is designed to help you develop AI agents and copilots using Azure
 
 - AI-050T00 - Develop Generative AI Solutions with Azure OpenAI Service
 - AI-3016 - Develop custom copilots with Azure AI Studio
-- AI-3017 - Develop AI agents using Azure OpenAI and the Semantic Kernel SDK
+- AI-2005 - Develop AI Agents using Azure OpenAI and the Semantic Kernel SDK
 
 Module 1: Develop Generative AI Solutions with Azure OpenAI Service
 
