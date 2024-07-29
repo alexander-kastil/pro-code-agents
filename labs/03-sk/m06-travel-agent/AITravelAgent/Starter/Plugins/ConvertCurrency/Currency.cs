@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.IO;
+
 namespace AITravelAgent;
 
 public class Currency
