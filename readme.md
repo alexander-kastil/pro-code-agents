@@ -14,7 +14,7 @@ Companion Material for Class Delivery by [Alexander Kastil]() containing:
   - [Configure VS Code REST Client Extension](./tooling/07-rest-client)
   - [Python Basics](./tooling/10-python)
   - [Working with Jupyter Notebooks](./tooling/09-jupyter)
-  - [Working with local LLM Models](./tooling/11-llms)
+  - [Local LLMs](./tooling/11-llms)
 - [Labs](./labs/)
 
 ## Contributing
