@@ -1,0 +1,4 @@
+
+[submodule "demos/02-ollama/02-web-ui/web-ui"]
+	path = demos/02-ollama/02-web-ui/web-ui
+	url = https://github.com/ollama-webui/ollama-webui
