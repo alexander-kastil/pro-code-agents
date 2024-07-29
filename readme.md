@@ -1,19 +1,19 @@
 # Implementing AI Agents and Copilots using Azure OpenAI
 
-Companion Material for Class Delivery by [Alexander Kastil]() containing:
+Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) containing:
 
 - [Getting Started](./tooling/00-getting-started)
 - [Instructor Demos](./demos)
 - [Requirements / tooling](./tooling)
-  - [Register Azure Pass](./tooling/05-azurepass)
+  - [Register Azure Subscription using an Azure Pass](./tooling/05-azurepass)
   - [Git & GitHub Basics](./tooling/01-git)
-  - [Visual Studio Code Intro](./tooling/02-vscode)
-  - [Document Repos using Markdown](./tooling/03-markdown)
+  - [Visual Studio Code Basics](./tooling/02-vscode)
+  - [Using Markdown](./tooling/03-markdown)
   - [Using Azure CLI & Cloud Shell](./tooling/04-cli)
   - [Docker and WSL Setup](./tooling/08-docker-wsl)
   - [Configure VS Code REST Client Extension](./tooling/07-rest-client)
   - [Python Basics](./tooling/10-python)
-  - [Working with Jupyter Notebooks](./tooling/09-jupyter)
+  - [Jupyter Notebooks](./tooling/09-jupyter)
   - [Local LLMs](./tooling/11-llms)
 - [Labs](./labs/)
 
