@@ -15,8 +15,6 @@ Companion Material for Class Delivery by [Alexander Kastil]() containing:
   - [Python Basics](./tooling/10-python)
   - [Working with Jupyter Notebooks](./tooling/09-jupyter)
   - [Working with local LLM Models](./tooling/11-llms)
-- [Lab VM Setup](./setup)
-  - [Base Dev Environment Setup including Visual Studio Code Extensions](./setup/#basics)
 - [Labs](./labs/)
 
 ## Contributing
