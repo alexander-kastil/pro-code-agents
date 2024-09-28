@@ -2,19 +2,17 @@ using System.ComponentModel;
 using Microsoft.SemanticKernel;
 
 public class EmailPlugin
-{   
-
+{
     [KernelFunction("send_email")]
     [Description("Sends an email to a recipient.")]
-    public async Task SendEmailAsync(
+    public Task SendEmailAsync(
         Kernel kernel,
         List<string> recipientEmails,
         string subject,
         string body
     )
     {
-        // Add logic to send an email using the recipientEmails, subject, and body
-        // For now, we'll just print out a success message to the console
-        Console.WriteLine("Email sent!");
+        Console.WriteLine("Mocking e-mail sent!");
+        return Task.CompletedTask;
     }
 }

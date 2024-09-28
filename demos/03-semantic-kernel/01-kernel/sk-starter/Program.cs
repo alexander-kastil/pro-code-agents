@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 
 var builder = new ConfigurationBuilder()
@@ -34,7 +33,12 @@ else
 
 var kernel = kernelBuilder.Build();
 
-var prompt = "Give me a list of breakfast foods with eggs and cheese";
+Console.WriteLine("Enter a prompt (or press Enter to use the default):");
+var prompt = Console.ReadLine();
+if (string.IsNullOrWhiteSpace(prompt))
+{
+    prompt = "Give me a list of breakfast foods with eggs and cheese";
+}
 Console.WriteLine("Prompt: " + prompt);
 var result = await kernel.InvokePromptAsync(prompt);
 

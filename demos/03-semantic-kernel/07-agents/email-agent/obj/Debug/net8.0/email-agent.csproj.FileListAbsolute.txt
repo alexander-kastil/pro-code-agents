@@ -85,3 +85,5 @@ D:\git-classes\ai-agents-copilots\demos\03-semantic-kernel\07-agents\email-agent
 D:\git-classes\ai-agents-copilots\demos\03-semantic-kernel\07-agents\email-agent\obj\Debug\net8.0\email-agent.genruntimeconfig.cache
 D:\git-classes\ai-agents-copilots\demos\03-semantic-kernel\07-agents\email-agent\obj\Debug\net8.0\ref\email-agent.dll
 D:\git-classes\ai-agents-copilots\demos\03-semantic-kernel\07-agents\email-agent\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Binder.dll
+D:\git-classes\ai-agents-copilots\demos\03-semantic-kernel\07-agents\email-agent\bin\Debug\net8.0\Microsoft.SemanticKernel.Connectors.AzureOpenAI.dll
+D:\git-classes\ai-agents-copilots\demos\03-semantic-kernel\07-agents\email-agent\bin\Debug\net8.0\OpenAI.dll
