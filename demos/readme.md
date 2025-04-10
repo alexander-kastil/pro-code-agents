@@ -2,7 +2,7 @@
 
 This workshop is designed to help you develop AI agents and copilots using Azure OpenAI. The workshop is divided into four modules, each covering different aspects of developing AI solutions with Azure OpenAI. It bundles the following Microsoft Applied Skills courses and deep dives Semantic Kernel. To provide a full picture of the AI development process, we have added the module on monitoring and deploying LLM applications:
 
-- AI-050T00 - Develop Generative AI Solutions with Azure OpenAI Service
+- AI-050 - Develop Generative AI Solutions with Azure OpenAI Service
 - AI-3016 - Develop custom copilots with Azure AI Studio
 - AI-2005 - Develop AI Agents using Azure OpenAI and the Semantic Kernel SDK
 
@@ -141,7 +141,6 @@ This module outlines the deployment process for LLM applications, including intr
 - Semantic Kernel Memory: In-process & Connectors
 - High performance memory using Azure Cosmos DB DiskANN
 - Kernel Memory & Retrieval Augmented Generation (RAG)
-- Consuming Semantic Kernel from Single Page Applications
 - Streaming Responses to Single Page Applications
 
 ### Use intelligent planners
@@ -173,7 +172,6 @@ This module outlines the deployment process for LLM applications, including intr
 - Understand the deployment process for LLM applications
 - Introductions to Azure Container Apps
 - Deploy LLM applications to Azure Container Apps
-- Scale Azure OpenAI for .NET chat using RAG with Azure Container Apps
-- Azure Container Apps Dynamic Sessions with LangChain
-- Expose LLM Apps using Azure API Management
+- Scale Azure OpenAI Apps with Azure Container Apps
+- Azure Container Apps Dynamic Sessions
 - Monitor and manage LLM applications
