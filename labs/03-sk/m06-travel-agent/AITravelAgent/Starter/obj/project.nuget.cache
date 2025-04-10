@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "H2IsRnlUSOg=",
+  "dgSpecHash": "KCNpzPqo0Pw=",
   "success": true,
-  "projectFilePath": "D:\\git-classes\\ai-agents-copilots\\labs\\03-sk\\m06-travel-agent\\AITravelAgent\\Starter\\ai-travel-agent.csproj",
+  "projectFilePath": "D:\\git-classes\\agents-copilots\\labs\\03-sk\\m06-travel-agent\\AITravelAgent\\Starter\\ai-travel-agent.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\azure.ai.openai\\1.0.0-beta.17\\azure.ai.openai.1.0.0-beta.17.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\azure.core\\1.39.0\\azure.core.1.39.0.nupkg.sha512",

@@ -1936,11 +1936,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\git-classes\\ai-agents-copilots\\labs\\03-sk\\m06-travel-agent\\AITravelAgent\\Starter\\ai-travel-agent.csproj",
+      "projectUniqueName": "D:\\git-classes\\agents-copilots\\labs\\03-sk\\m06-travel-agent\\AITravelAgent\\Starter\\ai-travel-agent.csproj",
       "projectName": "ai-travel-agent",
-      "projectPath": "D:\\git-classes\\ai-agents-copilots\\labs\\03-sk\\m06-travel-agent\\AITravelAgent\\Starter\\ai-travel-agent.csproj",
+      "projectPath": "D:\\git-classes\\agents-copilots\\labs\\03-sk\\m06-travel-agent\\AITravelAgent\\Starter\\ai-travel-agent.csproj",
       "packagesPath": "C:\\Users\\AlexanderKastil\\.nuget\\packages\\",
-      "outputPath": "D:\\git-classes\\ai-agents-copilots\\labs\\03-sk\\m06-travel-agent\\AITravelAgent\\Starter\\obj\\",
+      "outputPath": "D:\\git-classes\\agents-copilots\\labs\\03-sk\\m06-travel-agent\\AITravelAgent\\Starter\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1973,7 +1973,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -2024,7 +2025,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -1,0 +1,4 @@
+python-dotenv>=1.0.0
+azure-identity>=1.16.0
+azure-ai-projects>=1.0.0b1
+pathlib>=1.0.1
