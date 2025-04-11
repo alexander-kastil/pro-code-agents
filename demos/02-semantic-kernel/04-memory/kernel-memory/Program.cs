@@ -7,10 +7,8 @@ var config = new ConfigurationBuilder()
 
 if (config["UseInProc"] == "true")
 {
-    string openAiKey = config["OPEN_AI_KEY"];
-
-    var memory = new KernelMemoryBuilder()
-       .WithOpenAIDefaults(openAiKey)
+    string openAiKey = config["OPEN_AI_KEY"]; var memory = new KernelMemoryBuilder()
+       .WithOpenAIDefaults(apiKey: openAiKey)
        .Build<MemoryServerless>();
 
     Console.WriteLine("Importing document...");
