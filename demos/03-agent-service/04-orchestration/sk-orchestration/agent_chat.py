@@ -106,19 +106,19 @@ async def main():
             agents=[agent_incident, agent_devops],
             termination_strategy=ApprovalTerminationStrategy(
                 agents=[agent_incident], 
-                maximum_iterations=10, 
+                maximum_iterations=5, 
                 automatic_reset=True
             ),
             selection_strategy=SelectionStrategy(agents=[agent_incident,agent_devops]),      
         )        
 
+        delay = 15
+
          # Process log files
         for filename in os.listdir(file_path):
             logfile_msg = ChatMessageContent(role=AuthorRole.USER, content=f"USER > {file_path}/{filename}")
-            await asyncio.sleep(30) # Wait to reduce TPM
+            
             print(f"\nReady to process log file: {filename}\n")
-
-
             # Append the current log file to the chat
             await chat.add_chat_message(logfile_msg)
             print()
@@ -131,7 +131,7 @@ async def main():
                     if response is None or not response.name:
                         continue
                     print(f"{response.content}")
-                
+                await asyncio.sleep(delay) # Wait to reduce TPM
             except Exception as e:
                 print(f"Error during chat invocation: {e}")
                 # If TPM rate exceeded, wait 60 secs
