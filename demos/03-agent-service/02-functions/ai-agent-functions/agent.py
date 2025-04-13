@@ -91,7 +91,5 @@ def main():
         project_client.agents.delete_thread(thread.id)
     
 
-
-
 if __name__ == '__main__': 
     main()
