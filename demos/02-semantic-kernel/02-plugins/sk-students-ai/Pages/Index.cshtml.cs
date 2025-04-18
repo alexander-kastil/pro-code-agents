@@ -31,9 +31,9 @@ public class IndexModel : PageModel
 
   private async Task<string> CallFunction(string question)
   {
-    string azEndpoint = _config["AzureOpenAiSettings:Endpoint"]!;
-    string azApiKey = _config["AzureOpenAiSettings:ApiKey"]!;
-    string azModel = _config["AzureOpenAiSettings:Model"]!;
+    string azEndpoint = _config["Azure:Endpoint"]!;
+    string azApiKey = _config["Azure:ApiKey"]!;
+    string azModel = _config["Azure:Model"]!;
 
     var builder = Kernel.CreateBuilder();
     builder.Services.AddAzureOpenAIChatCompletion(azModel, azEndpoint, azApiKey);

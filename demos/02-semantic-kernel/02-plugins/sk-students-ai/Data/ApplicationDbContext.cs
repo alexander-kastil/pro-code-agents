@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using CsvHelper;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace SKFunctionCalling;
 
@@ -14,4 +11,20 @@ public class ApplicationDbContext : DbContext
     }
     public DbSet<Student> Students { get; set; }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Set case-insensitive comparison for all string properties
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(string))
+                {
+                    property.SetCollation("NOCASE");
+                }
+            }
+        }
+    }
 }
