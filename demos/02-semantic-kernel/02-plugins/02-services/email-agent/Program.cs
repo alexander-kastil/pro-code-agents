@@ -1,8 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
+// filepath: d:\git-classes\agents-copilots\demos\02-semantic-kernel\02-plugins\02-services\email-agent\Program.cs
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using EmailAgent.Common;
+using EmailAgent.Plugins;
+using System.Threading.Tasks;
 
 var builder = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -10,13 +15,21 @@ var builder = new ConfigurationBuilder()
 
 IConfiguration configuration = builder.Build();
 
-var model = configuration["SemanticKernel:Model"];
-var endpoint = configuration["SemanticKernel:Endpoint"];
-var resourceKey = configuration["SemanticKernel:ApiKey"];
+// Get the strongly typed configuration
+var appConfig = configuration.Get<AppConfig>();
+
+var model = appConfig.SemanticKernel.Model;
+var endpoint = appConfig.SemanticKernel.Endpoint;
+var resourceKey = appConfig.SemanticKernel.ApiKey;
 
 // Create kernel with an email plugin
 var skBuilder = Kernel.CreateBuilder();
-skBuilder.Plugins.AddFromType<EmailPlugin>();
+// Add services to the kernel
+skBuilder.Services.AddSingleton(appConfig.GraphCfg);
+
+// Create and add email plugin
+var emailPlugin = new EmailPlugin(appConfig.GraphCfg);
+skBuilder.Plugins.AddFromObject(emailPlugin);
 Kernel kernel = skBuilder.Build();
 
 skBuilder.Services.AddAzureOpenAIChatCompletion(
@@ -25,7 +38,7 @@ skBuilder.Services.AddAzureOpenAIChatCompletion(
     resourceKey
 );
 
-AzureOpenAIChatCompletionService chatCompletionService = new (
+AzureOpenAIChatCompletionService chatCompletionService = new(
     deploymentName: model,
     apiKey: resourceKey,
     endpoint: endpoint
