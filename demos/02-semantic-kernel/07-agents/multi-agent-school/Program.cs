@@ -28,9 +28,12 @@ var principalAgent = Agents.CreatePrincipalAgent(kernelBuilder);
 AgentGroupChat chat = Agents.GetGroupChat([principalAgent, englishAgent, mathsAgent]);
 
 //// Invoke chat and display messages.
+var initialPrompt = "Please provide the sum of 12 and 13";
+Console.ForegroundColor = ConsoleColor.Yellow;
+Console.WriteLine($"# User: '{initialPrompt}'");
 
 chat.AddChatMessage(new ChatMessageContent(AuthorRole.User, "Semantic kernel is a powerful tool for natural language processing, enabling more accurate understanding of context and meaning."));
-chat.AddChatMessage(new ChatMessageContent(AuthorRole.User, "Please provide the sum of 12 and 13"));
+chat.AddChatMessage(new ChatMessageContent(AuthorRole.User, initialPrompt));
 
 await foreach (var content in chat.InvokeAsync())
 {

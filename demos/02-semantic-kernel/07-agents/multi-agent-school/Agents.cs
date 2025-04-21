@@ -1,8 +1,7 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
-using Microsoft.SemanticKernel.Agents.Chat;
 
-public class Agents
+public partial class Agents
 {
     public static ChatCompletionAgent CreatePrincipalAgent(Kernel kernelBuilder)
     {
@@ -11,6 +10,7 @@ public class Agents
             """
                 You are PrincipalAgent. you should receive complete user information and 
                 Your final task is to approve the results evaluated by the English and Math teachers.
+                You should only approve the results and not provide any other information.
                 """;
 
 
@@ -66,13 +66,6 @@ public class Agents
         return mathsAgent;
     }
 
-
-    /// <summary>
-    /// Get a group chat with the specified agents.
-    /// </summary>
-    /// <param name="agents">The array of agents participating in the group chat. The first item in the array should be the manager.</param>
-    /// <param name="maxIterations">The maximum number of iterations for the group chat. Default is 5.</param>
-    /// <returns>The created group chat.</returns>
     public static AgentGroupChat GetGroupChat(ChatCompletionAgent[] agents, int maxIterations = 5)
     {
         AgentGroupChat chat =
@@ -90,12 +83,5 @@ public class Agents
                     }
             };
         return chat;
-    }
-
-    public sealed class ApprovalTerminationStrategy : TerminationStrategy
-    {
-        // Terminate when the final message contains the term "approve"
-        protected override Task<bool> ShouldAgentTerminateAsync(Agent agent, IReadOnlyList<ChatMessageContent> history, CancellationToken cancellationToken)
-            => Task.FromResult(history[history.Count - 1].Content?.Contains("approve", StringComparison.OrdinalIgnoreCase) ?? false);
     }
 }
