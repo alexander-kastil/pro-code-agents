@@ -1,6 +1,6 @@
 # Module 3: Develop AI agents using Azure OpenAI and the Semantic Kernel SDK
 
-### Build your kernel
+## Build your kernel
 
 - Understand the purpose of Semantic Kernel
 - Understand prompting basics & techniques for more effective prompts
@@ -24,7 +24,7 @@
 
 ### Providing state & history using Kernel Memory
 
-- Understand the purpose of Kernel Memory 
+- Understand the purpose of Kernel Memory
 - Semantic Kernel Memory: In-process & Connectors
 - Consuming Semantic Kernel from Single Page Applications
 - Kernel Memory & Retrieval Augmented Generation (RAG)
@@ -55,8 +55,6 @@
 [Semantic Kernel Docs](https://learn.microsoft.com/en-us/semantic-kernel/overview/)
 
 [Semantic Kernel Cookbook](https://github.com/microsoft/SemanticKernelCookBook/tree/main)
-
-
 
 [Semantic Kernel Community Plugins](https://github.com/Azure-AI-Community/Microsoft-Semantic-Kernel-Community-dotnet/tree/main)
 
