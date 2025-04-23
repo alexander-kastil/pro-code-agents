@@ -1,4 +1,4 @@
-# Implementing Agents and Copilots using Azure AI Foundry, Semantic Kernel and Azure AI Studio
+# Implementing Agents and Copilots using Azure AI Foundry, Semantic Kernel and Azure AI Agent Service
 
 Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) containing:
 
