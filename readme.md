@@ -1,4 +1,4 @@
-# Implementing AI Agents and Copilots using Azure OpenAI
+# Implementing AI Agents and Copilots using Azure
 
 Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) containing:
 
