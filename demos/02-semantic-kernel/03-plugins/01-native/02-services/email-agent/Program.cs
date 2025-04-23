@@ -64,6 +64,7 @@ while (true)
     {
         ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions
     };
+
     var result = chatCompletionService.GetStreamingChatMessageContentsAsync(
         history,
         executionSettings: openAIPromptExecutionSettings,
