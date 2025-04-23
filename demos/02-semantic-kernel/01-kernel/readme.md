@@ -1,4 +1,4 @@
-# Build your kernel
+# Semantic Kernel AI Services
 
 - Understand the purpose of Semantic Kernel
 - Understand prompting basics & techniques for more effective prompts

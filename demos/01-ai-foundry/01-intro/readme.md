@@ -2,5 +2,5 @@
 
 - Core Features and Capabilities of Azure AI Studio
 - Azure AI Hubs & Projects
-- Provision and manage an Azure AI Resources
+- Azure AI Foundry SDK
 - Azure AI Studio: Use Cases and Scenarios
