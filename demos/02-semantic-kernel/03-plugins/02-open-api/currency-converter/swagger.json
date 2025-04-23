@@ -1,0 +1,62 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Currency Converter API",
+    "version": "1.0.0",
+    "description": "Convert amounts between currencies using Fixer.io rates."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:7072/api"
+    }
+  ],
+  "paths": {
+    "/convertTo": {
+      "post": {
+        "summary": "Convert currency (POST)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "description": "Source currency code (ISO 4217)",
+                    "example": "USD"
+                  },
+                  "to": {
+                    "type": "string",
+                    "description": "Target currency code (ISO 4217)",
+                    "example": "EUR"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Amount to convert",
+                    "example": 100
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "Date for historical rates (YYYY-MM-DD)",
+                    "example": "2023-01-15"
+                  }
+                },
+                "required": ["from", "to", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Conversion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "from": { "type": "string" },
+                    "to": { "type": "string" },
+                    "amount": { "type": "number" },
+                    "result": { "type": "number" },
+                    "rate": { "type": "number" },

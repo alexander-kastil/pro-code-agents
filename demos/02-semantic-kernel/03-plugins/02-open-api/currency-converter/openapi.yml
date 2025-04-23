@@ -1,0 +1,113 @@
+openapi: 3.0.1
+info:
+  title: Currency Converter API
+  version: 1.0.0
+  description: Convert amounts between currencies using Fixer.io rates.
+servers:
+  - url: http://localhost:7072/api
+paths:
+  /convertTo:
+    post:
+      summary: Convert currency (POST)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from:
+                  type: string
+                  description: Source currency code (ISO 4217)
+                  example: USD
+                to:
+                  type: string
+                  description: Target currency code (ISO 4217)
+                  example: EUR
+                amount:
+                  type: number
+                  description: Amount to convert
+                  example: 100
+                date:
+                  type: string
+                  description: Date for historical rates (YYYY-MM-DD)
+                  example: 2023-01-15
+              required:
+                - from
+                - to
+                - amount
+      responses:
+        "200":
+          description: Conversion result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  from:
+                    type: string
+                  to:
+                    type: string
+                  amount:
+                    type: number
+                  result:
+                    type: number
+                  rate:
+                    type: number
+                  date:
+                    type: string
+        "400":
+          description: Invalid input
+        "500":
+          description: Server error
+    get:
+      summary: Convert currency (GET)
+      parameters:
+        - in: query
+          name: from
+          schema:
+            type: string
+          required: true
+          description: Source currency code (ISO 4217)
+        - in: query
+          name: to
+          schema:
+            type: string
+          required: true
+          description: Target currency code (ISO 4217)
+        - in: query
+          name: amount
+          schema:
+            type: number
+          required: true
+          description: Amount to convert
+        - in: query
+          name: date
+          schema:
+            type: string
+          required: false
+          description: Date for historical rates (YYYY-MM-DD)
+      responses:
+        "200":
+          description: Conversion result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  from:
+                    type: string
+                  to:
+                    type: string
+                  amount:
+                    type: number
+                  result:
+                    type: number
+                  rate:
+                    type: number
+                  date:
+                    type: string
+        "400":
+          description: Invalid input
+        "500":
+          description: Server error
