@@ -7,7 +7,6 @@ using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using EmailAgent.Common;
 using EmailAgent.Plugins;
-using System.Threading.Tasks;
 
 var builder = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())

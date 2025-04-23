@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: Currency Converter API
   version: 1.0.0
-  description: Convert amounts between currencies using Fixer.io rates.
+  description: Retrieves currency conversion rates and converts amounts between different currencies.
 servers:
   - url: http://localhost:7072/api
 paths:

@@ -19,7 +19,3 @@ content-type: application/json
     "amount": 1000,
     "date": "2023-10-01"
 }
-
-### test the swaggger file
-
-GET http://localhost:7072/swagger.json HTTP/1.1
