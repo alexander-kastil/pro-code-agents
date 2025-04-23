@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("sk-orchestration")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c27ce1db0ce8a632639f6c1f3afad0c384906c99")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+10d0fad2c6a2552816a9dafd1dadaefdef888f44")]
 [assembly: System.Reflection.AssemblyProductAttribute("sk-orchestration")]
 [assembly: System.Reflection.AssemblyTitleAttribute("sk-orchestration")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
