@@ -1,4 +1,4 @@
-# Implementing Copilots & Agents using Semantic Kernel
+# Semantic Kernel Agent Framework
 
 - Agent Basics
 - Multi Agents

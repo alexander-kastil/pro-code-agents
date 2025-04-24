@@ -30,14 +30,14 @@
 - Kernel Memory & Retrieval Augmented Generation (RAG)
 - High performance memory using Azure Cosmos DB DiskANN
 
-### Process Framework
+### Semantic Kernel Process Framework
 
 - Text to Image & Image to Text
 - Using Audio to text
 - Using Hugging Face with Semantic Kernel
 - Integrating Prompt-Flow with Semantic Kernel
 
-### Agent Framework
+### Semantic Kernel Agent Framework
 
 - Agents Overview
 - Completing multi-step tasks with Agents

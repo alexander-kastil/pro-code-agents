@@ -1,4 +1,4 @@
-# Integrating AI Services with Semantic Kernel
+# Semantic Kernel Process Framework
 
 - Text to Image & Image to Text
 - Using Audio to text
