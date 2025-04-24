@@ -5,21 +5,18 @@ using System.Text.Json;
 
 namespace AgentWorkshop.Client;
 
-public class SalesAgent(AIProjectClient client, string modelName) : IAsyncDisposable
+public class SalesAgent(
+    AIProjectClient Client,
+    string ModelName,
+    string InstructionsFile) : IAsyncDisposable
 {
     protected readonly SalesData SalesData = new("contoso-sales.db");
-    protected AIProjectClient Client { get; } = client;
-    protected string ModelName { get; } = modelName;
     protected AgentsClient? agentClient;
     protected Agent? agent;
     protected AgentThread? thread;
-    protected string InstructionsFile = "prompts/function_calling.txt";
     private readonly JsonSerializerOptions options = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-    private const int maxCompletionTokens = 4096;
-    private const int maxPromptTokens = 10240;
-    private const float temperature = 0.1f;
-    private const float topP = 0.1f;
     private bool disposeAgent = true;
+    record FetchSalesDataArgs(string Query);
     private IEnumerable<ToolDefinition> InitializeTools() => [
 
         new FunctionToolDefinition(
@@ -57,7 +54,7 @@ public class SalesAgent(AIProjectClient client, string modelName) : IAsyncDispos
             name: "Constoso Sales AI Agent",
             instructions: instructions,
             tools: tools,
-            temperature: temperature,
+            temperature: ModelParams.Temperature,
             toolResources: toolResources
         );
 
@@ -102,10 +99,10 @@ public class SalesAgent(AIProjectClient client, string modelName) : IAsyncDispos
             AsyncCollectionResult<StreamingUpdate> streamingUpdate = agentClient.CreateRunStreamingAsync(
                 threadId: thread.Id,
                 assistantId: agent.Id,
-                maxCompletionTokens: maxCompletionTokens,
-                maxPromptTokens: maxPromptTokens,
-                temperature: temperature,
-                topP: topP
+                maxCompletionTokens: ModelParams.MaxCompletionTokens,
+                maxPromptTokens: ModelParams.MaxPromptTokens,
+                temperature: ModelParams.Temperature,
+                topP: ModelParams.TopP
             );
 
             await foreach (StreamingUpdate update in streamingUpdate)
@@ -261,6 +258,4 @@ public class SalesAgent(AIProjectClient client, string modelName) : IAsyncDispos
             }
         }
     }
-
-    record FetchSalesDataArgs(string Query);
 }
