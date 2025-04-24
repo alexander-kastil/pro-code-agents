@@ -13,5 +13,5 @@ var model = configuration["Model"] ?? throw new InvalidOperationException("Model
 
 AIProjectClient projectClient = new(conProject, new DefaultAzureCredential());
 
-var agent = new SalesAgent(projectClient, model, "prompts/function_calling.txt");
+var agent = new SalesAgent(projectClient, model, "prompts/function_calling.md");
 await agent.RunAsync();
