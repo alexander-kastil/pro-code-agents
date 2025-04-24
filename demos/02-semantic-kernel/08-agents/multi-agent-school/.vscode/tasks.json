@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/c:/Users/AlexanderKastil/AppData/Roaming/Code/User/workspaceStorage/22579d9cd99782b8f5460a844ad1f83f/ms-dotnettools.csdevkit/multi-agent.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/c:/Users/AlexanderKastil/AppData/Roaming/Code/User/workspaceStorage/22579d9cd99782b8f5460a844ad1f83f/ms-dotnettools.csdevkit/multi-agent.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/c:/Users/AlexanderKastil/AppData/Roaming/Code/User/workspaceStorage/22579d9cd99782b8f5460a844ad1f83f/ms-dotnettools.csdevkit/multi-agent.sln"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
