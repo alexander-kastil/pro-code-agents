@@ -1,39 +1,50 @@
 using Azure;
 using Azure.AI.Projects;
+using Azure.Identity;
 using System.ClientModel;
 using System.Text.Json;
 
-namespace AgentWorkshop.Client;
-
-public class SalesAgent(
-    AIProjectClient Client,
-    string ModelName,
-    string InstructionsFile) : IAsyncDisposable
+namespace SalesAgentApp;
+public class SalesAgent
 {
-    protected readonly SalesData SalesData = new("contoso-sales.db");
+    private readonly AppConfig config;
+    protected readonly SalesData SalesData;
     protected AgentsClient? agentClient;
     protected Agent? agent;
+    protected readonly AIProjectClient Client;
     protected AgentThread? thread;
     private readonly JsonSerializerOptions options = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
     private bool disposeAgent = true;
+
     record FetchSalesDataArgs(string Query);
+
+    public SalesAgent(AppConfig config, string instructionsFile)
+    {
+        this.config = config;
+        SalesData = new(config.DBName);
+        Client = new AIProjectClient(config.Project_ConnectionString, new DefaultAzureCredential());
+        InstructionsFile = instructionsFile;
+    }
+
+    private string InstructionsFile { get; }
+
     private IEnumerable<ToolDefinition> InitializeTools() => [
 
         new FunctionToolDefinition(
-            name: nameof(SalesData.FetchSalesDataAsync),
-            description: "This function is used to answer user questions about Contoso sales data by executing SQLite queries against the database.",
-            parameters: BinaryData.FromObjectAsJson(new {
-                Type = "object",
-                Properties = new {
-                    Query = new {
-                        Type = "string",
-                        Description = "The input should be a well-formed SQLite query to extract information based on the user's question. The query result will be returned as a JSON object."
-                    }
+                name: nameof(SalesData.FetchSalesDataAsync),
+                description: "This function is used to answer user questions about Contoso sales data by executing SQLite queries against the database.",
+                parameters: BinaryData.FromObjectAsJson(new {
+                    Type = "object",
+                    Properties = new {
+                        Query = new {
+                            Type = "string",
+                            Description = "The input should be a well-formed SQLite query to extract information based on the user's question. The query result will be returned as a JSON object."
+                        }
+                    },
+                    Required = new [] { "query" }
                 },
-                Required = new [] { "query" }
-            },
-            new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
-        )
+                new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+            )
     ];
 
     public async Task RunAsync()
@@ -50,11 +61,11 @@ public class SalesAgent(
         string instructions = await CreateInstructionsAsync();
 
         agent = await agentClient.CreateAgentAsync(
-            model: ModelName,
+            model: config.Model,
             name: "Constoso Sales AI Agent",
             instructions: instructions,
             tools: tools,
-            temperature: ModelParams.Temperature,
+            temperature: (float?)config.ModelParams.Temperature,
             toolResources: toolResources
         );
 
@@ -99,10 +110,10 @@ public class SalesAgent(
             AsyncCollectionResult<StreamingUpdate> streamingUpdate = agentClient.CreateRunStreamingAsync(
                 threadId: thread.Id,
                 assistantId: agent.Id,
-                maxCompletionTokens: ModelParams.MaxCompletionTokens,
-                maxPromptTokens: ModelParams.MaxPromptTokens,
-                temperature: ModelParams.Temperature,
-                topP: ModelParams.TopP
+                maxCompletionTokens: config.ModelParams.MaxCompletionTokens,
+                maxPromptTokens: config.ModelParams.MaxPromptTokens,
+                temperature: (float?)config.ModelParams.Temperature,
+                topP: (float?)config.ModelParams.TopP
             );
 
             await foreach (StreamingUpdate update in streamingUpdate)

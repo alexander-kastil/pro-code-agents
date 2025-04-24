@@ -1,17 +1,13 @@
-﻿using AgentWorkshop.Client;
-using Azure.AI.Projects;
-using Azure.Identity;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using SalesAgentApp;
 
 var builder = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 var configuration = builder.Build();
-var conProject = configuration["Project_ConnectionString"] ?? throw new InvalidOperationException("Project_ConnectionString not found in configuration");
-var model = configuration["Model"] ?? throw new InvalidOperationException("Model not found in configuration");
+var config = configuration.Get<AppConfig>() ?? throw new InvalidOperationException("Failed to bind configuration to AppConfig");
 
-AIProjectClient projectClient = new(conProject, new DefaultAzureCredential());
-
-var agent = new SalesAgent(projectClient, model, "prompts/function_calling.md");
+var agent = new SalesAgent(config, "prompts/function_calling.md");
 await agent.RunAsync();
+await agent.DisposeAsync();

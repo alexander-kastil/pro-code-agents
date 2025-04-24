@@ -1,9 +1,9 @@
-namespace AgentWorkshop.Client;
+namespace SalesAgentApp;
 
 public class ModelParams
 {
-    public const int MaxCompletionTokens = 4096;
-    public const int MaxPromptTokens = 10240;
-    public const float Temperature = 0.1f;
-    public const float TopP = 0.1f;
+    public int MaxCompletionTokens { get; set; }
+    public int MaxPromptTokens { get; set; }
+    public double Temperature { get; set; }
+    public double TopP { get; set; }
 }

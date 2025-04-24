@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
 
-namespace AgentWorkshop.Client;
+namespace SalesAgentApp;
 
 public class SalesData : IDisposable
 {

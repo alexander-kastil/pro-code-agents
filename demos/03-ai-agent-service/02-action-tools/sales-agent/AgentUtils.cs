@@ -1,6 +1,6 @@
 using Azure.AI.Projects;
 
-namespace AgentWorkshop.Client;
+namespace SalesAgentApp;
 
 public static class AgentUtils
 {
@@ -19,7 +19,6 @@ public static class AgentUtils
         {
             string filePath = prefix + file;
             LogPurple($"Uploading file: {filePath}");
-            // Adjust the upload API call if needed
             AgentFile fileInfo = await agentsClient.UploadFileAsync(filePath, AgentFilePurpose.Agents);
             fileIds.Add(fileInfo.Id);
         }
