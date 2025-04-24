@@ -1,28 +1,28 @@
 # Module 3: Develop AI agents using Azure OpenAI and the Semantic Kernel SDK
 
-## Build your kernel
+## Introduction to Semantic Kernel
 
 - Understand the purpose of Semantic Kernel
-- Understand prompting basics & techniques for more effective prompts
-- Implementing Agent Personas
 - Use OpenAI, Azure OpenAI & 3rd party Large Language Models
+- Chat History & AI Services Integration
+- ChatCompletion and Multi-modal capabilities
+- Embeddings
 
-### Give your AI agent skills using Native Functions
+## Optimizing Prompts
 
-- Understand native functions in the Semantic Kernel SDK
-- Implement Native Functions using Prompts
-- Using yaml based prompts
-- Chaining Native Functions
-- Using Pre- and Post Hooks
+- Prompt engineering and Variables
+- Prompt templates: Handlebars vs Liquid
+- Yaml based prompts
 
 ### Create Plugins for Semantic Kernel
 
-- Understand the purpose of Semantic Kernel plugins
-- Learn how to use pre-made plugins
-- Implementing data retrieval and task automation plugins
-- Persisting Data using Plugins
+- Planners & Function Calling
+- Implement Native Functions using Prompts
+- OpenApi Plugins
+- Using MCP Servers in Semantic Kernel
+- Using Pre- and Post Hooks
 
-### Providing state & history using Kernel Memory
+### Kernel Memory & Vector Store Connectors
 
 - Understand the purpose of Kernel Memory
 - Semantic Kernel Memory: In-process & Connectors
@@ -30,20 +30,14 @@
 - Kernel Memory & Retrieval Augmented Generation (RAG)
 - High performance memory using Azure Cosmos DB DiskANN
 
-### Use intelligent planners
-
-- Understand planners in the Semantic Kernel SDK
-- Use & optimize planners to automate function calls
-- Learn how to use Semantic Kernel SDK to automatically invoke functions
-
-### Integrating AI Services with Semantic Kernel
+### Process Framework
 
 - Text to Image & Image to Text
 - Using Audio to text
 - Using Hugging Face with Semantic Kernel
 - Integrating Prompt-Flow with Semantic Kernel
 
-### Implementing Copilots & Agents using Semantic Kernel
+### Agent Framework
 
 - Agents Overview
 - Completing multi-step tasks with Agents
