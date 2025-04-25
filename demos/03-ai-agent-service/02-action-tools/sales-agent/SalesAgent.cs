@@ -169,29 +169,27 @@ public class SalesAgent
 
     private async Task HandleStreamingUpdate(StreamingUpdate update)
     {
-        Console.WriteLine($"Update kind: {update.UpdateKind}");
         switch (update.UpdateKind)
         {
             case StreamingUpdateReason.RunRequiresAction:
-                // The run requires an action from the application, such as a tool output submission.
-                // This is where the application can handle the action.
+                // Print status only for non-content updates
+                Console.WriteLine($"\nStreaming Update received: {update.UpdateKind}");
                 RequiredActionUpdate requiredActionUpdate = (RequiredActionUpdate)update;
-                await HandleActionAsync(requiredActionUpdate);
+                await HandleRequiredActionAsync(requiredActionUpdate);
                 break;
 
             case StreamingUpdateReason.MessageUpdated:
-                // The agent has a response to the user, potentially requiring some user input
-                // or further action. This comes as a stream of message content updates.
+                // Only print the message content fragment, without the status line
                 MessageContentUpdate messageContentUpdate = (MessageContentUpdate)update;
-                await Console.Out.WriteAsync(messageContentUpdate.Text);
+                await Console.Out.WriteAsync(messageContentUpdate.Text); // Keep WriteAsync for continuous text
                 break;
 
             case StreamingUpdateReason.MessageCompleted:
+                // Print status only for non-content updates
+                Console.WriteLine($"\nStreaming Update received: {update.UpdateKind}");
                 MessageStatusUpdate messageStatusUpdate = (MessageStatusUpdate)update;
                 ThreadMessage tm = messageStatusUpdate.Value;
-
                 var contentItems = tm.ContentItems;
-
                 foreach (MessageContent contentItem in contentItems)
                 {
                     if (contentItem is MessageImageFileContent imageContent)
@@ -202,21 +200,24 @@ public class SalesAgent
                 break;
 
             case StreamingUpdateReason.RunCompleted:
-                // The run is complete, so we can print a new line.
+                // Print status only for non-content updates
+                Console.WriteLine($"\nStreaming Update received: {update.UpdateKind}");
+                // The run is complete, print a final new line to ensure the next prompt starts cleanly.
                 await Console.Out.WriteLineAsync();
                 break;
 
             case StreamingUpdateReason.RunFailed:
-                // The run failed, so we can print the error message.
+                // Print status only for non-content updates
+                Console.WriteLine($"\nStreaming Update received: {update.UpdateKind}");
                 RunUpdate runFailedUpdate = (RunUpdate)update;
-
                 if (runFailedUpdate.Value.LastError.Code == "rate_limit_exceeded")
                 {
                     await Console.Out.WriteLineAsync(runFailedUpdate.Value.LastError.Message);
-                    break;
                 }
-
-                await Console.Out.WriteLineAsync($"Error: {runFailedUpdate.Value.LastError.Message} (code: {runFailedUpdate.Value.LastError.Code})");
+                else
+                {
+                    await Console.Out.WriteLineAsync($"Error: {runFailedUpdate.Value.LastError.Message} (code: {runFailedUpdate.Value.LastError.Code})");
+                }
                 break;
         }
     }
@@ -243,12 +244,12 @@ public class SalesAgent
         AgentUtils.LogGreen($"File saved to {Path.GetFullPath(filePath)}");
     }
 
-    private AsyncCollectionResult<StreamingUpdate> HandleLabAction(RequiredActionUpdate requiredActionUpdate)
+    private AsyncCollectionResult<StreamingUpdate> HandleUnsupportedAction(RequiredActionUpdate requiredActionUpdate)
     {
         throw new NotImplementedException("This function is not implemented in the base SalesAgent class.");
     }
 
-    private async Task HandleActionAsync(RequiredActionUpdate requiredActionUpdate)
+    private async Task HandleRequiredActionAsync(RequiredActionUpdate requiredActionUpdate)
     {
         if (agentClient is null)
         {
@@ -256,18 +257,19 @@ public class SalesAgent
         }
 
         AsyncCollectionResult<StreamingUpdate> toolOutputUpdate;
-        if (requiredActionUpdate.FunctionName != nameof(SalesDB.FetchSalesDataAsync))
-        {
-            toolOutputUpdate = HandleLabAction(requiredActionUpdate);
-        }
-        else
+
+        if (requiredActionUpdate.FunctionName == nameof(SalesDB.FetchSalesDataAsync))
         {
             FetchSalesDataArgs salesDataArgs = JsonSerializer.Deserialize<FetchSalesDataArgs>(requiredActionUpdate.FunctionArguments, options) ?? throw new InvalidOperationException("Failed to parse JSON object.");
             string result = await SalesDB.FetchSalesDataAsync(salesDataArgs.Query);
             toolOutputUpdate = agentClient.SubmitToolOutputsToStreamAsync(
-                requiredActionUpdate.Value,
-                new List<ToolOutput>([new ToolOutput(requiredActionUpdate.ToolCallId, result)])
+            requiredActionUpdate.Value,
+            new List<ToolOutput>([new ToolOutput(requiredActionUpdate.ToolCallId, result)])
             );
+        }
+        else
+        {
+            toolOutputUpdate = HandleUnsupportedAction(requiredActionUpdate);
         }
 
         await foreach (StreamingUpdate toolUpdate in toolOutputUpdate)
