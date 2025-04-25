@@ -1862,11 +1862,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\git-classes\\agents-copilots\\demos\\03-ai-agent-service\\05-orchestration\\sk-orchestration\\sk-orchestration.csproj",
+      "projectUniqueName": "D:\\git-classes\\agents-copilots\\demos\\03-ai-agent-service\\04-orchestration\\sk-orchestration\\sk-orchestration.csproj",
       "projectName": "sk-orchestration",
-      "projectPath": "D:\\git-classes\\agents-copilots\\demos\\03-ai-agent-service\\05-orchestration\\sk-orchestration\\sk-orchestration.csproj",
+      "projectPath": "D:\\git-classes\\agents-copilots\\demos\\03-ai-agent-service\\04-orchestration\\sk-orchestration\\sk-orchestration.csproj",
       "packagesPath": "C:\\Users\\AlexanderKastil\\.nuget\\packages\\",
-      "outputPath": "D:\\git-classes\\agents-copilots\\demos\\03-ai-agent-service\\05-orchestration\\sk-orchestration\\obj\\",
+      "outputPath": "D:\\git-classes\\agents-copilots\\demos\\03-ai-agent-service\\04-orchestration\\sk-orchestration\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
