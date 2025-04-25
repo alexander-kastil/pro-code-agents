@@ -12,10 +12,10 @@ var config = configuration.Get<AppConfig>() ?? throw new InvalidOperationExcepti
 // await agent.RunAsync();
 // await agent.DisposeAsync();
 
-var agent = new SalesAgent(config, "prompts/file_search.txt");
-await agent.RunAsync();
-await agent.DisposeAsync();
-
-// var agent = new SalesAgent(config, "prompts/code_interpreter.txt");
+// var agent = new SalesAgent(config, "prompts/file_search.txt");
 // await agent.RunAsync();
 // await agent.DisposeAsync();
+
+var agent = new SalesAgent(config, "prompts/code_interpreter.md");
+await agent.RunAsync();
+await agent.DisposeAsync();
