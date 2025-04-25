@@ -1,0 +1,21 @@
+### current date
+
+POST  http://localhost:7072/api/convertTo HTTP/1.1
+content-type: application/json
+
+{
+    "from": "EUR",
+    "to": "THB",
+    "amount": 1000
+}
+
+### specify the date
+POST  http://localhost:7072/api/convertTo HTTP/1.1
+content-type: application/json
+
+{
+    "from": "EUR",
+    "to": "THB",
+    "amount": 1000,
+    "date": "2023-10-01"
+}
