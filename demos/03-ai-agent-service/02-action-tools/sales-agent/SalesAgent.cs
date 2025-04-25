@@ -45,7 +45,8 @@ public class SalesAgent
                 new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
             ),
         // Add the definition for a file search tool that will be used to search for files in the vector store
-        new FileSearchToolDefinition()
+        new FileSearchToolDefinition(),
+        new CodeInterpreterToolDefinition()
     ];
 
     public async Task RunAsync()
@@ -64,7 +65,7 @@ public class SalesAgent
 
         agent = await agentClient.CreateAgentAsync(
             model: config.Model,
-            name: "Constoso Sales AI Agent",
+            name: config.AgentName, // Use config.AgentName here
             instructions: instructions,
             tools: tools,
             temperature: (float?)config.ModelParams.Temperature,
