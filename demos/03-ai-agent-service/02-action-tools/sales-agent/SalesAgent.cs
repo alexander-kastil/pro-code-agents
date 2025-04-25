@@ -63,16 +63,10 @@ public class SalesAgent
 
         string instructions = await ReadAgentInstructions();
 
-        agent = await agentClient.CreateAgentAsync(
-            model: config.Model,
-            name: config.AgentName, // Use config.AgentName here
-            instructions: instructions,
-            tools: tools,
-            temperature: (float?)config.ModelParams.Temperature,
-            toolResources: toolResources
-        );
+        // Get or create the agent
+        agent = await CreateOrGetAgent(agentClient, instructions, tools, toolResources);
 
-        await Console.Out.WriteLineAsync($"Agent created with ID: {agent.Id}");
+        await Console.Out.WriteLineAsync($"Using agent with ID: {agent.Id}");
 
         thread = await agentClient.CreateThreadAsync();
 
@@ -132,6 +126,34 @@ public class SalesAgent
         {
             FileSearch = new FileSearchToolResource([store.Id], null)
         };
+    }
+
+    private async Task<Agent> CreateOrGetAgent(AgentsClient client, string instructions, IEnumerable<ToolDefinition> tools, ToolResources? toolResources)
+    {
+        await Console.Out.WriteLineAsync($"Checking for existing agent with name: {config.AgentName}");
+        // List existing agents and check if one with the target name exists
+        Response<PageableList<Agent>> agentsResponse = await client.GetAgentsAsync();
+        foreach (Agent existingAgent in agentsResponse.Value)
+        {
+            if (existingAgent.Name == config.AgentName)
+            {
+                await Console.Out.WriteLineAsync($"Found existing agent with ID: {existingAgent.Id}");
+                return existingAgent;
+            }
+        }
+
+        // If no agent found, create a new one
+        await Console.Out.WriteLineAsync($"No existing agent found. Creating a new agent named '{config.AgentName}'.");
+        Agent newAgent = await client.CreateAgentAsync(
+            model: config.Model,
+            name: config.AgentName,
+            instructions: instructions,
+            tools: tools,
+            temperature: (float?)config.ModelParams.Temperature,
+            toolResources: toolResources
+        );
+        await Console.Out.WriteLineAsync($"New agent created with ID: {newAgent.Id}");
+        return newAgent;
     }
 
     private async Task<string> ReadAgentInstructions()
