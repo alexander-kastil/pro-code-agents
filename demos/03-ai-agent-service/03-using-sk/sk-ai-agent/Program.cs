@@ -35,8 +35,11 @@ Azure.AI.Projects.Agent definition = await agentsClient.CreateAgentAsync(
         AzureAISearch = new()
         {
             IndexList = { new Azure.AI.Projects.AISearchIndexResource(searchConnection.Id, "manuals-index") }
-        }
+        },
     });
+
+string knowledgeFile = Path.Combine("data", "return-policy.md");
+VectorStore store = await AgentUtils.CreateVectorStoreAndUploadKnowledge(agentsClient, knowledgeFile);
 
 // 2. Create a Semantic Kernel agent based on the agent definition
 AzureAIAgent agent = new(definition, agentsClient);
