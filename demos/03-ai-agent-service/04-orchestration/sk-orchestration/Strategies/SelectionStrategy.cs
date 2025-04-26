@@ -1,45 +1,42 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure.AI.Projects;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Agents.Chat;
 using Microsoft.SemanticKernel.Agents;
 
-namespace SKOrchestration.Strategies
+namespace SKOrchestration
 {
-    /// <summary>
-    /// A selection strategy that determines which agent speaks next in the group chat.
-    /// </summary>
-    public class SelectionStrategy : IAgentSelectionStrategy
+    public class SelectionStrategy
     {
-        private readonly List<IAgent> agents;
-        private int currentIndex = 0;
+        private const string IncidentManager = "INCIDENT_MANAGER";
+        private const string DevOpsAssistant = "DEVOPS_ASSISTANT";
+        private const string User = "USER";
 
-        public SelectionStrategy(List<IAgent> agents)
+        public async Task<Microsoft.SemanticKernel.Agents.Agent?> SelectAgentAsync(
+            IReadOnlyList<Microsoft.SemanticKernel.Agents.Agent> agents,
+            IReadOnlyList<ChatMessageContent> history,
+            CancellationToken cancellationToken = default)
         {
-            this.agents = agents ?? throw new ArgumentNullException(nameof(agents));
-        }
-
-        public Task<IAgent> SelectAgentAsync(IReadOnlyList<ChatMessageContent> chatHistory, IReadOnlyList<IAgent> groupParticipants, CancellationToken cancellationToken = default)
-        {
-            if (chatHistory.Count == 0 || groupParticipants.Count == 0)
+            if (history == null || history.Count == 0)
             {
-                return Task.FromResult(agents[0]); // Default to the first agent
+                return null;
             }
 
-            // Get the last message
-            var lastMessage = chatHistory[^1];
+            var lastMessage = history[^1];
 
-            // If the last message is from a user, start with the first agent (incident manager)
-            if (lastMessage.Role == AuthorRole.User)
+            // The Incident Manager should go after the User or the DevOps Assistant
+            if (string.Equals(lastMessage.AuthorName, DevOpsAssistant, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(lastMessage.AuthorName, User, StringComparison.OrdinalIgnoreCase))
             {
-                currentIndex = 0;
-                return Task.FromResult(agents[0]);
+                return agents.FirstOrDefault(agent => string.Equals(agent.Name, IncidentManager, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Alternate between agents
-            currentIndex = (currentIndex + 1) % agents.Count;
-            return Task.FromResult(agents[currentIndex]);
+            // Otherwise it is the DevOps Assistant's turn
+            return agents.FirstOrDefault(agent => string.Equals(agent.Name, DevOpsAssistant, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

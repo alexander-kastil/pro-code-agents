@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "oxKj8rpImBo=",
+  "dgSpecHash": "XeZ9DKFfnCQ=",
   "success": true,
   "projectFilePath": "D:\\git-classes\\agents-copilots\\demos\\03-ai-agent-service\\04-orchestration\\sk-orchestration\\sk-orchestration.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\azure.ai.openai\\2.2.0-beta.4\\azure.ai.openai.2.2.0-beta.4.nupkg.sha512",
-    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\azure.ai.projects\\1.0.0-beta.6\\azure.ai.projects.1.0.0-beta.6.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\azure.ai.projects\\1.0.0-beta.8\\azure.ai.projects.1.0.0-beta.8.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\azure.core\\1.44.1\\azure.core.1.44.1.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\azure.identity\\1.13.2\\azure.identity.1.13.2.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",
@@ -13,6 +13,7 @@
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.extensions.ai.abstractions\\9.4.0-preview.1.25207.5\\microsoft.extensions.ai.abstractions.9.4.0-preview.1.25207.5.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.extensions.configuration\\9.0.4\\microsoft.extensions.configuration.9.0.4.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\9.0.4\\microsoft.extensions.configuration.abstractions.9.0.4.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.extensions.configuration.binder\\9.0.4\\microsoft.extensions.configuration.binder.9.0.4.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\9.0.4\\microsoft.extensions.configuration.fileextensions.9.0.4.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.extensions.configuration.json\\9.0.4\\microsoft.extensions.configuration.json.9.0.4.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\8.0.1\\microsoft.extensions.dependencyinjection.8.0.1.nupkg.sha512",
@@ -27,15 +28,20 @@
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.identity.client.extensions.msal\\4.67.2\\microsoft.identity.client.extensions.msal.4.67.2.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.identitymodel.abstractions\\6.35.0\\microsoft.identitymodel.abstractions.6.35.0.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel\\1.46.0\\microsoft.semantickernel.1.46.0.nupkg.sha512",
-    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.abstractions\\1.46.0\\microsoft.semantickernel.abstractions.1.46.0.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.abstractions\\1.47.0\\microsoft.semantickernel.abstractions.1.47.0.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.agents.abstractions\\1.47.0\\microsoft.semantickernel.agents.abstractions.1.47.0.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.agents.azureai\\1.47.0-preview\\microsoft.semantickernel.agents.azureai.1.47.0-preview.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.agents.core\\1.47.0\\microsoft.semantickernel.agents.core.1.47.0.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.agents.openai\\1.47.0-preview\\microsoft.semantickernel.agents.openai.1.47.0-preview.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.connectors.azureopenai\\1.46.0\\microsoft.semantickernel.connectors.azureopenai.1.46.0.nupkg.sha512",
-    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.connectors.openai\\1.46.0\\microsoft.semantickernel.connectors.openai.1.46.0.nupkg.sha512",
-    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.core\\1.46.0\\microsoft.semantickernel.core.1.46.0.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.connectors.openai\\1.47.0\\microsoft.semantickernel.connectors.openai.1.47.0.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.semantickernel.core\\1.47.0\\microsoft.semantickernel.core.1.47.0.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\openai\\2.2.0-beta.4\\openai.2.2.0-beta.4.nupkg.sha512",
-    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.clientmodel\\1.4.0-beta.1\\system.clientmodel.1.4.0-beta.1.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.clientmodel\\1.4.0-beta.3\\system.clientmodel.1.4.0-beta.3.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.4\\system.configuration.configurationmanager.9.0.4.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.diagnostics.diagnosticsource\\8.0.1\\system.diagnostics.diagnosticsource.8.0.1.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.diagnostics.eventlog\\9.0.4\\system.diagnostics.eventlog.9.0.4.nupkg.sha512",
+    "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.linq.async\\6.0.1\\system.linq.async.6.0.1.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.memory.data\\6.0.1\\system.memory.data.6.0.1.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.numerics.tensors\\9.0.0\\system.numerics.tensors.9.0.0.nupkg.sha512",
@@ -46,5 +52,16 @@
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.text.json\\8.0.5\\system.text.json.8.0.5.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1608",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Detected package version outside of dependency constraint: Microsoft.SemanticKernel.Agents.AzureAI 1.47.0-preview requires Azure.AI.Projects (= 1.0.0-beta.3) but version Azure.AI.Projects 1.0.0-beta.8 was resolved.",
+      "libraryId": "Azure.AI.Projects",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
 }

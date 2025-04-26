@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace SKOrchestration.Services
+namespace SKOrchestration
 {
     public class LogService
     {

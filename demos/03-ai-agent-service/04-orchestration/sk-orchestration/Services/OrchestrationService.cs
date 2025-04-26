@@ -7,16 +7,11 @@ using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
-using Microsoft.SemanticKernel.Agents.Azure;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SKOrchestration.Plugins;
-using SKOrchestration.Strategies;
-using System.Linq;
 
-namespace SKOrchestration.Services
+namespace SKOrchestration
 {
-    public class OrchestrationService : BackgroundService
+    public class OrchestrationService
     {
         private readonly IConfiguration configuration;
         private readonly ILogger<OrchestrationService> logger;
