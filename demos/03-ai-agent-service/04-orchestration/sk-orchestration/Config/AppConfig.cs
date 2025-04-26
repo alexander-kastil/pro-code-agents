@@ -4,10 +4,11 @@ public class AppConfig
 {
     public LoggingConfig? Logging { get; set; }
     public string Model { get; set; }
+
+    public string ApiKey { get; set; }
     public string ProjectConnectionString { get; set; }
     public string AgentName { get; set; }
     public ModelParamsConfig? ModelParams { get; set; }
-    public GraphCfg? GraphCfg { get; set; }
     public string? AllowedHosts { get; set; }
 
     public AppConfig()
@@ -17,7 +18,6 @@ public class AppConfig
         ProjectConnectionString = string.Empty;
         AgentName = string.Empty;
         ModelParams = new ModelParamsConfig();
-        GraphCfg = new GraphCfg();
         AllowedHosts = string.Empty;
     }
 }

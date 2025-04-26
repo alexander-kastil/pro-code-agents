@@ -48,6 +48,8 @@
 
 [Semantic Kernel Docs](https://learn.microsoft.com/en-us/semantic-kernel/overview/)
 
+[Semantic Kernel In-Depth Samples](https://learn.microsoft.com/en-us/semantic-kernel/get-started/detailed-samples)
+
 [Semantic Kernel Cookbook](https://github.com/microsoft/SemanticKernelCookBook/tree/main)
 
 [Semantic Kernel Community Plugins](https://github.com/Azure-AI-Community/Microsoft-Semantic-Kernel-Community-dotnet/tree/main)
@@ -55,5 +57,3 @@
 [Mermaid Visualizations](https://jordanbeandev.com/how-to-visualize-semantic-kernel-azure-openai-plans-using-mermaid/)
 
 [Semantic Kernel Search Orchestration](https://jordanbeandev.com/how-to-build-an-azure-openai-intent-plugin-in-semantic-kernel-to-help-orchestrate-which-azure-ai-search-index-to-use/)
-
-[SK Samples](https://learn.microsoft.com/en-us/semantic-kernel/get-started/detailed-samples?pivots=programming-language-csharp)

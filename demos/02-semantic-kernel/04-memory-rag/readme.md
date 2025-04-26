@@ -9,3 +9,5 @@
 ## Links & Resources
 
 [Semantic Kernel Vector Store connectors](https://learn.microsoft.com/en-us/semantic-kernel/concepts/vector-store-connectors)
+
+https://github.com/microsoft/semantic-kernel/tree/main/dotnet/samples/Demos/VectorStoreRAG

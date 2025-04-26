@@ -1,23 +1,16 @@
-using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using Microsoft.SemanticKernel;
 
 namespace SKOrchestration;
 
 public class DevopsPlugin
 {
-    /// <summary>
-    /// A plugin that performs developer operation tasks.
-    /// </summary>
-
     private void AppendToLogFile(string filepath, string content)
     {
         File.AppendAllText(filepath, "\n" + content.Trim());
     }
 
-    [KernelFunction(Description = "A function that restarts the named service")]
+    [KernelFunction, Description("A function that restarts the named service")]
     public string RestartService(string serviceName = "", string logfile = "")
     {
         var logEntries = new[]
@@ -33,7 +26,7 @@ public class DevopsPlugin
         return $"Service {serviceName} restarted successfully.";
     }
 
-    [KernelFunction(Description = "A function that rollsback the transaction")]
+    [KernelFunction, Description("A function that rolls back the transaction")]
     public string RollbackTransaction(string logfile = "")
     {
         var logEntries = new[]
@@ -48,7 +41,8 @@ public class DevopsPlugin
 
         return "Transaction rolled back successfully.";
     }
-    [KernelFunction(Description = "A function that redeploys the named resource")]
+
+    [KernelFunction, Description("A function that redeploys the named resource")]
     public string RedeployResource(string resourceName = "", string logfile = "")
     {
         var logEntries = new[]

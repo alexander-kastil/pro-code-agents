@@ -77,7 +77,7 @@
             },
             "Microsoft.SemanticKernel": {
               "target": "Package",
-              "version": "[1.46.0, )"
+              "version": "[1.47.0, )"
             },
             "Microsoft.SemanticKernel.Agents.AzureAI": {
               "target": "Package",

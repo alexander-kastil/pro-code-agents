@@ -407,11 +407,11 @@
           }
         }
       },
-      "Microsoft.SemanticKernel/1.46.0": {
+      "Microsoft.SemanticKernel/1.47.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.SemanticKernel.Connectors.AzureOpenAI": "1.46.0",
-          "Microsoft.SemanticKernel.Core": "1.46.0"
+          "Microsoft.SemanticKernel.Connectors.AzureOpenAI": "1.47.0",
+          "Microsoft.SemanticKernel.Core": "1.47.0"
         },
         "compile": {
           "lib/net8.0/Microsoft.SemanticKernel.dll": {
@@ -520,12 +520,12 @@
           }
         }
       },
-      "Microsoft.SemanticKernel.Connectors.AzureOpenAI/1.46.0": {
+      "Microsoft.SemanticKernel.Connectors.AzureOpenAI/1.47.0": {
         "type": "package",
         "dependencies": {
           "Azure.AI.OpenAI": "[2.2.0-beta.4]",
-          "Microsoft.SemanticKernel.Connectors.OpenAI": "1.46.0",
-          "Microsoft.SemanticKernel.Core": "1.46.0"
+          "Microsoft.SemanticKernel.Connectors.OpenAI": "1.47.0",
+          "Microsoft.SemanticKernel.Core": "1.47.0"
         },
         "compile": {
           "lib/net8.0/Microsoft.SemanticKernel.Connectors.AzureOpenAI.dll": {
@@ -1457,10 +1457,10 @@
         "microsoft.identitymodel.abstractions.nuspec"
       ]
     },
-    "Microsoft.SemanticKernel/1.46.0": {
-      "sha512": "vwdxcFQo750QCPTlTP+j/sCpb4W6OZ/hHaTREgRIZqUT4jPe0HSdWeV6Lg0UfGAId7ZJ7zVtk1kBZJY1eQsMRw==",
+    "Microsoft.SemanticKernel/1.47.0": {
+      "sha512": "Bfk/LASeYrlAW0D4CjxP1PStTRH2YwcYraaj+BZJHplK4EGEM+uD55MfGIwhOcEW7p5ipVhXXoZxvjVyekiqJg==",
       "type": "package",
-      "path": "microsoft.semantickernel/1.46.0",
+      "path": "microsoft.semantickernel/1.47.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1470,7 +1470,7 @@
         "lib/net8.0/Microsoft.SemanticKernel.xml",
         "lib/netstandard2.0/Microsoft.SemanticKernel.dll",
         "lib/netstandard2.0/Microsoft.SemanticKernel.xml",
-        "microsoft.semantickernel.1.46.0.nupkg.sha512",
+        "microsoft.semantickernel.1.47.0.nupkg.sha512",
         "microsoft.semantickernel.nuspec"
       ]
     },
@@ -1559,10 +1559,10 @@
         "microsoft.semantickernel.agents.openai.nuspec"
       ]
     },
-    "Microsoft.SemanticKernel.Connectors.AzureOpenAI/1.46.0": {
-      "sha512": "aftHago8TNp7Liw2z3eBXPP/1DqhUv3bBpZV3fDqXdKLBQHxFMdY++x3UA+wzv7j27CtKp9jvMguYwlpGoJ/uw==",
+    "Microsoft.SemanticKernel.Connectors.AzureOpenAI/1.47.0": {
+      "sha512": "NLyR3UuuoVvcxBE1ClIfwHnZjfDPhoV94rIdTZxrU8S7wMAnwI+eTKrdWUMfrj3POIM1eixAX/swL6d0+W9TSA==",
       "type": "package",
-      "path": "microsoft.semantickernel.connectors.azureopenai/1.46.0",
+      "path": "microsoft.semantickernel.connectors.azureopenai/1.47.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1572,7 +1572,7 @@
         "lib/net8.0/Microsoft.SemanticKernel.Connectors.AzureOpenAI.xml",
         "lib/netstandard2.0/Microsoft.SemanticKernel.Connectors.AzureOpenAI.dll",
         "lib/netstandard2.0/Microsoft.SemanticKernel.Connectors.AzureOpenAI.xml",
-        "microsoft.semantickernel.connectors.azureopenai.1.46.0.nupkg.sha512",
+        "microsoft.semantickernel.connectors.azureopenai.1.47.0.nupkg.sha512",
         "microsoft.semantickernel.connectors.azureopenai.nuspec"
       ]
     },
@@ -2096,7 +2096,7 @@
       "Microsoft.Extensions.Configuration.Binder >= 9.0.4",
       "Microsoft.Extensions.Configuration.FileExtensions >= 9.0.4",
       "Microsoft.Extensions.Configuration.Json >= 9.0.4",
-      "Microsoft.SemanticKernel >= 1.46.0",
+      "Microsoft.SemanticKernel >= 1.47.0",
       "Microsoft.SemanticKernel.Agents.AzureAI >= 1.47.0-preview",
       "Microsoft.SemanticKernel.Agents.Core >= 1.47.0",
       "Microsoft.SemanticKernel.Agents.OpenAI >= 1.47.0-preview",
@@ -2180,7 +2180,7 @@
           },
           "Microsoft.SemanticKernel": {
             "target": "Package",
-            "version": "[1.46.0, )"
+            "version": "[1.47.0, )"
           },
           "Microsoft.SemanticKernel.Agents.AzureAI": {
             "target": "Package",

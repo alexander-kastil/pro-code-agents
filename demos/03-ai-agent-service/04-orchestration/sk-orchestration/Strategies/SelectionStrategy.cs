@@ -1,42 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Azure.AI.Projects;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Agents.Chat;
 using Microsoft.SemanticKernel.Agents;
 
 namespace SKOrchestration
 {
-    public class SelectionStrategy
+    public class Selection
     {
-        private const string IncidentManager = "INCIDENT_MANAGER";
-        private const string DevOpsAssistant = "DEVOPS_ASSISTANT";
-        private const string User = "USER";
+        // Define Selection Strategy (Which Agent Speaks Next?)
+        public static readonly KernelFunction selectionFunction =
+            AgentGroupChat.CreatePromptFunctionForStrategy(
+                @"Examine the provided RESPONSE and choose the next participant.
+                State only the name of the chosen participant without explanation.
+                Never choose the participant named in the RESPONSE.
 
-        public async Task<Microsoft.SemanticKernel.Agents.Agent?> SelectAgentAsync(
-            IReadOnlyList<Microsoft.SemanticKernel.Agents.Agent> agents,
-            IReadOnlyList<ChatMessageContent> history,
-            CancellationToken cancellationToken = default)
-        {
-            if (history == null || history.Count == 0)
-            {
-                return null;
-            }
+                Choose only from these participants:
+                - INCIDENT_MANAGER
+                - DEVOPS_ASSISTANT
+                - USER
 
-            var lastMessage = history[^1];
+                Always follow these rules when choosing the next participant:
+                - If RESPONSE is user input, analyze the message:
+                    - If it contains words like 'incident', 'issue', 'problem', choose INCIDENT_MANAGER.
+                    - If it contains words like 'deploy', 'build', 'pipeline', choose DEVOPS_ASSISTANT.
+                - If RESPONSE is by INCIDENT_MANAGER, the next step MUST be the DEVOPS_ASSISTANT.
+                - If RESPONSE is by DEVOPS_ASSISTANT, the next step MUST be the INCIDENT_MANAGER.
+                - If the topic is unclear, default to INCIDENT_MANAGER.
 
-            // The Incident Manager should go after the User or the DevOps Assistant
-            if (string.Equals(lastMessage.AuthorName, DevOpsAssistant, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(lastMessage.AuthorName, User, StringComparison.OrdinalIgnoreCase))
-            {
-                return agents.FirstOrDefault(agent => string.Equals(agent.Name, IncidentManager, StringComparison.OrdinalIgnoreCase));
-            }
+                RESPONSE:
+                {{$lastmessage}}",
+                safeParameterNames: "lastmessage"
+            );
 
-            // Otherwise it is the DevOps Assistant's turn
-            return agents.FirstOrDefault(agent => string.Equals(agent.Name, DevOpsAssistant, StringComparison.OrdinalIgnoreCase));
-        }
     }
 }
