@@ -8,3 +8,5 @@
 ## Links & Resources
 
 [Image to Text with Semantic Kernel and HuggingFace](https://devblogs.microsoft.com/semantic-kernel/image-to-text-with-semantic-kernel-and-huggingface/)
+
+https://github.com/microsoft/semantic-kernel/tree/main/dotnet/samples/Demos/ProcessFrameworkWithAspire

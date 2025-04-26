@@ -1,4 +1,0 @@
-Support ticket: fcf139
-Submitted by: alexander.kastil@integrations.at
-Description:
-The car does not start

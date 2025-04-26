@@ -1,6 +1,0 @@
-D:\git-classes\agents-copilots\demos\03-agent-service\04-orchestration\sk-orchestration\obj\Debug\net9.0\sk-orchestration.csproj.AssemblyReference.cache
-D:\git-classes\agents-copilots\demos\03-agent-service\04-orchestration\sk-orchestration\obj\Debug\net9.0\sk-orchestration.GeneratedMSBuildEditorConfig.editorconfig
-D:\git-classes\agents-copilots\demos\03-agent-service\04-orchestration\sk-orchestration\obj\Debug\net9.0\sk-orchestration.AssemblyInfoInputs.cache
-D:\git-classes\agents-copilots\demos\03-agent-service\04-orchestration\sk-orchestration\obj\Debug\net9.0\sk-orchestration.AssemblyInfo.cs
-D:\git-classes\agents-copilots\demos\03-agent-service\04-orchestration\sk-orchestration\obj\Debug\net9.0\sk-orchestration.csproj.CoreCompileInputs.cache
-D:\git-classes\agents-copilots\demos\03-agent-service\04-orchestration\sk-orchestration\obj\Debug\net9.0\sk-orchestration.sourcelink.json
