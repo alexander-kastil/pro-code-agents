@@ -10,6 +10,7 @@ public class AppConfig
     public string AgentName { get; set; }
     public ModelParamsConfig? ModelParams { get; set; }
     public string? AllowedHosts { get; set; }
+    public string Endpoint { get; set; }
 
     public AppConfig()
     {
@@ -19,6 +20,7 @@ public class AppConfig
         AgentName = string.Empty;
         ModelParams = new ModelParamsConfig();
         AllowedHosts = string.Empty;
+        Endpoint = string.Empty;
     }
 }
 

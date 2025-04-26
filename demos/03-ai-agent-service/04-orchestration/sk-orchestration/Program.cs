@@ -16,9 +16,12 @@ IConfiguration configuration = builder.Build();
 var appConfig = configuration.Get<AppConfig>();
 
 var kernelBuilder = Kernel.CreateBuilder();
-kernelBuilder.AddOpenAIChatCompletion(appConfig.Model, appConfig.ApiKey);
-var kernel = kernelBuilder.Build();
 
+kernelBuilder.AddAzureOpenAIChatCompletion(
+    appConfig.Model!,
+    appConfig.Endpoint!,
+    appConfig.ApiKey!);
+var kernel = kernelBuilder.Build();
 
 AIProjectClient client = AzureAIAgent.CreateAzureAIClient(appConfig.ProjectConnectionString, new AzureCliCredential());
 
