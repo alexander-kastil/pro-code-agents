@@ -1,6 +1,14 @@
-# Semantic Kernel AI Services
+# Semantic Kernel Basics & Concepts
+
+## Topics
 
 - Understand the purpose of Semantic Kernel
-- Understand prompting basics & techniques for more effective prompts
-- Implementing Agent Personas
-- Use OpenAI, Azure OpenAI & 3rd party Large Language Models
+- Semantic Kernel Components
+- Chat History & AI Services Integration
+- ChatCompletion and Multi-modal capabilities
+- Generate Semantic meaning using Embeddings
+- Security & Governance: Filters & Observability
+
+## Learning and references
+
+[Semantic Kernel Basics](https://learn.microsoft.com/en-us/semantic-kernel/concepts/kernel)

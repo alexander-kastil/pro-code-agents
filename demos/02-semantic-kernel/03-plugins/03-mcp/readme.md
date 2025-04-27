@@ -7,7 +7,3 @@
 ```bash
 env SSE_LOCAL=true FIRECRAWL_API_KEY=fc-b3b1f0f7140243edaf932672186ddec6 npx -y firecrawl-mcp
 ```
-
-https://github.com/microsoft/semantic-kernel/tree/main/dotnet/samples/Demos/ModelContextProtocolClientServer
-
-https://github.com/microsoft/semantic-kernel/tree/main/dotnet/samples/Demos/ModelContextProtocolPlugin
