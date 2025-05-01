@@ -51,7 +51,7 @@ OpenAIPromptExecutionSettings executionSettings = new()
 };
 
 // Test using GitHub tools
-var prompt = $"Summarize the last four commits to the {repo} repository?";
+var prompt = $"Summarize the last commit to the {repo} repository?";
 var result = await kernel.InvokePromptAsync(prompt, new(executionSettings)).ConfigureAwait(false);
 Console.WriteLine($"\n\n{prompt}\n{result}");
 
@@ -69,12 +69,12 @@ ChatMessageContent response = await agent.InvokeAsync(prompt).FirstAsync();
 Console.WriteLine($"\n\nResponse from GitHubAgent:\n{response.Content}");
 
 // Summarize the last five pull requests in the alexander-kastil/github-copilot-skills-fest repository.
-prompt = $"Summarize the last five pull requests in the {repo} repository?";
+prompt = $"Summarize the last pull requests in the {repo} repository?";
 response = await agent.InvokeAsync(prompt).FirstAsync();
 Console.WriteLine($"\n\nResponse from GitHubAgent:\n{response.Content}");
 
 
-prompt = $"Summarize the last three issues in the {repo} repository?";
+prompt = $"Summarize the last issue in the {repo} repository?";
 response = await agent.InvokeAsync(prompt).FirstAsync();
 Console.WriteLine($"\n\nResponse from GitHubAgent:\n{response.Content}");
 

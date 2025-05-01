@@ -103,10 +103,6 @@ switch (appConfig.RagConfig.VectorStoreType)
     case "Redis":
         RegisterServices<string>(builder, kernelBuilder, appConfig);
         break;
-    case "Qdrant":
-    case "Weaviate":
-        RegisterServices<Guid>(builder, kernelBuilder, appConfig);
-        break;
     default:
         throw new NotSupportedException($"Vector store type '{appConfig.RagConfig.VectorStoreType}' is not supported.");
 }

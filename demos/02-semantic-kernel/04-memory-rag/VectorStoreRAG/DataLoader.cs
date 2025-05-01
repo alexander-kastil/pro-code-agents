@@ -5,9 +5,11 @@ using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Embeddings;
-using UglyToad.PdfPig;
-using UglyToad.PdfPig.Content;
-using UglyToad.PdfPig.DocumentLayoutAnalysis.PageSegmenter;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using iText.Kernel.Pdf.Xobject;
+using iText.IO.Image;
 
 namespace VectorStoreRAG;
 
@@ -86,36 +88,40 @@ internal sealed class DataLoader<TKey>(
     /// <returns>The text and images from the pdf file, plus the page number that each is on.</returns>
     private static IEnumerable<RawContent> LoadTextAndImages(string pdfPath, CancellationToken cancellationToken)
     {
-        using (PdfDocument document = PdfDocument.Open(pdfPath))
+        using var pdfReader = new PdfReader(pdfPath);
+        using var pdfDoc = new PdfDocument(pdfReader);
+        for (int pageNum = 1; pageNum <= pdfDoc.GetNumberOfPages(); pageNum++)
         {
-            foreach (Page page in document.GetPages())
+            if (cancellationToken.IsCancellationRequested)
             {
-                if (cancellationToken.IsCancellationRequested)
+                break;
+            }
+            var page = pdfDoc.GetPage(pageNum);
+            // Extract text
+            var strategy = new SimpleTextExtractionStrategy();
+            var text = PdfTextExtractor.GetTextFromPage(page, strategy);
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                yield return new RawContent { Text = text, PageNumber = pageNum };
+            }
+            // Extract images
+            var resources = page.GetResources();
+            var xObjectDict = resources.GetResource(PdfName.XObject) as PdfDictionary;
+            if (xObjectDict != null)
+            {
+                foreach (var xObjectName in xObjectDict.KeySet())
                 {
-                    break;
-                }
-
-                foreach (var image in page.GetImages())
-                {
-                    if (image.TryGetPng(out var png))
+                    var xObject = xObjectDict.GetAsStream(xObjectName);
+                    if (xObject != null)
                     {
-                        yield return new RawContent { Image = png, PageNumber = page.Number };
+                        var subtype = xObject.GetAsName(PdfName.Subtype);
+                        if (subtype != null && subtype.Equals(PdfName.Image))
+                        {
+                            var imgObj = new PdfImageXObject(xObject);
+                            var imgBytes = imgObj.GetImageBytes(true);
+                            yield return new RawContent { Image = imgBytes, PageNumber = pageNum };
+                        }
                     }
-                    else
-                    {
-                        Console.WriteLine($"Unsupported image format on page {page.Number}");
-                    }
-                }
-
-                var blocks = DefaultPageSegmenter.Instance.GetBlocks(page.GetWords());
-                foreach (var block in blocks)
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
-                    yield return new RawContent { Text = block.Text, PageNumber = page.Number };
                 }
             }
         }

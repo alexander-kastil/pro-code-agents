@@ -13,20 +13,32 @@
         <PackageReference Include="Microsoft.Extensions.Hosting">
             <Version>9.0.4</Version>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.4" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
-        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.4" />
-        <PackageReference Include="Microsoft.Extensions.VectorData.Abstractions" Version="9.0.0-preview.1.25229.1" />
-        <PackageReference Include="Microsoft.SemanticKernel" Version="1.48.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureAISearch" Version="1.48.0-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureCosmosDbNoSQL" Version="1.48.0-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI" Version="1.48.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.InMemory" Version="1.48.0-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Redis" Version="1.48.0-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.48.0" />
-        <PackageReference Include="PdfPig" Version="0.1.7" />
-        <PackageReference Include="UglyToad.PdfPig.DocumentLayoutAnalysis" Version="0.1.9-alpha001" />
+        <PackageReference Include="Microsoft.Extensions.Configuration"
+                          Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions"
+                          Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json"
+                          Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations"
+                          Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.VectorData.Abstractions"
+                          Version="9.0.0-preview.1.25229.1" />
+        <PackageReference Include="Microsoft.SemanticKernel"
+                          Version="1.48.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureAISearch"
+                          Version="1.48.0-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureCosmosDbNoSQL"
+                          Version="1.48.0-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureOpenAI"
+                          Version="1.48.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.InMemory"
+                          Version="1.48.0-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Redis"
+                          Version="1.48.0-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars"
+                          Version="1.48.0" />
+        <PackageReference Include="itext7"
+                          Version="7.2.5" />
     </ItemGroup>
     <ItemGroup>
         <None Update="appsettings.json">
