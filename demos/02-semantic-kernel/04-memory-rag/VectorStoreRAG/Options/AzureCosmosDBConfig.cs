@@ -9,7 +9,6 @@ namespace VectorStoreRAG.Options;
 /// </summary>
 internal sealed class AzureCosmosDBConfig
 {
-    public const string MongoDBConfigSectionName = "AzureCosmosDBMongoDB";
     public const string NoSQLConfigSectionName = "AzureCosmosDBNoSQL";
 
     [Required]

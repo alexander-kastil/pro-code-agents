@@ -9,18 +9,13 @@ The sample can be configured in various ways:
 
 1. You can choose your preferred vector store by setting the `Rag:VectorStoreType` configuration setting in the `appsettings.json` file to one of the following values:
    1. AzureAISearch
-   1. AzureCosmosDBMongoDB
    1. AzureCosmosDBNoSQL
    1. InMemory
-   1. Qdrant
    1. Redis
-   1. Weaviate
-1. You can choose your preferred AI Chat service by settings the `Rag:AIChatService` configuration setting in the `appsettings.json` file to one of the following values:
+1. You can choose your preferred AI Chat service by settings the `Rag:AIChatService` configuration setting in the `appsettings.json` file to:
    1. AzureOpenAI
-   1. OpenAI
-1. You can choose your preferred AI Embedding service by settings the `Rag:AIEmbeddingService` configuration setting in the `appsettings.json` file to one of the following values:
+1. You can choose your preferred AI Embedding service by settings the `Rag:AIEmbeddingService` configuration setting in the `appsettings.json` file to:
    1. AzureOpenAIEmbeddings
-   1. OpenAIEmbeddings
 1. You can choose whether to load data into the vector store by setting the `Rag:BuildCollection` configuration setting in the `appsettings.json` file to `true`. If you set this to `false`, the sample will assume that data was already loaded previously and it will go straight into the chat experience.
 1. You can choose the name of the collection to use by setting the `Rag:CollectionName` configuration setting in the `appsettings.json` file.
 1. You can choose the pdf file to load into the vector store by setting the `Rag:PdfFilePaths` array in the `appsettings.json` file.
@@ -59,21 +54,6 @@ dotnet user-secrets set "AIServices:AzureOpenAI:ChatDeploymentName" "<your deplo
 
 Note that the code doesn't use an API Key to communicate with Azure OpenAI, but rather an `AzureCliCredential` so no api key secret is required.
 
-### OpenAI Chat Completion
-
-For OpenAI Chat Completion, you need to add the following secrets:
-
-```cli
-dotnet user-secrets set "AIServices:OpenAI:ModelId" "<your model id>"
-dotnet user-secrets set "AIServices:OpenAI:ApiKey" "<your api key>"
-```
-
-Optionally, you can also provide an Org Id
-
-```cli
-dotnet user-secrets set "AIServices:OpenAI:OrgId" "<your org id>"
-```
-
 ### Azure OpenAI Embeddings
 
 For Azure OpenAI Embeddings, you need to add the following secrets:
@@ -85,21 +65,6 @@ dotnet user-secrets set "AIServices:AzureOpenAIEmbeddings:DeploymentName" "<your
 
 Note that the code doesn't use an API Key to communicate with Azure OpenAI, but rather an `AzureCliCredential` so no api key secret is required.
 
-### OpenAI Embeddings
-
-For OpenAI Embeddings, you need to add the following secrets:
-
-```cli
-dotnet user-secrets set "AIServices:OpenAIEmbeddings:ModelId" "<your model id>"
-dotnet user-secrets set "AIServices:OpenAIEmbeddings:ApiKey" "<your api key>"
-```
-
-Optionally, you can also provide an Org Id
-
-```cli
-dotnet user-secrets set "AIServices:OpenAIEmbeddings:OrgId" "<your org id>"
-```
-
 ### Azure AI Search
 
 If you want to use Azure AI Search as your vector store, you will need to create an instance of Azure AI Search and add
@@ -108,16 +73,6 @@ the following secrets here:
 ```cli
 dotnet user-secrets set "VectorStores:AzureAISearch:Endpoint" "https://<yourservice>.search.windows.net"
 dotnet user-secrets set "VectorStores:AzureAISearch:ApiKey" "<yoursecret>"
-```
-
-### Azure CosmosDB MongoDB
-
-If you want to use Azure CosmosDB MongoDB as your vector store, you will need to create an instance of Azure CosmosDB MongoDB and add
-the following secrets here:
-
-```cli
-dotnet user-secrets set "VectorStores:AzureCosmosDBMongoDB:ConnectionString" "<yourconnectionstring>"
-dotnet user-secrets set "VectorStores:AzureCosmosDBMongoDB:DatabaseName" "<yourdbname>"
 ```
 
 ### Azure CosmosDB NoSQL
