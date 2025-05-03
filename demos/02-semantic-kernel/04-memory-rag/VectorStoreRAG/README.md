@@ -85,25 +85,6 @@ dotnet user-secrets set "VectorStores:AzureCosmosDBNoSQL:ConnectionString" "<you
 dotnet user-secrets set "VectorStores:AzureCosmosDBNoSQL:DatabaseName" "<yourdbname>"
 ```
 
-### Qdrant
-
-If you want to use Qdrant as your vector store, you will need to have an instance of Qdrant available.
-
-You can use the following command to start a Qdrant instance in docker, and this will work with the default configured settings:
-
-```cli
-docker run -d --name qdrant -p 6333:6333 -p 6334:6334 qdrant/qdrant:latest
-```
-
-If you want to use a different instance of Qdrant, you can update the appsettings.json file or add the following secrets to reconfigure:
-
-```cli
-dotnet user-secrets set "VectorStores:Qdrant:Host" "<yourservice>"
-dotnet user-secrets set "VectorStores:Qdrant:Port" "6334"
-dotnet user-secrets set "VectorStores:Qdrant:Https" "true"
-dotnet user-secrets set "VectorStores:Qdrant:ApiKey" "<yoursecret>"
-```
-
 ### Redis
 
 If you want to use Redis as your vector store, you will need to have an instance of Redis available.
@@ -118,20 +99,4 @@ If you want to use a different instance of Redis, you can update the appsettings
 
 ```cli
 dotnet user-secrets set "VectorStores:Redis:ConnectionConfiguration" "<yourredisconnectionconfiguration>"
-```
-
-### Weaviate
-
-If you want to use Weaviate as your vector store, you will need to have an instance of Weaviate available.
-
-You can use the following command to start a Weaviate instance in docker, and this will work with the default configured settings:
-
-```cli
-docker run -d --name weaviate -p 8080:8080 -p 50051:50051 cr.weaviate.io/semitechnologies/weaviate:1.26.4
-```
-
-If you want to use a different instance of Weaviate, you can update the appsettings.json file or add the following secret to reconfigure:
-
-```cli
-dotnet user-secrets set "VectorStores:Weaviate:Endpoint" "<yourweaviateurl>"
 ```

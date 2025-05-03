@@ -11,11 +11,11 @@ internal sealed class RagConfig
 {
     public const string ConfigSectionName = "Rag";
 
-    [Required]
-    public string AIChatService { get; set; } = string.Empty;
+    // [Required]
+    // public string AIChatService { get; set; } = string.Empty;
 
-    [Required]
-    public string AIEmbeddingService { get; set; } = string.Empty;
+    // [Required]
+    // public string AIEmbeddingService { get; set; } = string.Empty;
 
     [Required]
     public bool BuildCollection { get; set; } = true;
