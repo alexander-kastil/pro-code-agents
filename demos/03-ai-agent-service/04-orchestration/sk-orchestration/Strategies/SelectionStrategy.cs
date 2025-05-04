@@ -15,7 +15,6 @@ namespace SKOrchestration
                 Choose only from these participants:
                 - INCIDENT_MANAGER
                 - DEVOPS_ASSISTANT
-                - USER
 
                 Always follow these rules when choosing the next participant:
                 - If RESPONSE is user input, analyze the message:

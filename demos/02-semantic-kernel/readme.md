@@ -1,34 +1,36 @@
-# Module 3: Develop AI agents using Azure OpenAI and the Semantic Kernel SDK
+# Module 2: Develop AI Agents using Azure OpenAI and the Semantic Kernel SDK
 
-## Introduction to Semantic Kernel
+## Semantic Kernel Basics & Concepts
 
 - Understand the purpose of Semantic Kernel
-- Use OpenAI, Azure OpenAI & 3rd party Large Language Models
+- Semantic Kernel Components
 - Chat History & AI Services Integration
 - ChatCompletion and Multi-modal capabilities
-- Embeddings
 
 ## Optimizing Prompts
 
-- Prompt engineering and Variables
-- Prompt templates: Handlebars vs Liquid
-- Yaml based prompts
+- Prompt Engineering with Semantic Kernel
+- YAML Prompt Templates and Template Formats
+- Handlebar Prompt Templates
+- Liquid Prompt Templates
+- Using Prompty
 
-### Create Plugins for Semantic Kernel
+### Implement Plugins for Semantic Kernel
 
-- Planners & Function Calling
+- Understand the purpose of Semantic Kernel plugins
+- Learn how to use pre-made plugins
+- Planners, Function Calling and Choice Behaviors
 - Implement Native Functions using Prompts
-- OpenApi Plugins
+- Integrate existing API's using OpenApi Plugins
 - Using MCP Servers in Semantic Kernel
-- Using Pre- and Post Hooks
+- Filters & Observability
 
 ### Kernel Memory & Vector Store Connectors
 
 - Understand the purpose of Kernel Memory
-- Semantic Kernel Memory: In-process & Connectors
-- Consuming Semantic Kernel from Single Page Applications
+- Semantic Kernel Memory: In-process & Out-of-the-box-Connectors
+- Data Model And Embedding Generation
 - Kernel Memory & Retrieval Augmented Generation (RAG)
-- High performance memory using Azure Cosmos DB DiskANN
 
 ### Semantic Kernel Process Framework
 

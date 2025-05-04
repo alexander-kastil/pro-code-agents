@@ -7,6 +7,9 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Data;
 using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 using VectorStoreRAG.Options;
+using System.Linq; // Add this using for System.Linq
+using System.Diagnostics; // Add this for Stopwatch
+using System.Collections.Generic; // Add for List<T>
 
 namespace VectorStoreRAG;
 
@@ -112,9 +115,46 @@ internal sealed class RAGChatService<TKey>(
                 break;
             }
 
+            // --- Debugging: Inspect parameters before invoking prompt ---
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n--- Debugging Prompt Parameters ---");
+            Console.WriteLine($"Question Argument: {question}");
+
+            // Manually invoke the search function to see its results
+            Console.WriteLine("[DEBUG] Calling GetTextSearchResultsAsync..."); // Removed limit info
+            var searchStopwatch = Stopwatch.StartNew();
+            // Remove limit parameter from the call
+            var searchResults = await vectorStoreTextSearch.GetTextSearchResultsAsync(question, cancellationToken: cancellationToken);
+            searchStopwatch.Stop();
+            Console.WriteLine($"[DEBUG] GetTextSearchResultsAsync completed in {searchStopwatch.ElapsedMilliseconds}ms.");
+
+            Console.WriteLine("Search Plugin Results:");
+
+            // Use await foreach directly on searchResults.Results
+            bool resultsFound = false;
+            Console.WriteLine("[DEBUG] Starting iteration over search results (await foreach)...");
+            var iterationStopwatch = Stopwatch.StartNew();
+            await foreach (var result in searchResults.Results)
+            {
+                resultsFound = true; // Set flag if we enter the loop
+                Console.WriteLine($"  Name: {result.Name}");
+                Console.WriteLine($"  Value: {result.Value?.Substring(0, Math.Min(result.Value.Length, 100))}..."); // Display first 100 chars
+                Console.WriteLine($"  Link: {result.Link}");
+                Console.WriteLine("  -----------------");
+            }
+            iterationStopwatch.Stop();
+            Console.WriteLine($"[DEBUG] Iteration over search results completed in {iterationStopwatch.ElapsedMilliseconds}ms.");
+
+            if (!resultsFound)
+            {
+                Console.WriteLine("  (No results found)");
+            }
+            Console.WriteLine("--- End Debugging ---\n");
+            // --- End Debugging ---
+
             // Invoke the LLM with a template that uses the search plugin to
-            // 1. get related information to the user query from the vector store
-            // 2. add the information to the LLM prompt.
+            Console.WriteLine("[DEBUG] Calling InvokePromptStreamingAsync...");
+            var llmStopwatch = Stopwatch.StartNew();
             var response = kernel.InvokePromptStreamingAsync(
                 promptTemplate: """
                     Please use this information to answer the question:
@@ -145,14 +185,27 @@ internal sealed class RAGChatService<TKey>(
 
             try
             {
+                Console.WriteLine("[DEBUG] Starting iteration over LLM response stream...");
                 await foreach (var message in response.ConfigureAwait(false))
                 {
+                    // Log first message received time
+                    if (llmStopwatch.IsRunning)
+                    {
+                        llmStopwatch.Stop();
+                        Console.WriteLine($"\n[DEBUG] First LLM response chunk received after {llmStopwatch.ElapsedMilliseconds}ms.");
+                        Console.Write("Assistant > "); // Re-print prompt start after debug info
+                    }
                     Console.Write(message);
                 }
                 Console.WriteLine();
+                // Ensure stopwatch is stopped if loop finishes or was empty
+                if (llmStopwatch.IsRunning) llmStopwatch.Stop();
+                Console.WriteLine("[DEBUG] Finished iterating over LLM response stream.");
             }
             catch (Exception ex)
             {
+                // Ensure stopwatch is stopped in case of error
+                if (llmStopwatch.IsRunning) llmStopwatch.Stop();
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Call to LLM failed with error: {ex}");
             }

@@ -9,7 +9,14 @@ namespace VectorStoreRAG.Options;
 /// </summary>
 internal sealed class ApplicationConfig
 {
-    private readonly AzureOpenAIConfig _azureOpenAIConfig;
+    // Rename section constant
+    private const string AzureAIServicesSectionName = "AzureAIServices";
+
+    // Add properties for top-level ApiKey and Endpoint
+    private string _apiKey = string.Empty;
+    private string _endpoint = string.Empty;
+
+    private readonly AzureOpenAIConfig _azureOpenAIConfig = new();
     private readonly AzureOpenAIEmbeddingsConfig _azureOpenAIEmbeddingsConfig = new();
     private readonly RagConfig _ragConfig = new();
     private readonly AzureAISearchConfig _azureAISearchConfig = new();
@@ -18,13 +25,20 @@ internal sealed class ApplicationConfig
 
     public ApplicationConfig(ConfigurationManager configurationManager)
     {
-        this._azureOpenAIConfig = new();
-        configurationManager
-            .GetRequiredSection($"AIServices:{AzureOpenAIConfig.ConfigSectionName}")
+        // Bind top-level properties
+        var azureAIServicesSection = configurationManager.GetRequiredSection(AzureAIServicesSectionName);
+        this._apiKey = azureAIServicesSection.GetValue<string>("ApiKey") ?? string.Empty;
+        this._endpoint = azureAIServicesSection.GetValue<string>("Endpoint") ?? string.Empty;
+
+        // Bind subsections
+        azureAIServicesSection
+            .GetRequiredSection(AzureOpenAIConfig.ConfigSectionName)
             .Bind(this._azureOpenAIConfig);
-        configurationManager
-            .GetRequiredSection($"AIServices:{AzureOpenAIEmbeddingsConfig.ConfigSectionName}")
+        azureAIServicesSection
+            .GetRequiredSection(AzureOpenAIEmbeddingsConfig.ConfigSectionName)
             .Bind(this._azureOpenAIEmbeddingsConfig);
+
+        // Keep existing bindings for other sections
         configurationManager
             .GetRequiredSection(RagConfig.ConfigSectionName)
             .Bind(this._ragConfig);
@@ -39,15 +53,14 @@ internal sealed class ApplicationConfig
             .Bind(this._redisConfig);
     }
 
+    // Add public accessors for ApiKey and Endpoint
+    public string ApiKey => this._apiKey;
+    public string Endpoint => this._endpoint;
+
     public AzureOpenAIConfig AzureOpenAIConfig => this._azureOpenAIConfig;
-
     public AzureOpenAIEmbeddingsConfig AzureOpenAIEmbeddingsConfig => this._azureOpenAIEmbeddingsConfig;
-
     public RagConfig RagConfig => this._ragConfig;
-
     public AzureAISearchConfig AzureAISearchConfig => this._azureAISearchConfig;
-
     public AzureCosmosDBConfig AzureCosmosDBNoSQLConfig => this._azureCosmosDBNoSQLConfig;
-
     public RedisConfig RedisConfig => this._redisConfig;
 }

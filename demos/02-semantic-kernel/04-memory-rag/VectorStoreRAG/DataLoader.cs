@@ -56,8 +56,12 @@ internal sealed class DataLoader<TKey>(
             });
             var textContent = await Task.WhenAll(textContentTasks).ConfigureAwait(false);
 
+            // Filter out items with null or empty text BEFORE generating embeddings/records
+            var validTextContent = textContent.Where(c => !string.IsNullOrWhiteSpace(c.Text)).ToList();
+
             // Map each paragraph to a TextSnippet and generate an embedding for it.
-            var recordTasks = textContent.Select(async content => new TextSnippet<TKey>
+            // Use validTextContent instead of textContent
+            var recordTasks = validTextContent.Select(async content => new TextSnippet<TKey>
             {
                 Key = uniqueKeyGenerator.GenerateKey(),
                 Text = content.Text,
@@ -100,9 +104,11 @@ internal sealed class DataLoader<TKey>(
             // Extract text
             var strategy = new SimpleTextExtractionStrategy();
             var text = PdfTextExtractor.GetTextFromPage(page, strategy);
-            if (!string.IsNullOrWhiteSpace(text))
+            // Trim text and check IsNullOrWhiteSpace
+            var trimmedText = text?.Trim();
+            if (!string.IsNullOrWhiteSpace(trimmedText))
             {
-                yield return new RawContent { Text = text, PageNumber = pageNum };
+                yield return new RawContent { Text = trimmedText, PageNumber = pageNum };
             }
             // Extract images
             var resources = page.GetResources();

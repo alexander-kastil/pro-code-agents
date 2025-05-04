@@ -13,7 +13,4 @@ internal sealed class AzureOpenAIEmbeddingsConfig
 
     [Required]
     public string DeploymentName { get; set; } = string.Empty;
-
-    [Required]
-    public string Endpoint { get; set; } = string.Empty;
 }

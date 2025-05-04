@@ -26,15 +26,17 @@ builder.Services.Configure<RagConfig>(builder.Configuration.GetSection(RagConfig
 // Register the kernel with DI and add services
 var kernelBuilder = builder.Services.AddKernel();
 
+// Use top-level Endpoint and ApiKey, and AzureKeyCredential
 kernelBuilder.AddAzureOpenAIChatCompletion(
-    appConfig.AzureOpenAIConfig.ChatDeploymentName,
-    appConfig.AzureOpenAIConfig.Endpoint,
-    new AzureCliCredential());
+    appConfig.AzureOpenAIConfig.DeploymentName, // Use corrected property name
+    appConfig.Endpoint, // Use top-level endpoint
+    appConfig.ApiKey); // Use top-level API key
 
+// Use top-level Endpoint and ApiKey
 kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(
     appConfig.AzureOpenAIEmbeddingsConfig.DeploymentName,
-    appConfig.AzureOpenAIEmbeddingsConfig.Endpoint,
-    new AzureCliCredential());
+    appConfig.Endpoint, // Use top-level endpoint
+    appConfig.ApiKey); // Pass API key directly as string
 
 switch (appConfig.RagConfig.VectorStoreType)
 {
