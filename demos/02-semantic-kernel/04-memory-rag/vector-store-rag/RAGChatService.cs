@@ -7,21 +7,10 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Data;
 using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
 using VectorStoreRAG.Options;
-using System.Linq; // Add this using for System.Linq
-using System.Diagnostics; // Add this for Stopwatch
-using System.Collections.Generic; // Add for List<T>
+using System.Diagnostics;
 
 namespace VectorStoreRAG;
 
-/// <summary>
-/// Main service class for the application.
-/// </summary>
-/// <typeparam name="TKey">The type of the data model key.</typeparam>
-/// <param name="dataLoader">Used to load data into the vector store.</param>
-/// <param name="vectorStoreTextSearch">Used to search the vector store.</param>
-/// <param name="kernel">Used to make requests to the LLM.</param>
-/// <param name="ragConfigOptions">The configuration options for the application.</param>
-/// <param name="appShutdownCancellationTokenSource">Used to gracefully shut down the entire application when cancelled.</param>
 internal sealed class RAGChatService<TKey>(
     IDataLoader dataLoader,
     VectorStoreTextSearch<TextSnippet<TKey>> vectorStoreTextSearch,
@@ -31,12 +20,6 @@ internal sealed class RAGChatService<TKey>(
 {
     private Task? _dataLoaded;
     private Task? _chatLoop;
-
-    /// <summary>
-    /// Start the service.
-    /// </summary>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
-    /// <returns>An async task that completes when the service is started.</returns>
     public Task StartAsync(CancellationToken cancellationToken)
     {
         // Start to load all the configured PDFs into the vector store.
@@ -55,21 +38,11 @@ internal sealed class RAGChatService<TKey>(
         return Task.CompletedTask;
     }
 
-    /// <summary>
-    /// Stop the service.
-    /// </summary>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
-    /// <returns>An async task that completes when the service is stopped.</returns>
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }
 
-    /// <summary>
-    /// Contains the main chat loop for the application.
-    /// </summary>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
-    /// <returns>An async task that completes when the chat loop is shut down.</returns>
     private async Task ChatLoopAsync(CancellationToken cancellationToken)
     {
         var pdfFiles = string.Join(", ", ragConfigOptions.Value.PdfFilePaths ?? []);
@@ -212,11 +185,6 @@ internal sealed class RAGChatService<TKey>(
         }
     }
 
-    /// <summary>
-    /// Load all configured PDFs into the vector store.
-    /// </summary>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
-    /// <returns>An async task that completes when the loading is complete.</returns>
     private async Task LoadDataAsync(CancellationToken cancellationToken)
     {
         try

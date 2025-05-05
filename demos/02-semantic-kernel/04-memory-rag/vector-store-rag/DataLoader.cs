@@ -1,6 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-
-using System.Net;
+﻿using System.Net;
 using Microsoft.Extensions.VectorData;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -9,18 +7,9 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Xobject;
-using iText.IO.Image;
 
 namespace VectorStoreRAG;
 
-/// <summary>
-/// Class that loads text from a PDF file into a vector store.
-/// </summary>
-/// <typeparam name="TKey">The type of the data model key.</typeparam>
-/// <param name="uniqueKeyGenerator">A function to generate unique keys with.</param>
-/// <param name="vectorStoreRecordCollection">The collection to load the data into.</param>
-/// <param name="textEmbeddingGenerationService">The service to use for generating embeddings from the text.</param>
-/// <param name="chatCompletionService">The chat completion service to use for generating text from images.</param>
 internal sealed class DataLoader<TKey>(
     UniqueKeyGenerator<TKey> uniqueKeyGenerator,
     IVectorStoreRecordCollection<TKey, TextSnippet<TKey>> vectorStoreRecordCollection,
@@ -84,12 +73,6 @@ internal sealed class DataLoader<TKey>(
         }
     }
 
-    /// <summary>
-    /// Read the text and images from each page in the provided PDF file.
-    /// </summary>
-    /// <param name="pdfPath">The pdf file to read the text and images from.</param>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
-    /// <returns>The text and images from the pdf file, plus the page number that each is on.</returns>
     private static IEnumerable<RawContent> LoadTextAndImages(string pdfPath, CancellationToken cancellationToken)
     {
         using var pdfReader = new PdfReader(pdfPath);
@@ -133,13 +116,6 @@ internal sealed class DataLoader<TKey>(
         }
     }
 
-    /// <summary>
-    /// Add a simple retry mechanism to embedding generation.
-    /// </summary>
-    /// <param name="textEmbeddingGenerationService">The embedding generation service.</param>
-    /// <param name="text">The text to generate the embedding for.</param>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
-    /// <returns>The generated embedding.</returns>
     private static async Task<ReadOnlyMemory<float>> GenerateEmbeddingsWithRetryAsync(ITextEmbeddingGenerationService textEmbeddingGenerationService, string text, CancellationToken cancellationToken)
     {
         var tries = 0;
@@ -168,13 +144,6 @@ internal sealed class DataLoader<TKey>(
         }
     }
 
-    /// <summary>
-    /// Add a simple retry mechanism to image to text.
-    /// </summary>
-    /// <param name="chatCompletionService">The chat completion service to use for generating text from images.</param>
-    /// <param name="imageBytes">The image to generate the text for.</param>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
-    /// <returns>The generated text.</returns>
     private static async Task<string> ConvertImageToTextWithRetryAsync(
         IChatCompletionService chatCompletionService,
         ReadOnlyMemory<byte> imageBytes,
@@ -212,9 +181,6 @@ internal sealed class DataLoader<TKey>(
         }
     }
 
-    /// <summary>
-    /// Private model for returning the content items from a PDF file.
-    /// </summary>
     private sealed class RawContent
     {
         public string? Text { get; init; }

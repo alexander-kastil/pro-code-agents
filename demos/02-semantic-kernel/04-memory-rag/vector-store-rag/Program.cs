@@ -35,8 +35,8 @@ kernelBuilder.AddAzureOpenAIChatCompletion(
 // Use top-level Endpoint and ApiKey
 kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(
     appConfig.AzureOpenAIEmbeddingsConfig.DeploymentName,
-    appConfig.Endpoint, // Use top-level endpoint
-    appConfig.ApiKey); // Pass API key directly as string
+    appConfig.Endpoint,
+    appConfig.ApiKey);
 
 switch (appConfig.RagConfig.VectorStoreType)
 {
