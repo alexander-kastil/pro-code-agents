@@ -1,0 +1,5 @@
+python-dotenv
+azure-ai-projects
+azure-ai-inference
+azure-ai-evaluation
+azure-identity

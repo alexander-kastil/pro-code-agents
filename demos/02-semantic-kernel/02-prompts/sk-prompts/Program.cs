@@ -40,6 +40,7 @@ Console.WriteLine("Create a yaml Handlebars prompt template");
 string handlebarsPromptYaml = File.ReadAllText(Path.Combine("prompts", "handlebars.prompt.yml"));
 
 var templateFactory = new HandlebarsPromptTemplateFactory();
+
 var function = kernel.CreateFunctionFromPrompt(
     promptTemplate: handlebarsPromptYaml,
     functionName: "HandleCustomerInquiry",
@@ -125,4 +126,8 @@ var liquidFuncYaml = kernel.CreateFunctionFromPrompt(
 
 // Invoke the prompt function
 var liquidYamlResp = await kernel.InvokeAsync(liquidFuncYaml, arguments);
+
 Console.WriteLine(liquidYamlResp);
+
+// Using Prompty
+
