@@ -50,7 +50,7 @@ internal sealed class RAGChatService<TKey>(
         // Wait for the data to be loaded before starting the chat loop.
         while (this._dataLoaded != null && !this._dataLoaded.IsCompleted && !cancellationToken.IsCancellationRequested)
         {
-            await Task.Delay(1_000, cancellationToken).ConfigureAwait(false);
+            await Task.Delay(0, cancellationToken).ConfigureAwait(false);
         }
 
         // If data loading failed, don't start the chat loop.

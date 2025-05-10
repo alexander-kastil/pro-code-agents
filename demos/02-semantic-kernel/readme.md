@@ -1,4 +1,4 @@
-# Module 2: Develop AI Agents using Azure OpenAI and the Semantic Kernel SDK
+# Module 2: Develop AI Agents using Azure OpenAI and Semantic Kernel
 
 ## Semantic Kernel Basics & Concepts
 
@@ -13,9 +13,9 @@
 - YAML Prompt Templates and Template Formats
 - Handlebar Prompt Templates
 - Liquid Prompt Templates
-- Using Prompty
+- Using Prompty Visual Studio Code Extension
 
-### Implement Plugins for Semantic Kernel
+## Implement Plugins for Semantic Kernel
 
 - Understand the purpose of Semantic Kernel plugins
 - Learn how to use pre-made plugins
@@ -25,21 +25,21 @@
 - Using MCP Servers in Semantic Kernel
 - Filters & Observability
 
-### Kernel Memory & Vector Store Connectors
+## Kernel Memory & Vector Store Connectors
 
 - Understand the purpose of Kernel Memory
 - Semantic Kernel Memory: In-process & Out-of-the-box-Connectors
 - Data Model And Embedding Generation
 - Kernel Memory & Retrieval Augmented Generation (RAG)
 
-### Semantic Kernel Process Framework
+## Semantic Kernel Process Framework
 
 - Text to Image & Image to Text
 - Using Audio to text
 - Using Hugging Face with Semantic Kernel
 - Integrating Prompt-Flow with Semantic Kernel
 
-### Semantic Kernel Agent Framework
+## Semantic Kernel Agent Framework
 
 - Agents Overview
 - Completing multi-step tasks with Agents

@@ -1,81 +1,76 @@
-# Implementing Agents and Copilots using Azure AI Foundry, Semantic Kernel and Microsoft AutoGen
+# Implementing Agents and Copilots using Semantic Kernel and Azure AI Agent Service
 
 ## Module 1: Copilot, Agents & Azure AI Foundry Essentials
 
 - Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
 - Azure AI Foundry: Hubs, Projects and Resources
-- Explore and deploy models from the model catalog in Azure AI Foundry
+- Deploy and use Large Language Models (LLM) in Azure AI Foundry
 - Effective Prompt Engineering
 - Introduction to Azure AI Foundry SDK
-- RAG-based copilot solution with your own data using Azure AI Foundry
+- Integrating your own data using Retrieval Augmented Generation (RAG)
+- Function Calling, Model Context Protocol (MCP) and Agent2Agent (A2A) Protocol Basics
 - Ensuring App Behavior using Evaluations
 - Deploy AI Apps using Azure Developer CLI
 
-## Module 2: Develop AI Agents using Azure OpenAI and the Semantic Kernel SDK
+## Module 2: Develop AI Agents using Azure OpenAI and Semantic Kernel
 
-### Build your kernel
+### Semantic Kernel Basics & Concepts
 
 - Understand the purpose of Semantic Kernel
-- Understand prompting basics & techniques for more effective prompts
-- Use OpenAI, Azure OpenAI & 3rd party Large Language Models
+- Semantic Kernel Components
+- Chat History & AI Services Integration
+- ChatCompletion and Multi-modal capabilities
 
-### Give your AI agent skills using Native Functions
+### Optimizing Prompts
 
-- Understand Native Functions in the Semantic Kernel SDK
-- Implement Native Functions using Prompts
-- Using yaml based prompts
-- Chaining Native Functions
-- Using Pre- and Post Hooks
+- Prompt Engineering with Semantic Kernel
+- YAML Prompt Templates and Template Formats
+- Handlebar Prompt Templates
+- Liquid Prompt Templates
+- Using Prompty Visual Studio Code Extension
 
-### Create Plugins for Semantic Kernel
+### Implement Plugins for Semantic Kernel
 
 - Understand the purpose of Semantic Kernel plugins
-- Built-in plugins (ConversationSummary, FileIO, Http, Math, Time)
-- Implementing data retrieval and task automation plugins
-- Persisting Data using Plugins
+- Learn how to use pre-made plugins
+- Planners, Function Calling and Choice Behaviors
+- Implement Native Functions using Prompts
+- Integrate existing API's using OpenApi Plugins
+- Using MCP Servers in Semantic Kernel
+- Filters & Observability
 
-### Providing state & history using Kernel Memory
+### Kernel Memory & Vector Store Connectors
 
 - Understand the purpose of Kernel Memory
-- Semantic Kernel Memory: In-process & Connectors
-- High performance memory using Azure Cosmos DB DiskANN
+- Semantic Kernel Memory: In-process & Out-of-the-box-Connectors
+- Data Model And Embedding Generation
 - Kernel Memory & Retrieval Augmented Generation (RAG)
-- Streaming Responses to Single Page Applications
 
-### Use intelligent planners
-
-- Understand planners in the Semantic Kernel SDK
-- Use & optimize planners to automate function calls
-- Learn how to use Semantic Kernel SDK to automatically invoke functions
-- Function calling as a planner replacement
-- Automatic vs Manual Function Calling
-- Using Function Filters and Function Calling Helpers
-
-### Integrating AI Services with Semantic Kernel
+### Semantic Kernel Process Framework
 
 - Text to Image & Image to Text
-- Using Audio to Text
+- Using Audio to text
 - Using Hugging Face with Semantic Kernel
 - Integrating Prompt-Flow with Semantic Kernel
 
-### Implementing Copilots & Assistant using Semantic Kernel
+### Semantic Kernel Agent Framework
 
-- Assistant Overview
-- OpenAI Assistant Specification
-- Completing multi-step tasks with Assistant
-- Using Personas with Assistant
-- Implementing Multi Assistant Solutions
+- Agents Overview
+- Completing multi-step tasks with Agents
+- Using Personas with Agents
+- Implementing Multi Agent Solutions
 
-## Module 3: Implement multi-agent solution using Microsoft AutoGen
+## Module 3: Develop Agents using Azure AI Agent Service
 
-- Introduction to Microsoft AutoGen
--
+- Introduction to Azure AI Agent Service
+- Using Action Tools: Code Interpreter, Function Calling, Azure Functions and OpenAPI Tools
+- Using Knowledge Tools: File Search, Azure AI Search and Bing Grounding
+- Orchestrating Agents using Semantic Kernel
+- Content Filtering and Observability
 
-## Module 4: Monitoring & Deploying LLM Applications
+## Module 4: Implementing Copilots for Microsoft 365
 
-- Understand the deployment process for LLM applications
-- Introductions to Azure Container Apps
-- Deploy LLM applications to Azure Container Apps
-- Scale Azure OpenAI Apps with Azure Container Apps
-- Azure Container Apps Dynamic Sessions
-- Monitor and manage LLM applications
+- Overview of the Microsoft 365 Copilot Ecosystem
+- Implementing Plugins and Connectors for Microsoft 365 Copilot
+- Declarative Agents vs Custom Engine Agents
+- Copilot Agent Plugins Sample for Semantic Kernel
