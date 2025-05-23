@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace SKFunctionCalling;
+namespace sk_function_calling.Pages;
 
 public class PrivacyModel : PageModel
 {

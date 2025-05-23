@@ -32,19 +32,20 @@
 - Data Model And Embedding Generation
 - Kernel Memory & Retrieval Augmented Generation (RAG)
 
-## Semantic Kernel Process Framework
-
-- Text to Image & Image to Text
-- Using Audio to text
-- Using Hugging Face with Semantic Kernel
-- Integrating Prompt-Flow with Semantic Kernel
-
 ## Semantic Kernel Agent Framework
 
 - Agents Overview
 - Completing multi-step tasks with Agents
 - Using Personas with Agents
 - Implementing Multi Agent Solutions
+- Sematic Kernel A2A Integration
+
+## Semantic Kernel Process Framework
+
+- Process Framework Overview
+- Core Components and Patterns
+- Runtimes: Orleans vs Dapr
+- Implementing Human in the Loop
 
 ## Links & Resources
 

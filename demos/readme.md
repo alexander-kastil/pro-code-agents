@@ -1,5 +1,15 @@
 # Implementing Agents and Copilots using Semantic Kernel and Azure AI Agent Service
 
+This comprehensive development five-days class teaches you how to build intelligent AI agents and copilots using Microsoft's Semantic Kernel framework and Azure AI services.
+
+You'll start with foundational concepts in Azure AI Foundry, learn effective prompt engineering, and understand RAG techniques for data integration.
+
+The core of the class focuses on Semantic Kernel development - from basic concepts through advanced patterns including plugins, memory systems, agent frameworks, and process orchestration. You'll implement multi-agent solutions and learn how to leverage Azure AI Agent Service for sophisticated applications.
+
+The class concludes with practical implementation of Microsoft 365 Copilots through plugins and connectors.
+
+Throughout all modules, you'll work with hands-on code samples in both Python and C#, giving you practical experience building production-ready AI agent solutions.
+
 ## Module 1: Copilot, Agents & Azure AI Foundry Essentials
 
 - Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
@@ -46,19 +56,21 @@
 - Data Model And Embedding Generation
 - Kernel Memory & Retrieval Augmented Generation (RAG)
 
-### Semantic Kernel Process Framework
-
-- Text to Image & Image to Text
-- Using Audio to text
-- Using Hugging Face with Semantic Kernel
-- Integrating Prompt-Flow with Semantic Kernel
-
-### Semantic Kernel Agent Framework
+## Semantic Kernel Agent Framework
 
 - Agents Overview
 - Completing multi-step tasks with Agents
 - Using Personas with Agents
 - Implementing Multi Agent Solutions
+- Sematic Kernel A2A Integration
+- Using .NET Aspire in multi-agent scenarios
+
+## Semantic Kernel Process Framework
+
+- Process Framework Overview
+- Core Components and Patterns
+- Runtimes: Orleans vs Dapr
+- Implementing Human in the Loop
 
 ## Module 3: Develop Agents using Azure AI Agent Service
 

@@ -24,4 +24,3 @@ public class StudentIndexModel : PageModel
         Student = await _context.Students.ToListAsync();
     }
 }
-
