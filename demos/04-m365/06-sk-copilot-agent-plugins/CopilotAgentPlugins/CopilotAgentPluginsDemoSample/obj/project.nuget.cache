@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "G3mWDiD6DeM=",
+  "dgSpecHash": "D7Ijowv5kpc=",
   "success": false,
-  "projectFilePath": "D:\\git-classes\\agents-copilots\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\CopilotAgentPluginsDemoSample.csproj",
+  "projectFilePath": "D:\\git-classes\\az-agents\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\CopilotAgentPluginsDemoSample.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.csharp\\4.0.1\\microsoft.csharp.4.0.1.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.extensions.configuration\\1.0.0\\microsoft.extensions.configuration.1.0.0.nupkg.sha512",

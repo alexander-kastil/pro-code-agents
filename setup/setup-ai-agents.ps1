@@ -1,82 +1,70 @@
-# Script uses Chocolatey Package Manager for Windows from https://chocolatey.org/
-# Execute in elevated Powershell Prompt
+d:\git-classes\m365-copilot\setup\setup-m365-copilot.ps1Write-Host "Installing VSCode & Git Related Software" -ForegroundColor yellow
+Write-Host "Refresh Path Env - 1/6" -ForegroundColor yellow
 
-# Install Chocolatey
-Write-Host "Installing Chocolatey - 1/6" -ForegroundColor yellow
-
-Set-ExecutionPolicy Bypass -Scope Process -Force; 
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; 
-Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-
-# Install Git Related Software
-Write-Host "Installing VSCode & Git Related Software" -ForegroundColor yellow
-Write-Host "Refresh Path Env - 2/6" -ForegroundColor yellow
-
-choco install googlechrome -y
-choco install vscode -y
-choco install git -y
-choco install gitextensions -y
-choco install gh -y
-
-Write-Host "*****" -ForegroundColor red
-Write-Host "You can now clone your fork to c:\az-204 using git clone REPO-URL" -ForegroundColor red
-Write-Host "git clone https://github.com/Student01/AZ-204/" -ForegroundColor yellow
-Write-Host "*****" -ForegroundColor red
+winget install --id Microsoft.VisualStudioCode -e --accept-package-agreements --accept-source-agreements
+winget install --id Git.Git -e --accept-package-agreements --accept-source-agreements
+winget install --id GitHub.cli -e --accept-package-agreements --accept-source-agreements
 
 # Install Software
-Write-Host "Refresh Path Env - 3/6" -ForegroundColor yellow
+Write-Host "Refresh Path Env - 2/6" -ForegroundColor yellow
 
-choco install microsoft-edge -y
-choco install googlechrome -y
-choco install vscode -y
-choco install dotnet-6.0-sdk -y
-choco install dotnet -y
-choco install git -y
-choco install gitextensions -y
-choco install git-lfs.install -y
-choco install nodejs-lts --version=18.15.0 -y
-choco install azure-cli -y
-choco install azurepowershell -y
-choco install curl -y
-choco install dapr -y
+winget install --id Microsoft.DotNet.SDK.9 -e --accept-package-agreements --accept-source-agreements
+winget install --id OpenJS.NodeJS --version 22.11.0 -e --accept-package-agreements --accept-source-agreements
+winget install --id Microsoft.AzureCLI -e --accept-package-agreements --accept-source-agreements
+winget install --id Python.Python.3.11 -e --accept-package-agreements --accept-source-agreements
 
 # Refresh Path Env
-Write-Host "Refresh Path Env - 4/6" -ForegroundColor yellow
+Write-Host "Refresh Path Env - 3/6" -ForegroundColor yellow
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-# Install httprepl
-dotnet tool install -g Microsoft.dotnet-httprepl
+# Install Azure CLI Extensions without prompt
+az config set extension.use_dynamic_install=yes_without_prompt
 
 # Set NuGet Source
 dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
 
 # Intall VS Code Extensions
-Write-Host "VS Code Extensions - 5/6" -ForegroundColor yellow
+Write-Host "VS Code Extensions - 4/6" -ForegroundColor yellow
 
+code --install-extension ms-dotnettools.csharp
+code --install-extension ms-dotnettools.csdevkit
+code --install-extension ms-vscode.powershell
 code --install-extension ms-vscode.azurecli
-code --install-extension ms-vscode.azure-account
-code --install-extension ms-azuretools.vscode-docker
-code --install-extension ms-azuretools.vscode-azurefunctions
 code --install-extension GitHub.vscode-pull-request-github
 code --install-extension redhat.vscode-yaml
-code --install-extension bencoleman.armview
-code --install-extension kbrose/vsc-python-indent
 code --install-extension mdickin.markdown-shortcuts
-code --install-extension mhutchie.git-graph 
-code --install-extension ms-toolsai.jupyter		
-
-code --install-extension ms-azuretools.vscode-azureterraform
-code --install-extension vs-publisher-1448185.keyoti-changeallendoflinesequence
-code --install-extension ms-kubernetes-tools.vscode-kubernetes-tools
 code --install-extension alex-pattison.theme-cobalt3
-code --install-extension ms-azuretools.vscode-azurecontainerapps
-code --install-extension ms-azuretools.vscode-dapr
-code --install-extension az-resource-explorer-vscode.azure-resource-explorer-for-vscode
-code --install-extension joshuapoehls.json-escaper
+code --install-extension aliasadidev.nugetpackagemanagergui
+code --install-extension humao.rest-client
+code --install-extension github.copilot
+code --install-extension teamsdevapp.vscode-adaptive-cards
+code --install-extension teamsdevapp.ms-teams-vscode-extension
+code --install-extension ms-azuretools.vscode-azurefunctions
+code --install-extension ms-azuretools.vscode-bicep	
+code --install-extension ms-copilotstudio.vscode-copilotstudio
+code --install-extension teamsdevapp.vscode-ai-foundry
+code --install-extension ms-graph.kiota
 
 # Azurite Storage Emulator & Function Core Tools v4
 npm install -g azure-functions-core-tools@4 --unsafe-perm true --force
 npm install -g azurite
+
+# Install Visual Studio Templates
+Write-Host "Installing Visual Studio Templates" -ForegroundColor yellow
+dotnet new install M365Advocacy.Teams.Templates
+dotnet new install M365Advocacy.GraphConnectors.Templates
+
+# Install Microsoft Graph PowerShell Module
+Install-Module Microsoft.Graph -Scope CurrentUser
+
+# Install Dev Tunnel CLI
+winget install --id Microsoft.DevTunnelCLI -e --accept-package-agreements --accept-source-agreements
+
+# Install Teams Toolkit CLI
+npm install -g @microsoft/teamsapp-cli
+
+# Install Kiota
+dotnet tool install --global Microsoft.OpenApi.Kiota
 
 # Finished Msg
 Write-Host "Finished Software installation" -ForegroundColor yellow

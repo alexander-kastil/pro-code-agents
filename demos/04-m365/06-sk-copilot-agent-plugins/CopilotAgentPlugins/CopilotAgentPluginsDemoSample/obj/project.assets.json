@@ -4187,11 +4187,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\git-classes\\agents-copilots\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\CopilotAgentPluginsDemoSample.csproj",
+      "projectUniqueName": "D:\\git-classes\\az-agents\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\CopilotAgentPluginsDemoSample.csproj",
       "projectName": "CopilotAgentPluginsDemoSample",
-      "projectPath": "D:\\git-classes\\agents-copilots\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\CopilotAgentPluginsDemoSample.csproj",
+      "projectPath": "D:\\git-classes\\az-agents\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\CopilotAgentPluginsDemoSample.csproj",
       "packagesPath": "C:\\Users\\AlexanderKastil\\.nuget\\packages\\",
-      "outputPath": "D:\\git-classes\\agents-copilots\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\obj\\",
+      "outputPath": "D:\\git-classes\\az-agents\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

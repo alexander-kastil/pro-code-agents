@@ -11,3 +11,11 @@
 - Deploy AI Apps using Azure Developer CLI
 
 ## Links & Resources
+
+https://techcommunity.microsoft.com/blog/azure-ai-services-blog/introducing-agentic-retrieval-in-azure-ai-search/4414677
+
+https://azure.microsoft.com/en-us/blog/azure-ai-foundry-your-ai-app-and-agent-factory/
+
+https://techcommunity.microsoft.com/blog/azure-ai-services-blog/introducing-agentic-retrieval-in-azure-ai-search/4414677
+
+https://devblogs.microsoft.com/foundry/unlock-instant-on-device-ai-with-foundry-local/
