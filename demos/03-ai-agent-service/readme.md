@@ -1,4 +1,4 @@
-# Azure AI Agent Service
+# Module 3: Develop Agents using Azure AI Agent Service
 
 [Azure AI Agent Service](https://learn.microsoft.com/en-us/azure/ai-services/agents/)
 

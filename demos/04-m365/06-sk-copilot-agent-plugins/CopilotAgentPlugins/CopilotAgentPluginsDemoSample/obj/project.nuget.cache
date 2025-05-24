@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "eO9VuszBHPY=",
+  "dgSpecHash": "D7Ijowv5kpc=",
   "success": false,
-  "projectFilePath": "D:\\git-classes\\agents-copilots\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\CopilotAgentPluginsDemoSample.csproj",
+  "projectFilePath": "D:\\git-classes\\az-agents\\demos\\04-m365\\06-sk-copilot-agent-plugins\\CopilotAgentPlugins\\CopilotAgentPluginsDemoSample\\CopilotAgentPluginsDemoSample.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.csharp\\4.0.1\\microsoft.csharp.4.0.1.nupkg.sha512",
     "C:\\Users\\AlexanderKastil\\.nuget\\packages\\microsoft.extensions.configuration\\1.0.0\\microsoft.extensions.configuration.1.0.0.nupkg.sha512",
@@ -77,7 +77,7 @@
       "message": "Project dependency Microsoft.Extensions.Configuration does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Microsoft.Extensions.Configuration",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -87,7 +87,7 @@
       "message": "Project dependency Microsoft.Extensions.Configuration.Json does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Microsoft.Extensions.Configuration.Json",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -97,7 +97,7 @@
       "message": "Project dependency Microsoft.Extensions.Logging does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Microsoft.Extensions.Logging",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -107,7 +107,7 @@
       "message": "Project dependency Microsoft.Extensions.Logging.Console does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Microsoft.Extensions.Logging.Console",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -117,7 +117,7 @@
       "message": "Project dependency Microsoft.Net.Compilers.Toolset does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Microsoft.Net.Compilers.Toolset",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -127,7 +127,7 @@
       "message": "Project dependency Microsoft.OpenApi does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Microsoft.OpenApi",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -137,7 +137,7 @@
       "message": "Project dependency Microsoft.OpenAPI.APIManifest does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Microsoft.OpenAPI.APIManifest",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -147,7 +147,7 @@
       "message": "Project dependency Spectre.Console does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Spectre.Console",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -157,7 +157,7 @@
       "message": "Project dependency Spectre.Console.Cli does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Spectre.Console.Cli",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -167,7 +167,7 @@
       "message": "Project dependency Spectre.Console.Json does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.",
       "libraryId": "Spectre.Console.Json",
       "targetGraphs": [
-        ".NETCoreApp,Version=v8.0"
+        ".NETCoreApp,Version=v9.0"
       ]
     },
     {
@@ -176,7 +176,7 @@
       "message": "Unable to find a stable package Microsoft.OpenAPI.APIManifest with version \r\n  - Found 13 version(s) in nuget.org [ Nearest version: 2.0.0-preview4 ]\r\n  - Found 0 version(s) in Microsoft Visual Studio Offline Packages\r\n  - Found 0 version(s) in C:\\Program Files\\dotnet\\library-packs",
       "libraryId": "Microsoft.OpenAPI.APIManifest",
       "targetGraphs": [
-        "net8.0"
+        "net9.0"
       ]
     }
   ]

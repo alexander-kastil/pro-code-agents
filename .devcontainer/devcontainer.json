@@ -1,14 +1,11 @@
 {
-  "name": "Angular 19 and .NET 9 Development",
+  "name": "Agents Development Container",
   "dockerComposeFile": "docker-compose.yml",
   "service": "devcontainer",
   "workspaceFolder": "/workspace",
   "customizations": {
     "vscode": {
       "extensions": [
-        // Angular extensions
-        "angular.ng-template",
-        "nrwl.angular-console",
         // .NET extensions
         "ms-dotnettools.csharp",
         "ms-dotnettools.csdevkit",
@@ -20,12 +17,32 @@
         // General development extensions
         "mdickin.markdown-shortcuts",
         "esbenp.prettier-vscode",
-        "github.copilot-insiders",
+        "github.copilot",
         "github.copilot-chat",
         "eamodio.gitlens",
         "streetsidesoftware.code-spell-checker",
         "humao.rest-client",
-        "ms-vscode.powershell"
+        "ms-vscode.powershell",
+        // Azure extensions
+        "ms-vscode.azurecli",
+        "ms-azuretools.vscode-azurefunctions",
+        "ms-azuretools.vscode-bicep",
+        // GitHub extensions
+        "GitHub.vscode-pull-request-github",
+        // YAML and configuration
+        "redhat.vscode-yaml",
+        // Theme
+        "alex-pattison.theme-cobalt3",
+        // Package management
+        "aliasadidev.nugetpackagemanagergui",
+        // Teams and M365 extensions
+        "teamsdevapp.vscode-adaptive-cards",
+        "teamsdevapp.ms-teams-vscode-extension",
+        "ms-copilotstudio.vscode-copilotstudio",
+        "teamsdevapp.vscode-ai-foundry",
+        "ms-graph.kiota",
+        "mermaidchart.vscode-mermaid-chart",
+        "ms-semantic-kernel.semantic-kernel"
       ],
       "settings": {
         "editor.formatOnSave": true,
@@ -42,18 +59,65 @@
         },
         "[csharp]": {
           "editor.defaultFormatter": "ms-dotnettools.csharp"
-        }
+        },
+        // GitHub Copilot Settings
+        "chat.agent.enabled": true,
+        "chat.mcp.discovery.enabled": true,
+        "chat.detectParticipant.enabled": true,
+        "terminal.integrated.suggest.enabled": true,
+        "github.copilot.chat.codeGeneration.instructions": [
+          {
+            "text": "In TypeScript never underscore for private field names instead use camelCase."
+          },
+          {
+            "text": "Always use 'const' for variables that are not reassigned."
+          }
+        ],
+        "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
+          {
+            "text": "Describe the pull request in detail, including the purpose of the changes and any relevant context in a list format."
+          }
+        ],
+        "github.copilot.chat.commitMessageGeneration.instructions": [
+          {
+            "text": "Be extremely detailed with the file changes and the reason for the change in a list format."
+          }
+        ],
+        "github.copilot.chat.codesearch.enabled": true,
+        "github.copilot.chat.editor.temporalContext.enabled": true,
+        "github.copilot.chat.generateTests.codeLens": true,
+        "github.copilot.chat.languageContext.typescript.enabled": true,
+        "github.copilot.chat.search.semanticTextResults": true,
+        "github.copilot.chat.startDebugging.enabled": true,
+        "github.copilot.enable": {
+          "*": true,
+          "markdown": true,
+          "plaintext": false,
+          "scminput": false,
+          "yaml": true
+        },
+        "github.copilot.nextEditSuggestions.enabled": true,
+        "github.copilot.selectedCompletionModel": ""
       }
     }
   },
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "20.12.2"
+      "version": "22.11.0"
     },
     "ghcr.io/devcontainers/features/dotnet:1": {
       "version": "9.0"
     },
     "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/azure-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/powershell:1": {
       "version": "latest"
     }
   },
