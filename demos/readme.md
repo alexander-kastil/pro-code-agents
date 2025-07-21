@@ -8,12 +8,25 @@ Advanced topics include orchestrating complex multi-agent solutions, implementin
 
 Throughout all modules, you'll work with hands-on code samples in both Python and C#, giving you practical experience building production-ready AI agent solutions.
 
+## Audience
+
+- Microsoft 365 & AI Pro-Code Developers
+
+## Prerequisites & Requirements
+
+- Basic Microsoft 365 Platform Development Skills
+- Basic Azure Development Skills
+- Python, C#, Typescript
+
+## Modules
+
 ## Module 1: Copilot, Agents & Azure AI Foundry Essentials
 
 ### Introduction to Azure AI Foundry
 
 - Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
 - Azure AI Foundry: Hubs, Projects and Resources
+- Hub based projects vs AI Foundry Projects
 - Deploy and use Large Language Models (LLM) in Azure AI Foundry
 - Introduction to Azure AI Foundry SDK
 - Deploy AI Apps using Azure Developer CLI
@@ -25,9 +38,6 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Comparing and Prototyping Prompts using GitHub Models
 - Retrieval Augmented Generation (RAG) & Agentic Retrieval in Azure AI Search
 - Function Calling, Model Context Protocol (MCP)
-- Agent2Agent (A2A) Protocol Basics
-- Installing Windows AI Foundry
-- Windows local MCP support
 
 ## Module 2: Develop AI Agents using Azure OpenAI and Semantic Kernel
 
@@ -79,16 +89,17 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Runtimes: Orleans vs Dapr
 - Implementing Human in the Loop
 
-## Module 4: Develop Agents using Azure AI Agent Service
+## Module 3: Develop Agents using Azure AI Agent Service
 
 - Introduction to Azure AI Agent Service
 - Using Action Tools: Code Interpreter, Function Calling, Azure Functions and OpenAPI Tools
 - Using Knowledge Tools: File Search, Azure AI Search and Bing Grounding
+- Connect MCP tools to Azure AI Agent Service
+- Automating UI Tasks using Computer Use Agent
+- Designing and implementing connected Agents
 - Orchestrate Multi-Agent-Solutions using Semantic Kernel
-- Using Agent to Agent (A2A) Protocol
-- Azure Agent AI Service & .NET Aspire
 
-## Module 5: Securing, Monitoring and Evaluating Agents
+## Module 4: Securing, Monitoring and Evaluating Agents
 
 - Agent Guardrails and Data Controls
 - Ensuring App Behavior using Evaluations
