@@ -1,8 +1,8 @@
-# Implementing Agents and Copilots using Semantic Kernel and Azure AI Agent Service
+# Implementing Agents and Copilots using Semantic Kernel and Azure AI Foundry Agent Service
 
 This in-depth course that takes developers from foundational concepts to advanced multi-agent orchestration using Microsoft's AI ecosystem. The course begins with Azure AI Foundry essentials, covering hubs, projects, and resources while establishing expertise in prompt engineering, GitHub Models, and the Agent-to-Agent (A2A) protocol fundamentals. Students dive deep into Semantic Kernel development, mastering chat completion, multi-modal capabilities, and advanced prompt templating using YAML, Handlebar, and Liquid formats.
 
-The curriculum provides extensive coverage of Semantic Kernel's plugin architecture, including native functions, OpenAPI integrations, and MCP server implementations, alongside Kernel Memory and vector store connectors for RAG solutions. Participants will master both the Semantic Kernel Agent and Process Frameworks, learning to build multi-step task agents with personas while choosing between Orleans and Dapr runtimes. The course emphasizes Azure AI Foundry's multi-agent solutions, teaching students to leverage the Azure AI Agent Service with action tools (code interpreters, function calling) and knowledge tools (file search, Azure AI Search, Bing Grounding).
+The curriculum provides extensive coverage of Semantic Kernel's plugin architecture, including native functions, OpenAPI integrations, and MCP server implementations, alongside Kernel Memory and vector store connectors for RAG solutions. Participants will master both the Semantic Kernel Agent and Process Frameworks, learning to build multi-step task agents with personas while choosing between Orleans and Dapr runtimes. The course emphasizes Azure AI Foundry's multi-agent solutions, teaching students to leverage the Azure AI Foundry Agent Service with action tools (code interpreters, function calling) and knowledge tools (file search, Azure AI Search, Bing Grounding).
 
 Advanced topics include orchestrating complex multi-agent solutions, implementing human-in-the-loop patterns, and integrating .NET Aspire for scalable deployments. The final module ensures production readiness through security, monitoring, and evaluation strategies including agent guardrails, risk monitoring, and Azure AI Foundry's governance and observability features. By completion, students will architect and deploy secure, monitored multi-agent systems leveraging the full power of Azure AI Foundry's orchestration capabilities.
 
@@ -28,6 +28,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Azure AI Foundry: Hubs, Projects and Resources
 - Hub based projects vs AI Foundry Projects
 - Deploy and use Large Language Models (LLM) in Azure AI Foundry
+- Visual Studio Code AI Toolkit Extension
 - Introduction to Azure AI Foundry SDK
 - Deploy AI Apps using Azure Developer CLI
 
@@ -37,7 +38,16 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Introduction to GitHub Models
 - Comparing and Prototyping Prompts using GitHub Models
 - Retrieval Augmented Generation (RAG) & Agentic Retrieval in Azure AI Search
-- Function Calling, Model Context Protocol (MCP)
+- Function Calling
+
+### Developing & Consuming Model Context Servers
+
+- Model Context Protocol (MCP) Overview
+- MCP Core Concepts
+- Transports STDIO vs Http Streaming
+- Develop MCP Servers
+- Testing & Debugging using MCP Inspector
+- Publishing MCP's to Azure
 
 ## Module 2: Develop AI Agents using Azure OpenAI and Semantic Kernel
 
@@ -89,9 +99,9 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Runtimes: Orleans vs Dapr
 - Implementing Human in the Loop
 
-## Module 3: Develop Agents using Azure AI Agent Service
+## Module 3: Develop Agents using Azure AI Foundry Agent Service
 
-- Introduction to Azure AI Agent Service
+- Introduction to Azure AI Foundry Agent Service
 - Using Action Tools: Code Interpreter, Function Calling, Azure Functions and OpenAPI Tools
 - Using Knowledge Tools: File Search, Azure AI Search and Bing Grounding
 - Connect MCP tools to Azure AI Agent Service
@@ -105,4 +115,3 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Ensuring App Behavior using Evaluations
 - Monitoring Risk and Alerts
 - Azure AI Foundry Agent Governance and Observability
-- Ensuring App Behavior using Evaluations

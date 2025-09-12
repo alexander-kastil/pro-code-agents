@@ -1,13 +1,13 @@
 # Module 2: Develop AI Agents using Azure OpenAI and Semantic Kernel
 
-## Semantic Kernel Basics & Concepts
+### Semantic Kernel Basics & Concepts
 
 - Understand the purpose of Semantic Kernel
 - Semantic Kernel Components
 - Chat History & AI Services Integration
 - ChatCompletion and Multi-modal capabilities
 
-## Optimizing Prompts
+### Optimizing Prompts
 
 - Prompt Engineering with Semantic Kernel
 - YAML Prompt Templates and Template Formats
@@ -15,7 +15,7 @@
 - Liquid Prompt Templates
 - Using Prompty Visual Studio Code Extension
 
-## Implement Plugins for Semantic Kernel
+### Implement Plugins for Semantic Kernel
 
 - Understand the purpose of Semantic Kernel plugins
 - Learn how to use pre-made plugins
@@ -23,9 +23,9 @@
 - Implement Native Functions using Prompts
 - Integrate existing API's using OpenApi Plugins
 - Using MCP Servers in Semantic Kernel
-- Filters & Observability
+- Invocation-, Prompt Render & Invocation Filters
 
-## Kernel Memory & Vector Store Connectors
+### Kernel Memory & Vector Store Connectors
 
 - Understand the purpose of Kernel Memory
 - Semantic Kernel Memory: In-process & Out-of-the-box-Connectors
@@ -39,6 +39,7 @@
 - Using Personas with Agents
 - Implementing Multi Agent Solutions
 - Sematic Kernel A2A Integration
+- Using .NET Aspire in multi-agent scenarios
 
 ## Semantic Kernel Process Framework
 

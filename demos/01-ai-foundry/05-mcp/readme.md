@@ -28,12 +28,25 @@ Run the function:
 func start
 ```
 
+Create the dev tunnel:
+
+```bash
+devtunnel login
+devtunnel create hr-mcp-copilot-studio -a --host-header unchanged
+devtunnel port update hr-mcp-copilot-studio -p 47002
+devtunnel host hr-mcp-copilot-studio
+```
+
 Run MCP inspector:
 
 ```bash
-npx @modelcontextprotocol/inspector node build/index.js
+npx @modelcontextprotocol/inspector
 ```
 
-Use MCP inspector to inspect the function:
+In the MCP inspector, connect to the MCP server and choose `List Tools` and then use the `list_candidates` tool:
 
-![MCP Inspector](_images/mcp-inspector.jpg)
+- Transport Type: `Streamable Http`
+- Endpoint URL: `https://hr-mcp-copilot-studio.<your-dev-tunnel-id>.devtunnels.ms`
+- Port: `47002`
+
+> Note: If you want you can publish the web app to avoid using the dev tunnel, but this is not required for the demo.
