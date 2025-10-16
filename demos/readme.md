@@ -49,14 +49,14 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Testing & Debugging using MCP Inspector
 - Publishing MCP's to Azure
 
-## Module 2: Develop AI Agents using Azure OpenAI and Semantic Kernel
+## Module 2: Develop AI Agents using Microsoft Agent Framework
 
-### Semantic Kernel Basics & Concepts
+### Microsoft Agent Framework Basics & Concepts
 
-- Understand the purpose of Semantic Kernel
-- Semantic Kernel Components
+- Introduction to Microsoft Agent Framework
 - Chat History & AI Services Integration
 - ChatCompletion and Multi-modal capabilities
+- Configuration & Dependency Injection
 
 ### Optimizing Prompts
 
@@ -109,9 +109,69 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Designing and implementing connected Agents
 - Orchestrate Multi-Agent-Solutions using Semantic Kernel
 
-## Module 4: Securing, Monitoring and Evaluating Agents
+## Module 4: Securing, Monitoring and Evaluating Foundry Agents
 
 - Agent Guardrails and Data Controls
 - Ensuring App Behavior using Evaluations
 - Monitoring Risk and Alerts
 - Azure AI Foundry Agent Governance and Observability
+
+## Module 5: Microsoft Copilot Pro-Code Extensibility
+
+#### Pro-Code Extensibility Fundamentals
+
+- Teams Developer Portal, Microsoft Agent Toolkit & DevTunnel
+- App Registrations & Single Sign-On (SSO)
+- Azure Resources Deployment using Azure Developer CLI & Bicep
+
+### Copilot Connectors & Copilot API Capabilities
+
+- Designing & Implementing Copilot Connectors
+- Overview Copilot API Capabilities
+- Microsoft 365 Copilot Retrieval API
+
+#### Pro-Code Agentic Extensibility Options
+
+- Pro-Code Agents Overview & Extensibility Options
+- Introduction to Microsoft 365 Agent Toolkit & Agent Toolkit CLI
+- Pro Code Declarative Agents vs Custom Engine Agents
+- Custom Engine Agents: Microsoft Agent SDK vs Teams AI Library v2
+- When to use which type of Pro-Code Agent
+
+#### Declarative Agents for Microsoft 365
+
+- Declarative Agents for Microsoft 365 Copilot Overview
+- Creating Declarative Agents using Microsoft 365 Agent Toolkit
+- Base Files, Instructions & Conversation Starters
+- Knowledge Sources: WebSearch, SharePoint, Teams, ...
+- Managing Knowledge & Copilot Connectors
+- Adding Skills: Image Generation, Code Interpreter
+- Enhance Presentation using Adaptive Cards
+- Debugging & Fixing Errors GitHub Copilot
+- Declarative Agents using TypeSpec
+- Extend Agents Actions with API Plugins
+- Implementing Key-based & EntraID Authentication
+
+#### Custom Engine Agents using Microsoft Agent SDK
+
+- Introduction & Benefits of using Microsoft Agent SDK
+- Microsoft Agents Playground
+- Implementing Custom Engine Agents for Microsoft 365
+- Consuming Model Context Protocol (MCP) Tool
+- Running Copilot Studio Agents using Microsoft Agent SDK
+- Enhance your agent using custom data and Azure AI Search (RAG)
+- Integrating Azure AI Foundry Agents in the Copilot UI
+
+#### Custom Engine Agents using the Teams AI Library
+
+- Introduction & Benefits of using Teams AI Library
+- Create a custom engine agent using Teams AI Library
+- Understanding Project Structure & Metadata
+- Activity Handling
+- Integrate Enterprise data using RAG
+
+#### Publishing & Monitoring Pro Code Agents
+
+- Copilot Security & Compliance
+- Introduction to Copilot Controls
+- Publish and Analyze Pro-Code Agents
