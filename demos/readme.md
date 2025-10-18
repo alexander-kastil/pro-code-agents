@@ -54,9 +54,10 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 ### Microsoft Agent Framework Basics & Concepts
 
 - Introduction to Microsoft Agent Framework
-- Chat History & AI Services Integration
 - ChatCompletion and Multi-modal capabilities
+- Agent Types
 - Configuration & Dependency Injection
+- Threads & Conversations
 
 ### Optimizing Prompts
 
