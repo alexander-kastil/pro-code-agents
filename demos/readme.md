@@ -62,10 +62,9 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 ### Optimizing Prompts
 
 - Prompt Engineering with Semantic Kernel
-- YAML Prompt Templates and Template Formats
-- Handlebar Prompt Templates
-- Liquid Prompt Templates
+- Loading yaml based prompts
 - Using Prompty Visual Studio Code Extension
+- Prompt Rendering Middleware
 
 ### Implemet Tools
 
@@ -74,7 +73,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Use Human in the loop with Tool Call
 - Integrate existing API's using OpenApi Plugins
 - Using MCP Tools
-- Invocation-, Prompt Render & Invocation Filters
+- Using Function Calling Middelware
 
 ### Kernel Memory & Vector Store Connectors
 
