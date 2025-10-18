@@ -66,20 +66,20 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Using Prompty Visual Studio Code Extension
 - Prompt Rendering Middleware
 
-### Implemet Tools
+### Implemeting Tools
 
 - Understand Tool Call
 - Implementing basic tools
 - Use Human in the loop with Tool Call
 - Integrate API's using OpenApi Plugins
-- Using MCP Tools
+- Using existing MCP Tools
 - Using Function Calling Middelware
 
-### Kernel Memory & Vector Store Connectors
+### Agentic Retrival Augmented Generation (RAG)
 
-- Understand the purpose of Kernel Memory
-- Semantic Kernel Memory: In-process & Out-of-the-box-Connectors
-- Data Model And Embedding Generation
+- Rag vs Agentic RAG
+- Agentic Reasoning Process
+- RAG Tool Integration
 - Kernel Memory & Retrieval Augmented Generation (RAG)
 
 ## Semantic Kernel Agent Framework
