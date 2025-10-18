@@ -93,7 +93,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Sematic Kernel A2A Integration
 - Using .NET Aspire in multi-agent scenarios
 
-## Microsoft Agent Framework Workflows
+### Microsoft Agent Framework Workflows
 
 - Process Framework Overview
 - Core Components and Patterns
