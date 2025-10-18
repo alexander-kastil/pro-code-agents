@@ -55,8 +55,8 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 - Introduction to Microsoft Agent Framework
 - ChatCompletion and Multi-modal capabilities
-- Agent Types
-- Configuration & Dependency Injection
+- Agent Types & Configuration
+- Middelware & Dependency Injection
 - Threads & Conversations Persistance
 
 ### Optimizing Prompts
@@ -70,9 +70,8 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 ### Implemet Tools
 
 - Understand Tool Call
-- Learn how to use pre-made plugins
-- Planners, Function Calling and Choice Behaviors
-- Implement Native Functions using Prompts
+- Implementing basic tools
+- Use Human in the loop with Tool Call
 - Integrate existing API's using OpenApi Plugins
 - Using MCP Servers in Semantic Kernel
 - Invocation-, Prompt Render & Invocation Filters
