@@ -82,8 +82,9 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Agentic Reasoning Process
 - RAG Tool Integration
 - Self Correction
+- Agent Framework and RAG / Agentic RAG
 
-## Semantic Kernel Agent Framework
+### Microsoft Agent Framework Multi Agent Support
 
 - Agents Overview
 - Completing multi-step tasks with Agents
@@ -92,7 +93,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Sematic Kernel A2A Integration
 - Using .NET Aspire in multi-agent scenarios
 
-## Semantic Kernel Process Framework
+## Microsoft Agent Framework Workflows
 
 - Process Framework Overview
 - Core Components and Patterns
