@@ -69,7 +69,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 ### Implemet Tools
 
-- Understand the purpose of Semantic Kernel plugins
+- Understand Tool Call
 - Learn how to use pre-made plugins
 - Planners, Function Calling and Choice Behaviors
 - Implement Native Functions using Prompts
