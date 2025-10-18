@@ -57,7 +57,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - ChatCompletion and Multi-modal capabilities
 - Agent Types
 - Configuration & Dependency Injection
-- Threads & Conversations
+- Threads & Conversations Persistance
 
 ### Optimizing Prompts
 
@@ -67,7 +67,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Liquid Prompt Templates
 - Using Prompty Visual Studio Code Extension
 
-### Implement Plugins for Semantic Kernel
+### Implemet Tools
 
 - Understand the purpose of Semantic Kernel plugins
 - Learn how to use pre-made plugins
