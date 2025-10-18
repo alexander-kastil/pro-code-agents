@@ -55,6 +55,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 - Introduction to Microsoft Agent Framework
 - ChatCompletion and Multi-modal capabilities
+- Structured Output for Chats
 - Agent Types & Configuration
 - Middelware & Dependency Injection
 - Threads & Conversations Persistance
@@ -80,7 +81,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Rag vs Agentic RAG
 - Agentic Reasoning Process
 - RAG Tool Integration
-- Kernel Memory & Retrieval Augmented Generation (RAG)
+- Self Correction
 
 ## Semantic Kernel Agent Framework
 
