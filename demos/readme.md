@@ -62,7 +62,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 ### Optimizing Prompts
 
-- Prompt Engineering with Semantic Kernel
+- Prompt Engineering 
 - Loading yaml based prompts
 - Using Prompty Visual Studio Code Extension
 - Prompt Rendering Middleware
