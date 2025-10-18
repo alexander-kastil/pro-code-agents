@@ -34,11 +34,11 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 ### Agent Essentials
 
-- Introduction Effective Prompt Engineering
-- Introduction to GitHub Models
-- Comparing and Prototyping Prompts using GitHub Models
-- Retrieval Augmented Generation (RAG) & Agentic Retrieval in Azure AI Search
-- Function Calling
+- What is Agentic AI
+- Function Calling & Tools
+- Prompt Engineering vs Context Engineering
+- Retrieval Augmented Generation (RAG) vs Agentic RAG
+- Agentic Reasoning Process & Self Correction 
 
 ### Developing & Consuming Model Context Servers
 
@@ -69,14 +69,6 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Integrate API's using OpenApi Plugins
 - Using existing MCP Tools
 - Using Function Calling Middelware
-
-### Agentic Retrival Augmented Generation (RAG)
-
-- Rag vs Agentic RAG
-- Agentic Reasoning Process
-- RAG Tool Integration
-- Self Correction
-- Agent Framework and RAG / Agentic RAG
 
 ### Microsoft Agent Framework Multi Agent Support
 
