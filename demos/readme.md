@@ -71,7 +71,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Understand Tool Call
 - Implementing basic tools
 - Use Human in the loop with Tool Call
-- Integrate existing API's using OpenApi Plugins
+- Integrate API's using OpenApi Plugins
 - Using MCP Tools
 - Using Function Calling Middelware
 
