@@ -59,12 +59,6 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Agent Types & Configuration
 - Middelware & Dependency Injection
 - Threads & Conversations Persistance
-
-### Optimizing Prompts
-
-- Prompt Engineering 
-- Loading yaml based prompts
-- Using Prompty Visual Studio Code Extension
 - Prompt Rendering Middleware
 
 ### Implemeting Tools
