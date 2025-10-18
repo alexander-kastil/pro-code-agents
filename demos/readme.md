@@ -73,7 +73,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Implementing basic tools
 - Use Human in the loop with Tool Call
 - Integrate existing API's using OpenApi Plugins
-- Using MCP Servers in Semantic Kernel
+- Using MCP Tools
 - Invocation-, Prompt Render & Invocation Filters
 
 ### Kernel Memory & Vector Store Connectors
