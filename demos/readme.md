@@ -1,4 +1,4 @@
-# Implementing Agents and Copilots using Semantic Kernel and Azure AI Foundry Agent Service
+# Designing & Implementing Agents and Pro Code Copilots using Microsoft Agent Framework and Azure AI Agent Service
 
 This in-depth course that takes developers from foundational concepts to advanced multi-agent orchestration using Microsoft's AI ecosystem. The course begins with Azure AI Foundry essentials, covering hubs, projects, and resources while establishing expertise in prompt engineering, GitHub Models, and the Agent-to-Agent (A2A) protocol fundamentals. Students dive deep into Semantic Kernel development, mastering chat completion, multi-modal capabilities, and advanced prompt templating using YAML, Handlebar, and Liquid formats.
 

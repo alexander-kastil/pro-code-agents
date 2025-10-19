@@ -1,4 +1,4 @@
-# Implementing Agents and Pro Code Copilots using Microsoft Agent Framework and Azure AI Agent Service
+# Designing & Implementing Agents and Pro Code Copilots using Microsoft Agent Framework and Azure AI Agent Service
 
 Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) containing:
 
