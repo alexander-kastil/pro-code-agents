@@ -43,7 +43,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Prompt Engineering vs Context Engineering
 - Multi Agent Solutions & Orchestration
 
-### Developing & Consuming Model Context Servers
+### Implementing Context Servers
 
 - Model Context Protocol (MCP) Overview
 - MCP Core Concepts
@@ -97,7 +97,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Sharing States & Checkpoints
 - Observability & Visualization
 
-## Module 3: Develop Agents using Azure AI Foundry Agent Service
+## Module 3: Designing & Implementing Agents using Azure AI Foundry Agent Service
 
 ### Agent Service Basic Concepts
 
