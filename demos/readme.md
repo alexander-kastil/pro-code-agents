@@ -29,19 +29,19 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 ### Introduction to Azure AI Foundry
 
 - Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
-- Azure AI Foundry: Hubs, Projects and Resources
-- Hub based projects vs AI Foundry Projects
-- Deploy and use Large Language Models (LLM) in Azure AI Foundry
+- Hub based projects vs Foundry based Projects
+- Deploy Large Language Models (LLM) in Azure AI Foundry
+- Azure AI Foundry Model Router
 - Visual Studio Code AI Toolkit Extension
-- Introduction to Azure AI Foundry SDK
+- Azure AI Foundry SDK & Microsoft.Extensions.AI
 - Deploy AI Apps using Azure Developer CLI
 
 ### Agent Essentials
 
-- What is Agentic AI
-- Multi Agent Solutions
+- Overview Agents & Agentic AI
 - Function Calling & Tools
 - Prompt Engineering vs Context Engineering
+- Multi Agent Solutions & Orchestration
 
 ### Developing & Consuming Model Context Servers
 
@@ -57,35 +57,40 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 ### Microsoft Agent Framework Basics & Concepts
 
 - Introduction to Microsoft Agent Framework
-- ChatCompletion and Multi-modal capabilities
-- Structured Output for Chats
+- Chat Clients vs Agents
 - Agent Types & Configuration
-- Middelware & Dependency Injection
-- Threads & Conversations Persistance
+- Multi-modal Capabilities
+- Structured Output for Chats
+- Middleware & Dependency Injection
+- Threads & Conversations Persistence
 - Prompt Rendering Middleware
+- Supporting Authentication
 
-### Implemeting Tools
+### Tools & Model Context Protocol
 
 - Understand Tool Call
-- Implementing basic tools
+- Builtin Tools (Code Interpreter, File Search, Web Search)
+- Implementing basic Tools
 - Use Human in the loop with Tool Call
+- Using Function Calling Middleware
 - Integrate API's using OpenApi Plugins
 - Using existing MCP Tools
-- Using Function Calling Middelware
+- Exposing your Agents as MCP Server
 
-### Retrieval Augmented Generation
+### Knowledge & Retrieval Augmented Generation
 
 - Retrieval Augmented Generation (RAG) vs Agentic RAG
 - Agentic Reasoning Process & Self Correction
-- Microsft.Extensions.AI RAG
+- Understanding Microsoft.Extensions.AI RAG
 - Create Embeddings & using Vector Stores
+- Using Azure AI Search Agentic Retrieval
 
 ### Microsoft Agent Framework Workflows
 
 - Workflow vs Agents
 - Workflow Types & Overview
 - Executor & Edges
-- Orchstration Patterns (Sequential, Concurrent, ...)
+- Orchestration Patterns (Sequential, Concurrent, ...)
 - Using Agents in Workflows & Workflow as Agents
 - Request & Response Handling
 - Sharing States & Checkpoints
@@ -112,11 +117,13 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 ## Module 4: Microsoft Copilot Pro-Code Extensibility
 
-#### Pro-Code Extensibility Fundamentals
+### Pro-Code Agentic Extensibility Options & Fundamentals
 
 - Teams Developer Portal, Microsoft Agent Toolkit & DevTunnel
 - App Registrations & Single Sign-On (SSO)
-- Azure Resources Deployment using Azure Developer CLI & Bicep
+- Pro-Code Agents Overview & Extensibility Options
+- Introduction to Microsoft 365 Agent Toolkit & Agent Toolkit CLI
+- Pro Code Declarative Agents vs Custom Engine Agents
 
 ### Copilot Connectors & Copilot API Capabilities
 
@@ -132,7 +139,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Custom Engine Agents: Microsoft Agent SDK vs Teams AI Library v2
 - When to use which type of Pro-Code Agent
 
-#### Declarative Agents for Microsoft 365
+### Declarative Agents for Microsoft 365
 
 - Declarative Agents for Microsoft 365 Copilot Overview
 - Creating Declarative Agents using Microsoft 365 Agent Toolkit
@@ -142,11 +149,10 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Adding Skills: Image Generation, Code Interpreter
 - Enhance Presentation using Adaptive Cards
 - Debugging & Fixing Errors GitHub Copilot
-- Declarative Agents using TypeSpec
 - Extend Agents Actions with API Plugins
 - Implementing Key-based & EntraID Authentication
 
-#### Custom Engine Agents using Microsoft Agent SDK
+### Custom Engine Agents using Microsoft Agent SDK
 
 - Introduction & Benefits of using Microsoft Agent SDK
 - Microsoft Agents Playground
@@ -156,15 +162,13 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Enhance your agent using custom data and Azure AI Search (RAG)
 - Integrating Azure AI Foundry Agents in the Copilot UI
 
-#### Custom Engine Agents using the Teams AI Library
+### Custom Engine Agents using the Teams AI Library
 
 - Introduction & Benefits of using Teams AI Library
 - Create a custom engine agent using Teams AI Library
 - Understanding Project Structure & Metadata
-- Activity Handling
-- Integrate Enterprise data using RAG
 
-#### Publishing & Monitoring Pro Code Agents
+### Publishing & Monitoring Pro Code Agents
 
 - Copilot Security & Compliance
 - Introduction to Copilot Controls
