@@ -35,10 +35,9 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 ### Agent Essentials
 
 - What is Agentic AI
+- Multi Agent Solutions
 - Function Calling & Tools
 - Prompt Engineering vs Context Engineering
-- Retrieval Augmented Generation (RAG) vs Agentic RAG
-- Agentic Reasoning Process & Self Correction 
 
 ### Developing & Consuming Model Context Servers
 
@@ -69,6 +68,13 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Integrate API's using OpenApi Plugins
 - Using existing MCP Tools
 - Using Function Calling Middelware
+
+### Retrieval Augmented Generation
+
+- Retrieval Augmented Generation (RAG) vs Agentic RAG
+- Agentic Reasoning Process & Self Correction
+- Microsft.Extensions.AI RAG
+- Using Vector Stores
 
 ### Microsoft Agent Framework Multi Agent Support
 
