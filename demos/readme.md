@@ -74,7 +74,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Retrieval Augmented Generation (RAG) vs Agentic RAG
 - Agentic Reasoning Process & Self Correction
 - Microsft.Extensions.AI RAG
-- Using Vector Stores
+- Create Embeddings & using Vector Stores
 
 ### Microsoft Agent Framework Multi Agent Support
 
