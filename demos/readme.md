@@ -8,6 +8,10 @@ Advanced topics include orchestrating complex multi-agent solutions, implementin
 
 Throughout all modules, you'll work with hands-on code samples in both Python and C#, giving you practical experience building production-ready AI agent solutions.
 
+## Duration
+
+5 Days
+
 ## Audience
 
 - Microsoft 365 & AI Pro-Code Developers
@@ -85,14 +89,20 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Sematic Kernel A2A Integration
 - Using .NET Aspire in multi-agent scenarios
 
-## Module 3: Microsoft Agent Framework Agentic Workflows
+### Microsoft Agent Framework Workflows
 
-- Process Framework Overview
-- Core Components and Patterns
-- Runtimes: Orleans vs Dapr
-- Implementing Human in the Loop
+- Workflow vs Agents
+- Workflow Types & Overview
+- Executor & Edges
+- Orchstration Patterns (Sequential, Concurrent, ...)
+- Using Agents in Workflows & Workflow as Agents
+- Request & Response Handling
+- Sharing States & Checkpoints
+- Observability & Visualization
 
-## Module 4: Develop Agents using Azure AI Foundry Agent Service
+## Module 3: Develop Agents using Azure AI Foundry Agent Service
+
+### Agent Service Basic Concepts
 
 - Introduction to Azure AI Foundry Agent Service
 - Using Action Tools: Code Interpreter, Function Calling, Azure Functions and OpenAPI Tools
@@ -102,14 +112,14 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Designing and implementing connected Agents
 - Orchestrate Multi-Agent-Solutions using Semantic Kernel
 
-## Module 5: Securing, Monitoring and Evaluating Foundry Agents
+### Securing, Monitoring and Evaluating Foundry Agents
 
 - Agent Guardrails and Data Controls
 - Ensuring App Behavior using Evaluations
 - Monitoring Risk and Alerts
 - Azure AI Foundry Agent Governance and Observability
 
-## Module 6: Microsoft Copilot Pro-Code Extensibility
+## Module 4: Microsoft Copilot Pro-Code Extensibility
 
 #### Pro-Code Extensibility Fundamentals
 
