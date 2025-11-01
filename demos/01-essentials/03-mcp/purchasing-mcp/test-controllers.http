@@ -1,0 +1,99 @@
+@host = http://localhost:5151
+@email = offers@integrations.at
+
+### Test 1: Bulk order - 3 products (total 15)
+POST {{host}}/inquiry/requestOffer
+Content-Type: application/json
+
+{
+  "supplierId": 1,
+  "requestId": "REQ-BULK-3P-{{$guid}}",
+  "requestDetails": [
+    { "product": "Butter Chicken", "requestedQuantity": 14 },
+    { "product": "Blini with Salmon", "requestedQuantity": 15 },
+    { "product": "Falafel", "requestedQuantity": 16 }
+  ],
+  "email": "{{email}}"
+}
+
+### Test 1: Bulk order - 3 products (total 15) - no email
+POST {{host}}/inquiry/requestOffer
+Content-Type: application/json
+
+{
+  "supplierId": 1,
+  "requestDetails": [
+    { "product": "Butter Chicken", "requestedQuantity": 14 },
+    { "product": "Blini with Salmon", "requestedQuantity": 15 },
+    { "product": "Falafel", "requestedQuantity": 16 }
+  ]
+}
+
+### Test 2: Bulk order - 4 products (total 17)
+POST {{host}}/inquiry/requestOffer
+Content-Type: application/json
+
+{
+  "supplierId": 2,
+  "requestId": "REQ-BULK-4P-{{$guid}}",
+  "requestDetails": [
+    { "product": "Wiener Schnitzel", "requestedQuantity": 20 },
+    { "product": "Curry Wurst", "requestedQuantity": 18 },
+    { "product": "Pizza Napoli", "requestedQuantity": 15 },
+    { "product": "Greek salad", "requestedQuantity": 14 }
+  ],
+  "email": "{{email}}"
+}
+
+### Test 3: Bulk order - 5 products (total 25)
+POST {{host}}/inquiry/requestOffer
+Content-Type: application/json
+
+{
+  "supplierId": 3,
+  "requestId": "REQ-BULK-5P-{{$guid}}",
+  "requestDetails": [
+    { "product": "Pad Ka Prao", "requestedQuantity": 22 },
+    { "product": "Spare Ribs", "requestedQuantity": 24 },
+    { "product": "Butter Chicken", "requestedQuantity": 18 },
+    { "product": "Blini with Salmon", "requestedQuantity": 16 },
+    { "product": "Falafel", "requestedQuantity": 14 }
+  ],
+  "email": "{{email}}"
+}
+
+### Test 4: Bulk order - 7 products (total 30)
+POST {{host}}/inquiry/requestOffer
+Content-Type: application/json
+
+{
+  "supplierId": 4,
+  "requestId": "REQ-BULK-7P-{{$guid}}",
+  "requestDetails": [
+    { "product": "Wiener Schnitzel", "requestedQuantity": 30 },
+    { "product": "Curry Wurst", "requestedQuantity": 28 },
+    { "product": "Pizza Napoli", "requestedQuantity": 20 },
+    { "product": "Greek salad", "requestedQuantity": 18 },
+    { "product": "Pad Ka Prao", "requestedQuantity": 16 },
+    { "product": "Spare Ribs", "requestedQuantity": 14 },
+    { "product": "Butter Chicken", "requestedQuantity": 15 }
+  ],
+  "email": "{{email}}"
+}
+
+### Suppliers tests
+
+### Get all suppliers
+GET {{host}}/Suppliers/getSuppliers
+
+### Get supplier by ID (existing: 1)
+GET {{host}}/Suppliers/getSupplierByID/1
+
+### Get supplier by name (existing example: "Acme Foods")
+GET {{host}}/Suppliers/getSupplierByName/Acme%20Foods
+
+### Get supplier for Wiener Schnitzel
+GET {{host}}/Suppliers/getSupplierFor/Wiener%20Schnitzel
+
+### Get supplier for Pad Ka Prao
+GET {{host}}/Suppliers/getSupplierFor/Pad%20Ka%20Prao

@@ -1,0 +1,1 @@
+npx @modelcontextprotocol/inspector --config inspector.config.json --server purchasing-mcp-azure-dev
