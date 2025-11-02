@@ -63,6 +63,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Structured Output for Chats
 - Middleware & Dependency Injection
 - Threads, Conversations Persistence & Memory
+- ChatReducer
 - Prompt Rendering Middleware
 - Supporting Authentication
 
