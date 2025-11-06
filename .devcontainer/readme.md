@@ -4,6 +4,13 @@
 
 This Development Container provides a ready-to-use, reproducible environment for building Microsoft 365 Copilots and AI Agents (declarative agents in Microsoft Copilot Studio, custom engine / pro‑code agents, Microsoft 365 Agents Toolkit solutions, Azure Functions–backed skills, Teams & Adaptive Card extensions, and Graph-integrated workloads). It bundles the core language SDKs, CLIs, local emulators, and VS Code extensions you typically need—so you can focus on solution logic instead of machine setup.
 
+### Key Features
+
+- **🚀 Optimized Performance**: Most tools are pre-installed in the Docker image for faster container startup
+- **📓 Jupyter Notebook Support**: Full support for interactive notebooks in Python and C# (.NET Interactive)
+- **🔧 Comprehensive Tooling**: Pre-configured with Azure, Microsoft 365, Teams, and Graph development tools
+- **✅ Validation Built-in**: Automated setup validation script included
+
 ---
 
 ## Getting Started
@@ -47,9 +54,11 @@ To open GitHub Codespaces, click on the button below:
 ### 4. Agent & API Productivity Tooling
 
 - **Microsoft 365 Agents Toolkit CLI (`@microsoft/m365agentstoolkit-cli`)** – Scaffolding & managing M365 agent solutions.
-- **Microsoft 365 Agents Playground (`@microsoft/m365agentstoolkit-playground`)** – Interactive environment for testing agents and skills.
+- **Microsoft 365 Agents Playground (`@microsoft/m365agentsplayground`)** – Interactive environment for testing agents and skills.
+- **Teams CLI (`@microsoft/teams.cli`)** – Command-line interface for Teams app development.
 - **Kiota (.NET global tool)** – Generate strongly typed clients from OpenAPI specs for Graph / custom APIs.
-- **Dev Tunnels CLI (`Microsoft.DevTunnels.Cli`)** – Secure tunneling for local development, remote access, and debugging.
+- **Dev Tunnels CLI** – Secure tunneling for local development, remote access, and debugging.
+- **Jupyter & .NET Interactive** – Full notebook support for Python and C# interactive development and experimentation.
 
 ### 5. PowerShell Modules (Installed for Current User)
 
@@ -107,6 +116,7 @@ Grouped by purpose:
 - ms-python.vscode-python-envs
 - ms-python.debugpy
 - ms-toolsai.jupyter (+ keymap, renderers, cell-tags, slideshow)
+- ms-dotnettools.dotnet-interactive-vscode (C# Jupyter notebooks)
 
 #### Web / Testing / Tooling
 
@@ -128,15 +138,29 @@ Grouped by purpose:
 - git:latest
 - python:3.11
 
-### 10. Post-Creation Actions
+### 10. Jupyter Notebook Support
 
-Executed by `post-create.sh`:
+The devcontainer includes full support for Jupyter notebooks in both Python and C#:
 
-1. Normalize workspace permissions.
-2. Install PowerShell Core (if missing).
-3. Install Graph + SharePoint PS modules.
-4. Install Microsoft 365 Agents Toolkit CLI (global npm).
-5. Install Kiota (.NET global tool).
+- **Python Jupyter Kernel**: Pre-installed with `ipykernel` for running Python notebooks
+- **.NET Interactive**: Installed for running C# notebooks (polyglot notebooks)
+- **VS Code Extensions**: Jupyter extensions for notebook authoring, debugging, and rendering
+
+To use:
+- Create a new `.ipynb` file
+- Select the appropriate kernel (Python 3 or .NET Interactive)
+- Start coding in your preferred language
+
+### 11. Post-Creation Actions
+
+Executed by `post-create.sh` (optimized for speed):
+
+1. Normalize workspace permissions
+2. Configure PATH for npm and .NET global tools
+3. Install Dev Tunnels CLI (user-specific, optional)
+4. Display installed tool versions
+
+**Note**: Most installations (PowerShell, npm packages, .NET tools, Jupyter kernels) are now pre-installed in the Dockerfile for faster container startup.
 
 ---
 
@@ -179,9 +203,56 @@ Add changes to `.devcontainer/*` and commit. Codespaces + local rebuilds will pi
 
 ---
 
+## Using Jupyter Notebooks
+
+The devcontainer includes full support for Jupyter notebooks in both Python and C#.
+
+### Testing the Setup
+
+Sample test notebooks are provided:
+- `.devcontainer/test-python-notebook.ipynb` - Tests Python kernel functionality
+- `.devcontainer/test-csharp-notebook.ipynb` - Tests C# (.NET Interactive) kernel functionality
+
+### Creating New Notebooks
+
+1. Create a new file with `.ipynb` extension
+2. When prompted, select a kernel:
+   - **Python 3** - for Python notebooks
+   - **.NET (C#)** - for C# notebooks (polyglot notebooks)
+3. Start writing code cells
+
+### Features Available
+
+**Python Notebooks:**
+- Full Python 3.11 support
+- Access to pip-installed packages
+- Standard library access
+- IPython features
+
+**C# Notebooks:**
+- Full C# language support (latest version with .NET 9)
+- Async/await support
+- LINQ, records, pattern matching
+- Access to NuGet packages via `#r "nuget: PackageName"`
+- Multi-language support (can mix C#, F#, PowerShell, SQL, etc.)
+
+---
+
 ## Validation & Diagnostics
 
-Run these inside the container to confirm key tooling:
+### Quick Validation
+
+Run the automated validation script to check all installations:
+
+```bash
+bash .devcontainer/validate-setup.sh
+```
+
+This script checks all core tools, Jupyter kernels, PowerShell modules, and optional components.
+
+### Manual Verification
+
+Alternatively, run these commands inside the container to confirm key tooling:
 
 ```bash
 dotnet --info | grep 'Version:' | head -n 1
@@ -196,8 +267,26 @@ func --version
 azurite --version
 dotnet tool list -g | grep Kiota || echo 'Kiota missing'
 npm list -g --depth=0 | grep m365agentstoolkit || echo 'M365 Agents Toolkit CLI missing'
-dotnet tool list -g | grep DevTunnels || echo 'Dev Tunnels CLI missing'
-agentsplayground --version
+npm list -g --depth=0 | grep m365agentsplayground || echo 'M365 Agents Playground missing'
+npm list -g --depth=0 | grep teams.cli || echo 'Teams CLI missing'
+devtunnel --version || echo 'Dev Tunnels CLI not installed (optional)'
 ```
+
+### Verify Jupyter Support
+
+```bash
+# Check Jupyter installation
+jupyter --version
+
+# List available Jupyter kernels
+jupyter kernelspec list
+
+# Verify .NET Interactive
+dotnet tool list -g | grep dotnet-interactive || echo '.NET Interactive missing'
+```
+
+You should see both `python3` and `.net-csharp` kernels listed.
+
+---
 
 Happy building intelligent experiences for Microsoft 365!
