@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" > /etc/apt/sources.list.d/github-cli.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends git python3 python3-pip python3-venv gh xz-utils \
+    && apt-get install -y --no-install-recommends git python3 python3-pip python3-venv gh xz-utils wget apt-transport-https software-properties-common gpg \
     && curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_DISTRO}.tar.xz" -o node.tar.xz \
     && mkdir -p /usr/local/lib/nodejs \
     && tar -xJf node.tar.xz -C /usr/local/lib/nodejs \
@@ -64,6 +64,45 @@ RUN npm install -g azure-functions-core-tools@4 --unsafe-perm true --force \
     && func --version \
     && azurite --version
 
+# Install PowerShell Core
+RUN wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb \
+    && dpkg -i /tmp/packages-microsoft-prod.deb \
+    && rm -f /tmp/packages-microsoft-prod.deb \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends powershell \
+    && pwsh --version \
+    && apt-get clean \
+    && rm -rf /tmp/*
+
+# Install global npm packages for Microsoft 365 and Teams development
+RUN npm install -g @microsoft/m365agentstoolkit-cli \
+    && npm install -g @microsoft/teams.cli \
+    && npm install -g @microsoft/m365agentsplayground
+
+# Install .NET global tools (Kiota)
+RUN dotnet tool install --global Microsoft.OpenApi.Kiota \
+    && echo 'export PATH="$PATH:/root/.dotnet/tools"' >> /etc/profile.d/dotnet-tools.sh
+
+# Install PowerShell modules as vscode user
+USER vscode
+RUN pwsh -NoLogo -NoProfile -Command "\
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
+    Install-Module -Name Microsoft.Graph -Scope CurrentUser -Force -AcceptLicense -ErrorAction Stop; \
+    Install-Module -Name Microsoft.Online.SharePoint.PowerShell -Scope CurrentUser -Force -ErrorAction Stop; \
+    Write-Host 'PowerShell modules installed successfully.'"
+
+# Install Jupyter kernel support for Python and .NET Interactive for C#
+RUN pip3 install --no-cache-dir jupyter ipykernel \
+    && python3 -m ipykernel install --user --name python3 --display-name "Python 3"
+
+# Install .NET Interactive for C# Jupyter notebooks
+RUN dotnet tool install --global Microsoft.dotnet-interactive \
+    && echo 'export PATH="$PATH:/home/vscode/.dotnet/tools"' >> ~/.bashrc \
+    && /home/vscode/.dotnet/tools/dotnet-interactive jupyter install
+
+# Switch back to root for final setup
+USER root
+
 # Set the working directory
 WORKDIR /workspace
 
@@ -74,3 +113,6 @@ RUN chown -R vscode:vscode /workspace \
 # Set timezone
 ENV TZ=UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Update PATH for all users to include .dotnet/tools
+ENV PATH="$PATH:/home/vscode/.dotnet/tools:/root/.dotnet/tools"

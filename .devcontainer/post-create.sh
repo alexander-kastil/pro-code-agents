@@ -21,40 +21,54 @@ sudo chmod -R u+rwX,go+rX /workspace
 # Navigate to the workspace root
 cd /workspace
 
-# Install PowerShell (pwsh) when it's not already present
-if ! command -v pwsh >/dev/null 2>&1; then
-  echo "Installing PowerShell Core (pwsh)..."
-  sudo apt-get update
-  sudo apt-get install -y wget apt-transport-https software-properties-common gpg
-  wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb
-  sudo dpkg -i /tmp/packages-microsoft-prod.deb
-  rm -f /tmp/packages-microsoft-prod.deb
-  sudo apt-get update
-  sudo apt-get install -y powershell
-else
-  echo "PowerShell Core already installed. Skipping installation."
+# Ensure npm global bin directory is on PATH for current and future shells
+GLOBAL_NPM_PREFIX="$(npm prefix -g 2>/dev/null || true)"
+if [[ -n "${GLOBAL_NPM_PREFIX}" ]]; then
+  GLOBAL_NPM_BIN="${GLOBAL_NPM_PREFIX}/bin"
+  if [[ -d "${GLOBAL_NPM_BIN}" ]]; then
+    if ! echo ":${PATH}:" | grep -q ":${GLOBAL_NPM_BIN}:/"; then
+      echo "Adding ${GLOBAL_NPM_BIN} to current PATH"
+      export PATH="${GLOBAL_NPM_BIN}:${PATH}"
+    fi
+    if [[ ! -f /etc/profile.d/npm-global-path.sh ]] || ! grep -q "${GLOBAL_NPM_BIN}" /etc/profile.d/npm-global-path.sh 2>/dev/null; then
+      echo "Persisting npm global bin path"
+      echo "export PATH=\"${GLOBAL_NPM_BIN}:\\$PATH\"" | sudo tee /etc/profile.d/npm-global-path.sh >/dev/null
+    fi
+  fi
 fi
 
-# Install required PowerShell modules using pwsh
-echo "Installing required PowerShell modules..."
-pwsh -NoLogo -NoProfile -Command "\
-  Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
-  Install-Module -Name Microsoft.Graph -Scope CurrentUser -Force -AcceptLicense -ErrorAction Stop; \
-  Install-Module -Name Microsoft.Online.SharePoint.PowerShell -Scope CurrentUser -Force -ErrorAction Stop; \
-  Write-Host 'PowerShell modules installed successfully.'"
-
-# Install Microsoft 365 Agents Toolkit CLI globally via npm
-if ! npm list -g @microsoft/m365agentstoolkit-cli >/dev/null 2>&1; then
-  echo "Installing Microsoft 365 Agents Toolkit CLI..."
-  npm install -g @microsoft/m365agentstoolkit-cli
-else
-  echo "Microsoft 365 Agents Toolkit CLI already installed."
+# Ensure .dotnet/tools is on PATH
+if [[ -d "$HOME/.dotnet/tools" ]]; then
+  if ! echo ":${PATH}:" | grep -q ":$HOME/.dotnet/tools:/"; then
+    echo "Adding $HOME/.dotnet/tools to current PATH"
+    export PATH="$HOME/.dotnet/tools:${PATH}"
+  fi
+  if [[ ! -f ~/.bashrc ]] || ! grep -q ".dotnet/tools" ~/.bashrc 2>/dev/null; then
+    echo "Persisting .dotnet/tools path to .bashrc"
+    echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> ~/.bashrc
+  fi
 fi
 
-# Install Kiota as a global .NET tool
-if ! dotnet tool list -g | grep -q "Microsoft.OpenApi.Kiota"; then
-  echo "Installing Kiota global .NET tool..."
-  dotnet tool install --global Microsoft.OpenApi.Kiota
+# Install Dev Tunnels CLI (optional, user-specific installation)
+if ! command -v devtunnel >/dev/null 2>&1; then
+  echo "Installing Dev Tunnels CLI..."
+  curl -sL https://aka.ms/DevTunnelCliInstall | bash
+  # Add ~/bin to PATH for current session
+  export PATH="$HOME/bin:$PATH"
+  echo "Dev Tunnels CLI installed successfully"
 else
-  echo "Kiota global .NET tool already installed."
+  echo "Dev Tunnels CLI already installed."
 fi
+
+echo "Post-creation setup completed successfully!"
+echo ""
+echo "Available tools:"
+echo "  - .NET SDK: $(dotnet --version)"
+echo "  - Node.js: $(node --version)"
+echo "  - Python: $(python --version)"
+echo "  - PowerShell: $(pwsh --version | head -1)"
+echo "  - Azure CLI: $(az --version | head -1)"
+echo "  - Jupyter: $(jupyter --version | head -1)"
+echo "  - .NET Interactive: $(dotnet interactive --version 2>&1 | head -1 || echo 'installed')"
+echo ""
+echo "Ready for development with Jupyter notebook support for Python and C#!"

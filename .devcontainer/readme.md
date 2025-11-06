@@ -47,9 +47,11 @@ To open GitHub Codespaces, click on the button below:
 ### 4. Agent & API Productivity Tooling
 
 - **Microsoft 365 Agents Toolkit CLI (`@microsoft/m365agentstoolkit-cli`)** – Scaffolding & managing M365 agent solutions.
-- **Microsoft 365 Agents Playground (`@microsoft/m365agentstoolkit-playground`)** – Interactive environment for testing agents and skills.
+- **Microsoft 365 Agents Playground (`@microsoft/m365agentsplayground`)** – Interactive environment for testing agents and skills.
+- **Teams CLI (`@microsoft/teams.cli`)** – Command-line interface for Teams app development.
 - **Kiota (.NET global tool)** – Generate strongly typed clients from OpenAPI specs for Graph / custom APIs.
-- **Dev Tunnels CLI (`Microsoft.DevTunnels.Cli`)** – Secure tunneling for local development, remote access, and debugging.
+- **Dev Tunnels CLI** – Secure tunneling for local development, remote access, and debugging.
+- **Jupyter & .NET Interactive** – Full notebook support for Python and C# interactive development and experimentation.
 
 ### 5. PowerShell Modules (Installed for Current User)
 
@@ -107,6 +109,7 @@ Grouped by purpose:
 - ms-python.vscode-python-envs
 - ms-python.debugpy
 - ms-toolsai.jupyter (+ keymap, renderers, cell-tags, slideshow)
+- ms-dotnettools.dotnet-interactive-vscode (C# Jupyter notebooks)
 
 #### Web / Testing / Tooling
 
@@ -128,15 +131,29 @@ Grouped by purpose:
 - git:latest
 - python:3.11
 
-### 10. Post-Creation Actions
+### 10. Jupyter Notebook Support
 
-Executed by `post-create.sh`:
+The devcontainer includes full support for Jupyter notebooks in both Python and C#:
 
-1. Normalize workspace permissions.
-2. Install PowerShell Core (if missing).
-3. Install Graph + SharePoint PS modules.
-4. Install Microsoft 365 Agents Toolkit CLI (global npm).
-5. Install Kiota (.NET global tool).
+- **Python Jupyter Kernel**: Pre-installed with `ipykernel` for running Python notebooks
+- **.NET Interactive**: Installed for running C# notebooks (polyglot notebooks)
+- **VS Code Extensions**: Jupyter extensions for notebook authoring, debugging, and rendering
+
+To use:
+- Create a new `.ipynb` file
+- Select the appropriate kernel (Python 3 or .NET Interactive)
+- Start coding in your preferred language
+
+### 11. Post-Creation Actions
+
+Executed by `post-create.sh` (optimized for speed):
+
+1. Normalize workspace permissions
+2. Configure PATH for npm and .NET global tools
+3. Install Dev Tunnels CLI (user-specific, optional)
+4. Display installed tool versions
+
+**Note**: Most installations (PowerShell, npm packages, .NET tools, Jupyter kernels) are now pre-installed in the Dockerfile for faster container startup.
 
 ---
 
