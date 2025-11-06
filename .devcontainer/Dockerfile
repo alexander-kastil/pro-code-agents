@@ -79,9 +79,8 @@ RUN npm install -g @microsoft/m365agentstoolkit-cli \
     && npm install -g @microsoft/teams.cli \
     && npm install -g @microsoft/m365agentsplayground
 
-# Install .NET global tools (Kiota)
-RUN dotnet tool install --global Microsoft.OpenApi.Kiota \
-    && echo 'export PATH="$PATH:/root/.dotnet/tools"' >> /etc/profile.d/dotnet-tools.sh
+# Install .NET global tools (Kiota) for root user
+RUN dotnet tool install --global Microsoft.OpenApi.Kiota
 
 # Install PowerShell modules as vscode user
 USER vscode
@@ -97,7 +96,6 @@ RUN pip3 install --no-cache-dir jupyter ipykernel \
 
 # Install .NET Interactive for C# Jupyter notebooks
 RUN dotnet tool install --global Microsoft.dotnet-interactive \
-    && echo 'export PATH="$PATH:/home/vscode/.dotnet/tools"' >> ~/.bashrc \
     && /home/vscode/.dotnet/tools/dotnet-interactive jupyter install
 
 # Switch back to root for final setup
@@ -114,5 +112,9 @@ RUN chown -R vscode:vscode /workspace \
 ENV TZ=UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Update PATH for all users to include .dotnet/tools
-ENV PATH="$PATH:/home/vscode/.dotnet/tools:/root/.dotnet/tools"
+# Configure PATH for vscode user to include their .dotnet/tools
+RUN echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> /home/vscode/.bashrc \
+    && echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> /home/vscode/.profile
+
+# Switch to vscode user by default
+USER vscode

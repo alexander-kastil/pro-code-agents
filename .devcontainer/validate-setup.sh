@@ -116,14 +116,24 @@ fi
 
 echo ""
 echo "--- PowerShell Modules ---"
-if pwsh -NoLogo -NoProfile -Command "Get-Module -ListAvailable Microsoft.Graph" | grep -q "Microsoft.Graph"; then
+# Check both modules in a single PowerShell session
+PS_MODULES_CHECK=$(pwsh -NoLogo -NoProfile -Command "
+    \$modules = @('Microsoft.Graph', 'Microsoft.Online.SharePoint.PowerShell')
+    \$results = @{}
+    foreach (\$module in \$modules) {
+        \$results[\$module] = (Get-Module -ListAvailable \$module) -ne \$null
+    }
+    \$results | ConvertTo-Json
+" 2>/dev/null)
+
+if echo "$PS_MODULES_CHECK" | grep -q '"Microsoft.Graph".*true'; then
     echo "✓ Microsoft.Graph PowerShell module installed"
 else
     echo "✗ Microsoft.Graph PowerShell module not found"
     ERRORS=$((ERRORS + 1))
 fi
 
-if pwsh -NoLogo -NoProfile -Command "Get-Module -ListAvailable Microsoft.Online.SharePoint.PowerShell" | grep -q "Microsoft.Online.SharePoint.PowerShell"; then
+if echo "$PS_MODULES_CHECK" | grep -q '"Microsoft.Online.SharePoint.PowerShell".*true'; then
     echo "✓ Microsoft.Online.SharePoint.PowerShell module installed"
 else
     echo "✗ Microsoft.Online.SharePoint.PowerShell module not found"

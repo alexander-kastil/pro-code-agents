@@ -69,6 +69,10 @@ echo "  - Python: $(python --version)"
 echo "  - PowerShell: $(pwsh --version | head -1)"
 echo "  - Azure CLI: $(az --version | head -1)"
 echo "  - Jupyter: $(jupyter --version | head -1)"
-echo "  - .NET Interactive: $(dotnet interactive --version 2>&1 | head -1 || echo 'installed')"
+if command -v dotnet-interactive >/dev/null 2>&1; then
+    echo "  - .NET Interactive: $(dotnet interactive --version 2>&1 | head -1 || echo 'tool available')"
+else
+    echo "  - .NET Interactive: not found in PATH"
+fi
 echo ""
 echo "Ready for development with Jupyter notebook support for Python and C#!"
