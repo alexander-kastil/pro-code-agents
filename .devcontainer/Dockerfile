@@ -81,6 +81,15 @@ RUN npm install -g @microsoft/m365agentstoolkit-cli \
 # Install .NET global tools (Kiota) for root user
 RUN dotnet tool install --global Microsoft.OpenApi.Kiota
 
+# Create dedicated Python environment for Jupyter kernels
+RUN python3 -m venv /opt/jupyterenv \
+    && /opt/jupyterenv/bin/pip install --no-cache-dir --upgrade pip \
+    && /opt/jupyterenv/bin/pip install --no-cache-dir jupyter ipykernel \
+    && /opt/jupyterenv/bin/python -m ipykernel install --prefix /usr/local/share/jupyter --name python3 --display-name "Python 3 (Dev Container)" \
+    && chown -R vscode:vscode /opt/jupyterenv /usr/local/share/jupyter
+
+ENV PATH="/opt/jupyterenv/bin:${PATH}"
+
 # Install PowerShell modules as vscode user
 USER vscode
 RUN pwsh -NoLogo -NoProfile -Command "\
@@ -88,10 +97,6 @@ RUN pwsh -NoLogo -NoProfile -Command "\
     Install-Module -Name Microsoft.Graph -Scope CurrentUser -Force -AcceptLicense -ErrorAction Stop; \
     Install-Module -Name Microsoft.Online.SharePoint.PowerShell -Scope CurrentUser -Force -ErrorAction Stop; \
     Write-Host 'PowerShell modules installed successfully.'"
-
-# Install Jupyter kernel support for Python and .NET Interactive for C#
-RUN python3 -m pip install --user --no-cache-dir jupyter ipykernel \
-    && python3 -m ipykernel install --user --name python3 --display-name "Python 3"
 
 # Install .NET Interactive for C# Jupyter notebooks
 RUN dotnet tool install --global Microsoft.dotnet-interactive \
