@@ -43,7 +43,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
 - Deploy AI Apps using Azure Developer CLI
 
-### Implementing Context Servers
+### Implementing Model Context Protocol Servers (MCP)
 
 - Model Context Protocol (MCP) Overview
 - MCP Core Concepts
