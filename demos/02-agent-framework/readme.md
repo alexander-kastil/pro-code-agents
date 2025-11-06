@@ -1,63 +1,45 @@
-# Module 2: Develop AI Agents using Azure OpenAI and Semantic Kernel
+# Module 2: Develop AI Agents using Microsoft Agent Framework
 
-### Semantic Kernel Basics & Concepts
+## Microsoft Agent Framework Basics & Concepts
 
-- Understand the purpose of Semantic Kernel
-- Semantic Kernel Components
-- Chat History & AI Services Integration
-- ChatCompletion and Multi-modal capabilities
+- Introduction to Microsoft Agent Framework
+- Chat Clients vs Agents
+- Agent Types & Configuration
+- Images & Multi-modal Capabilities
+- Structured Output for Chats
+- Middleware & Dependency Injection
+- Threads, Conversations Persistence & Memory
+- ChatReducer
+- Prompt Rendering Middleware
+- Supporting Authentication
 
-### Optimizing Prompts
+## Tools & Model Context Protocol
 
-- Prompt Engineering with Semantic Kernel
-- YAML Prompt Templates and Template Formats
-- Handlebar Prompt Templates
-- Liquid Prompt Templates
-- Using Prompty Visual Studio Code Extension
+- Understand Tool Call
+- Builtin Tools (Code Interpreter, File Search, Web Search)
+- Implementing basic Tools
+- Use Human in the loop with Tool Call
+- Using Function Calling Middleware
+- Integrate API's using OpenApi Plugins
+- Using existing MCP Tools
+- Exposing your Agents as MCP Server
 
-### Implement Plugins for Semantic Kernel
+## Knowledge & Retrieval Augmented Generation
 
-- Understand the purpose of Semantic Kernel plugins
-- Learn how to use pre-made plugins
-- Planners, Function Calling and Choice Behaviors
-- Implement Native Functions using Prompts
-- Integrate existing API's using OpenApi Plugins
-- Using MCP Servers in Semantic Kernel
-- Invocation-, Prompt Render & Invocation Filters
+- Retrieval Augmented Generation (RAG) vs Agentic RAG
+- Agentic Reasoning Process & Self Correction
+- Understanding Microsoft.Extensions.AI RAG
+- Create Embeddings & using Vector Stores
+- Using Azure AI Search Agentic Retrieval
 
-### Kernel Memory & Vector Store Connectors
+## Microsoft Agent Framework Workflows
 
-- Understand the purpose of Kernel Memory
-- Semantic Kernel Memory: In-process & Out-of-the-box-Connectors
-- Data Model And Embedding Generation
-- Kernel Memory & Retrieval Augmented Generation (RAG)
-
-## Semantic Kernel Agent Framework
-
-- Agents Overview
-- Completing multi-step tasks with Agents
-- Using Personas with Agents
-- Implementing Multi Agent Solutions
-- Sematic Kernel A2A Integration
-- Using .NET Aspire in multi-agent scenarios
-
-## Semantic Kernel Process Framework
-
-- Process Framework Overview
-- Core Components and Patterns
-- Runtimes: Orleans vs Dapr
-- Implementing Human in the Loop
-
-## Links & Resources
-
-[Semantic Kernel Docs](https://learn.microsoft.com/en-us/semantic-kernel/overview/)
-
-[Semantic Kernel In-Depth Samples](https://learn.microsoft.com/en-us/semantic-kernel/get-started/detailed-samples)
-
-[Semantic Kernel Cookbook](https://github.com/microsoft/SemanticKernelCookBook/tree/main)
-
-[Semantic Kernel Community Plugins](https://github.com/Azure-AI-Community/Microsoft-Semantic-Kernel-Community-dotnet/tree/main)
-
-[Mermaid Visualizations](https://jordanbeandev.com/how-to-visualize-semantic-kernel-azure-openai-plans-using-mermaid/)
-
-[Semantic Kernel Search Orchestration](https://jordanbeandev.com/how-to-build-an-azure-openai-intent-plugin-in-semantic-kernel-to-help-orchestrate-which-azure-ai-search-index-to-use/)
+- Workflow vs Agents
+- Workflow Types & Overview
+- Executor & Edges
+- Orchestration Patterns (Sequential, Concurrent, ...)
+- Branching in Workflows
+- Using Agents in Workflows & Workflow as Agents
+- Request & Response Handling
+- Sharing States & Checkpoints
+- Observability & Visualization
