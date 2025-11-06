@@ -9,5 +9,3 @@
 - Orchestrate Multi-Agent-Solutions using Semantic Kernel
 
 ## Links & Resources
-
-[Azure AI Agent Service](https://learn.microsoft.com/en-us/azure/ai-services/agents/)

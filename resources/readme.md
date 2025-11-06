@@ -1,8 +1,16 @@
 # Resources
 
+## MS Learn
+
 [Create custom copilots with Azure AI Studio](https://learn.microsoft.com/en-us/training/paths/create-custom-copilots-ai-studio/)
 
 [Develop AI agents on Azure](https://learn.microsoft.com/en-us/training/paths/develop-ai-agents-on-azure/)
+
+## GitHub
+
+[Guide: Build your code-first agent with Azure AI Foundry](https://microsoft.github.io/build-your-first-agent-with-azure-ai-agent-service-workshop/)
+
+[Python AI Agent Frameworks Demos](https://github.com/Azure-Samples/python-ai-agent-frameworks-demos)
 
 ## Articles
 

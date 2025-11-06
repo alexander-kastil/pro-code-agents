@@ -111,7 +111,8 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Connect MCP tools to Azure AI Agent Service
 - Automating UI Tasks using Computer Use Agent
 - Multi-Agent Workflows & Connected Agents
-- Microsoft Agent Framework & Azure AI Foundry Agent Service Integration
+- Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
+- Agent-2-Agent Protocol (A2A)
 
 ### Securing, Monitoring and Evaluating Foundry Agents
 

@@ -5,7 +5,6 @@ Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin
 - [Getting Started](./tooling/00-getting-started)
 - [Instructor Demos](./demos)
 - [Requirements / tooling](./tooling)
-  - [Register Azure Subscription using an Azure Pass](./tooling/05-azurepass)
   - [Git & GitHub Basics](./tooling/01-git)
   - [Visual Studio Code Basics](./tooling/02-vscode)
   - [Using Markdown](./tooling/03-markdown)
@@ -16,6 +15,20 @@ Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin
   - [Jupyter Notebooks](./tooling/09-jupyter)
   - [Local LLMs](./tooling/11-llms)
 - [Labs](./labs/)
+
+## Cloning the Repository
+
+This repository uses Git submodules. To clone the repository and automatically download all submodules, use:
+
+```bash
+git clone --recursive https://github.com/alexander-kastil/pro-code-agents.git
+```
+
+If you have already cloned the repository without `--recursive`, you can initialize and update the submodules with:
+
+```bash
+git submodule update --init --recursive
+```
 
 ## Contributing
 
