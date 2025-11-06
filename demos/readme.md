@@ -26,13 +26,6 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 ## Module 1: Copilot, Agents & Azure AI Foundry Essentials
 
-### Agent Essentials
-
-- Overview Agents & Agentic AI
-- Function Calling & Tools
-- Prompt Engineering vs Context Engineering
-- Multi Agent Solutions & Orchestration
-
 ### Introduction to Azure AI Foundry
 
 - Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
@@ -41,7 +34,15 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Azure AI Foundry Model Router
 - Visual Studio Code AI Toolkit Extension
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
+- Evaluate generative AI Performance
 - Deploy AI Apps using Azure Developer CLI
+
+### Agent Essentials
+
+- Overview Agents & Agentic AI
+- Function Calling & Tools
+- Prompt Engineering vs Context Engineering
+- Multi Agent Solutions & Orchestration
 
 ### Implementing Model Context Protocol Servers (MCP)
 

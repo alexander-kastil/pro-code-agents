@@ -1,4 +1,4 @@
-# Microsoft 365 Data Access using Microsoft Graph
+# Lab: Microsoft 365 Data Access using Microsoft Graph
 
 ## Exercise 1: Access and download files from OneDrive
 
