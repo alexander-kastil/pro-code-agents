@@ -4,6 +4,13 @@
 
 This Development Container provides a ready-to-use, reproducible environment for building Microsoft 365 Copilots and AI Agents (declarative agents in Microsoft Copilot Studio, custom engine / pro‑code agents, Microsoft 365 Agents Toolkit solutions, Azure Functions–backed skills, Teams & Adaptive Card extensions, and Graph-integrated workloads). It bundles the core language SDKs, CLIs, local emulators, and VS Code extensions you typically need—so you can focus on solution logic instead of machine setup.
 
+### Key Features
+
+- **🚀 Optimized Performance**: Most tools are pre-installed in the Docker image for faster container startup
+- **📓 Jupyter Notebook Support**: Full support for interactive notebooks in Python and C# (.NET Interactive)
+- **🔧 Comprehensive Tooling**: Pre-configured with Azure, Microsoft 365, Teams, and Graph development tools
+- **✅ Validation Built-in**: Automated setup validation script included
+
 ---
 
 ## Getting Started
@@ -233,7 +240,19 @@ Sample test notebooks are provided:
 
 ## Validation & Diagnostics
 
-Run these inside the container to confirm key tooling:
+### Quick Validation
+
+Run the automated validation script to check all installations:
+
+```bash
+bash .devcontainer/validate-setup.sh
+```
+
+This script checks all core tools, Jupyter kernels, PowerShell modules, and optional components.
+
+### Manual Verification
+
+Alternatively, run these commands inside the container to confirm key tooling:
 
 ```bash
 dotnet --info | grep 'Version:' | head -n 1
@@ -248,8 +267,26 @@ func --version
 azurite --version
 dotnet tool list -g | grep Kiota || echo 'Kiota missing'
 npm list -g --depth=0 | grep m365agentstoolkit || echo 'M365 Agents Toolkit CLI missing'
-dotnet tool list -g | grep DevTunnels || echo 'Dev Tunnels CLI missing'
-agentsplayground --version
+npm list -g --depth=0 | grep m365agentsplayground || echo 'M365 Agents Playground missing'
+npm list -g --depth=0 | grep teams.cli || echo 'Teams CLI missing'
+devtunnel --version || echo 'Dev Tunnels CLI not installed (optional)'
 ```
+
+### Verify Jupyter Support
+
+```bash
+# Check Jupyter installation
+jupyter --version
+
+# List available Jupyter kernels
+jupyter kernelspec list
+
+# Verify .NET Interactive
+dotnet tool list -g | grep dotnet-interactive || echo '.NET Interactive missing'
+```
+
+You should see both `python3` and `.net-csharp` kernels listed.
+
+---
 
 Happy building intelligent experiences for Microsoft 365!
