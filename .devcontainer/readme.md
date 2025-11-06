@@ -196,6 +196,41 @@ Add changes to `.devcontainer/*` and commit. Codespaces + local rebuilds will pi
 
 ---
 
+## Using Jupyter Notebooks
+
+The devcontainer includes full support for Jupyter notebooks in both Python and C#.
+
+### Testing the Setup
+
+Sample test notebooks are provided:
+- `.devcontainer/test-python-notebook.ipynb` - Tests Python kernel functionality
+- `.devcontainer/test-csharp-notebook.ipynb` - Tests C# (.NET Interactive) kernel functionality
+
+### Creating New Notebooks
+
+1. Create a new file with `.ipynb` extension
+2. When prompted, select a kernel:
+   - **Python 3** - for Python notebooks
+   - **.NET (C#)** - for C# notebooks (polyglot notebooks)
+3. Start writing code cells
+
+### Features Available
+
+**Python Notebooks:**
+- Full Python 3.11 support
+- Access to pip-installed packages
+- Standard library access
+- IPython features
+
+**C# Notebooks:**
+- Full C# language support (latest version with .NET 9)
+- Async/await support
+- LINQ, records, pattern matching
+- Access to NuGet packages via `#r "nuget: PackageName"`
+- Multi-language support (can mix C#, F#, PowerShell, SQL, etc.)
+
+---
+
 ## Validation & Diagnostics
 
 Run these inside the container to confirm key tooling:
