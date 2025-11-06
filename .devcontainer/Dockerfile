@@ -28,7 +28,6 @@ RUN --mount=type=cache,target=/var/cache/apt \
     && ln -sf /usr/local/lib/nodejs/node-v${NODE_VERSION}-${NODE_DISTRO}/bin/npx /usr/local/bin/npx \
     && export PATH="/usr/local/lib/nodejs/node-v${NODE_VERSION}-${NODE_DISTRO}/bin:$PATH" \
     && npm config set prefix /usr/local \
-    && npm install -g npm@latest \
     && pip3 install --no-cache-dir --upgrade pip \
     && node --version \
     && npm --version \
@@ -91,7 +90,7 @@ RUN pwsh -NoLogo -NoProfile -Command "\
     Write-Host 'PowerShell modules installed successfully.'"
 
 # Install Jupyter kernel support for Python and .NET Interactive for C#
-RUN pip3 install --no-cache-dir jupyter ipykernel \
+RUN python3 -m pip install --user --no-cache-dir jupyter ipykernel \
     && python3 -m ipykernel install --user --name python3 --display-name "Python 3"
 
 # Install .NET Interactive for C# Jupyter notebooks
@@ -112,9 +111,9 @@ RUN chown -R vscode:vscode /workspace \
 ENV TZ=UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Configure PATH for vscode user to include their .dotnet/tools
-RUN echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> /home/vscode/.bashrc \
-    && echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> /home/vscode/.profile
+# Configure PATH for vscode user to include user-installed tools
+RUN echo 'export PATH="$HOME/.local/bin:$PATH:$HOME/.dotnet/tools"' >> /home/vscode/.bashrc \
+    && echo 'export PATH="$HOME/.local/bin:$PATH:$HOME/.dotnet/tools"' >> /home/vscode/.profile
 
 # Switch to vscode user by default
 USER vscode
