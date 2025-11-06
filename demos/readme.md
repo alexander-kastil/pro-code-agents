@@ -31,7 +31,9 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
 - Hub based projects vs Foundry based Projects
 - Deploy Large Language Models (LLM) in Azure AI Foundry
+- Prompt Engineering Fundamentals
 - Azure AI Foundry Model Router
+- Using Jupyter Notebooks with Azure AI Foundry
 - Visual Studio Code AI Toolkit Extension
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
 - Evaluate generative AI Performance
@@ -51,7 +53,9 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Transports STDIO vs Http Streaming
 - Develop MCP Servers
 - Testing & Debugging using MCP Inspector
-- Publishing MCP's to Azure
+- MCP Authentication & Security
+- Publishing MCP's to Azure (App Service, Functions, Container Apps)
+- MCP & Azure API Management Integration
 
 ## Module 2: Develop AI Agents using Microsoft Agent Framework
 
