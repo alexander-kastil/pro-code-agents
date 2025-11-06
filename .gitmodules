@@ -2,3 +2,9 @@
 [submodule "demos/02-ollama/02-web-ui/web-ui"]
 	path = demos/02-ollama/02-web-ui/web-ui
 	url = https://github.com/ollama-webui/ollama-webui
+[submodule "resources/ai-agents"]
+	path = resources/ai-agents
+	url = https://github.com/MicrosoftLearning/mslearn-ai-agents
+[submodule "resources/ai-foundry"]
+	path = resources/ai-foundry
+	url = https://github.com/microsoftlearning/mslearn-ai-studio
