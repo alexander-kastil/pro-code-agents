@@ -1,3 +1,5 @@
 azure-identity
 openai
 python-dotenv
+azure-ai-evaluation
+azure-ai-projects

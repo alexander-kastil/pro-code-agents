@@ -13,8 +13,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # create a project client using environment variables loaded from the .env file
-project = AIProjectClient.from_connection_string(
-    conn_str=os.environ["AIPROJECT_CONNECTION_STRING"], credential=DefaultAzureCredential()
+project = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential()
 )
 
 connection = project.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True)

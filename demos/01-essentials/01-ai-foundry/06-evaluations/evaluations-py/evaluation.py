@@ -1,17 +1,33 @@
 from pathlib import Path
 from azure.ai.evaluation import ContentSafetyEvaluator
 from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 import os
 
-# instantiate an evaluator with image and multi-modal support
-azure_cred = DefaultAzureCredential()
-azure_ai_project = {
-    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
-    "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP"),
-    "project_name": os.environ.get("AZURE_PROJECT_NAME"),
+# load environment variables from the .env file
+from dotenv import load_dotenv
+load_dotenv()
+
+# Resolve credential once so both client and evaluator share it
+credential = DefaultAzureCredential()
+
+project_endpoint = os.environ["PROJECT_ENDPOINT"]
+
+# Create project client (useful when you want to interact with the project later)
+project_client = AIProjectClient(endpoint=project_endpoint, credential=credential)
+
+# Prefer endpoint-based scope for non hub-based projects; fall back to hub fields if needed
+azure_ai_project_scope = project_endpoint or {
+    "subscription_id": os.environ["AZURE_SUBSCRIPTION_ID"],
+    "resource_group_name": os.environ["AZURE_RESOURCE_GROUP"],
+    "project_name": os.environ["AZURE_PROJECT_NAME"],
 }
 
-safety_evaluator = ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=azure_ai_project)
+# instantiate an evaluator with image and multi-modal support
+safety_evaluator = ContentSafetyEvaluator(
+    credential=credential,
+    azure_ai_project=azure_ai_project_scope,
+)
 
 # example of a conversation with an image URL
 conversation_image_url = {
@@ -46,8 +62,9 @@ conversation_image_url = {
     ]
 }
 
-safety_score = safety_evaluator(conversation=conversation_image_url)
+if __name__ == "__main__":
+    safety_score = safety_evaluator(conversation=conversation_image_url)
 
-# Print all values from the safety evaluation
-for category, score in safety_score.items():
-    print(f"{category}: {score}")
+    # Print all values from the safety evaluation
+    for category, score in safety_score.items():
+        print(f"{category}: {score}")
