@@ -7,21 +7,15 @@ param location string = 'swedencentral'
 @description('Optional: Object ID (Principal ID) of the service principal to grant permissions to AI Foundry resources')
 param servicePrincipalObjectId string = ''
 
-@description('Whether to enable free tier for Cosmos DB')
-param enableFreeTier bool = false
-
-var prefix = 'pcagents-'
-var suffix = uniqueString(resourceGroup().id)
+var prefix = 'ai'
+var suffix = substring(uniqueString(resourceGroup().id), 0, 3)
 
 var storageAccountName = replace('${prefix}-storage-${suffix}', '-', '')
-var logAnalyticsWorkspaceName = '${prefix}-loganalytics-${suffix}'
+var logAnalyticsWorkspaceName = '${prefix}-analytics-${suffix}'
 var searchServiceName = '${prefix}-search-${suffix}'
-var containerRegistryName = replace('${prefix}acr${suffix}', '-', '')
-var keyVaultName = '${prefix}kv${suffix}'
-var aiFoundryName = '${prefix}-foundry-${suffix}'
-var aiProjectName = '${prefix}-project-${suffix}'
-var applicationInsightsName = '${prefix}-appinsights-${suffix}'
-var cosmosDbAccountName = '${prefix}-cosmosdb-${suffix}'
+var aiFoundryName = '${prefix}-procode-${suffix}'
+var aiProjectName = '${prefix}-procode-${suffix}'
+var applicationInsightsName = '${prefix}-insights-${suffix}'
 
 var cognitiveServicesUserRoleId = subscriptionResourceId(
   'Microsoft.Authorization/roleDefinitions',
@@ -40,18 +34,47 @@ var contributorRoleId = subscriptionResourceId(
   'b24988ac-6180-42a0-ab88-20f7382dd24c'
 )
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
   location: location
+  tags: {
+    ProjectType: 'aoai-your-data-service'
+  }
   sku: {
     name: 'Standard_LRS'
   }
   kind: 'StorageV2'
   properties: {
-    allowBlobPublicAccess: false
+    dnsEndpointType: 'Standard'
+    defaultToOAuthAuthentication: false
+    publicNetworkAccess: 'Enabled'
+    allowCrossTenantReplication: false
+    minimumTlsVersion: 'TLS1_2'
+    allowBlobPublicAccess: true
+    allowSharedKeyAccess: true
+    largeFileSharesState: 'Enabled'
     networkAcls: {
+      bypass: 'AzureServices'
+      virtualNetworkRules: []
+      ipRules: []
       defaultAction: 'Allow'
     }
+    supportsHttpsTrafficOnly: true
+    encryption: {
+      requireInfrastructureEncryption: false
+      services: {
+        file: {
+          keyType: 'Account'
+          enabled: true
+        }
+        blob: {
+          keyType: 'Account'
+          enabled: true
+        }
+      }
+      keySource: 'Microsoft.Storage'
+    }
+    accessTier: 'Hot'
   }
 }
 
@@ -69,36 +92,6 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06
   }
 }
 
-resource cosmosDbAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
-  name: cosmosDbAccountName
-  location: location
-  kind: 'GlobalDocumentDB'
-  identity: {
-    type: 'SystemAssigned'
-  }
-  properties: {
-    consistencyPolicy: {
-      defaultConsistencyLevel: 'Session'
-    }
-    locations: [
-      {
-        locationName: location
-        failoverPriority: 0
-        isZoneRedundant: false
-      }
-    ]
-    databaseAccountOfferType: 'Standard'
-    enableAutomaticFailover: false
-    enableMultipleWriteLocations: false
-    enableFreeTier: enableFreeTier
-    capabilities: [
-      {
-        name: 'EnableServerless'
-      }
-    ]
-  }
-}
-
 resource searchService 'Microsoft.Search/searchServices@2023-11-01' = {
   name: searchServiceName
   location: location
@@ -112,17 +105,6 @@ resource searchService 'Microsoft.Search/searchServices@2023-11-01' = {
   }
 }
 
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
-  name: containerRegistryName
-  location: location
-  sku: {
-    name: 'Basic'
-  }
-  properties: {
-    adminUserEnabled: true
-  }
-}
-
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: applicationInsightsName
   location: location
@@ -130,25 +112,6 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   properties: {
     Application_Type: 'web'
     WorkspaceResourceId: logAnalyticsWorkspace.id
-  }
-}
-
-resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
-  name: keyVaultName
-  location: location
-  properties: {
-    sku: {
-      family: 'A'
-      name: 'standard'
-    }
-    tenantId: subscription().tenantId
-    accessPolicies: []
-    enabledForDeployment: false
-    enabledForDiskEncryption: false
-    enabledForTemplateDeployment: false
-    enableSoftDelete: true
-    softDeleteRetentionInDays: 90
-    enableRbacAuthorization: true
   }
 }
 
@@ -180,7 +143,7 @@ resource aiProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-pre
 }
 
 resource gpt4MiniDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
-  name: 'gpt-4.1-mini'
+  name: 'gpt-4o-mini'
   parent: aiFoundry
   sku: {
     capacity: 100
@@ -188,37 +151,7 @@ resource gpt4MiniDeployment 'Microsoft.CognitiveServices/accounts/deployments@20
   }
   properties: {
     model: {
-      name: 'gpt-4.1-mini'
-      format: 'OpenAI'
-    }
-  }
-}
-
-resource gpt5MiniDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
-  name: 'gpt-5-mini'
-  parent: aiFoundry
-  sku: {
-    capacity: 100
-    name: 'GlobalStandard'
-  }
-  properties: {
-    model: {
-      name: 'gpt-5-mini'
-      format: 'OpenAI'
-    }
-  }
-}
-
-resource modelRouterDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
-  name: 'model-router'
-  parent: aiFoundry
-  sku: {
-    capacity: 250
-    name: 'GlobalStandard'
-  }
-  properties: {
-    model: {
-      name: 'model-router'
+      name: 'gpt-4o-mini'
       format: 'OpenAI'
     }
   }
@@ -326,11 +259,7 @@ output logAnalyticsWorkspaceName string = logAnalyticsWorkspaceName
 output searchServiceName string = searchServiceName
 output aiFoundryHubName string = aiFoundryName
 output aiFoundryProjectName string = aiProjectName
-output keyVaultName string = keyVaultName
-output containerRegistryName string = containerRegistryName
 output applicationInsightsName string = applicationInsightsName
-output cosmosDbAccountName string = cosmosDbAccountName
 output searchServiceEndpoint string = 'https://${searchServiceName}.search.windows.net/'
 output aiFoundryHubEndpoint string = 'https://ml.azure.com/home?wsid=${aiFoundry.id}'
 output aiFoundryProjectEndpoint string = 'https://ai.azure.com/build/overview?wsid=${aiProject.id}'
-output cosmosDbEndpoint string = cosmosDbAccount.properties.documentEndpoint
