@@ -2,7 +2,7 @@
 
 ## Overview
 
-All Python scripts in the `demos/01-essentials` directory and its subdirectories use a shared Python virtual environment located at the root of the repository (`/workspace/.venv` in the devcontainer).
+All Python scripts in the `demos/01-essentials` directory and its subdirectories can use a shared Python virtual environment located at the root of the repository (`/workspace/.venv` in the devcontainer). This environment contains all the packages needed by the example Python scripts in this directory.
 
 ## Automatic Setup
 
@@ -66,6 +66,8 @@ To add new Python dependencies:
 
 ## Directory Structure
 
+Python scripts are located in the following directories:
+
 ```
 demos/01-essentials/
 ├── 01-ai-foundry/
@@ -76,8 +78,9 @@ demos/01-essentials/
 │   │   └── rag-azure/           # RAG with Azure AI Search
 │   └── 06-evaluations/
 │       └── evaluations-py/      # Evaluation examples
+├── 02-agents/                   # (No Python scripts currently)
 └── 03-mcp/
     └── youtube-transcriber-mcp-py/  # MCP server example
 ```
 
-All scripts in these directories use the shared virtual environment at `/workspace/.venv`.
+All Python scripts in these directories can use the shared virtual environment at `/workspace/.venv`.
