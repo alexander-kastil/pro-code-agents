@@ -1,7 +1,0 @@
-azure-ai-projects
-azure-ai-inference
-azure-ai-evaluation
-azure-identity
-azure-search-documents
-python-dotenv
-azure-monitor-opentelemetry
