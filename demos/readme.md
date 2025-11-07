@@ -31,11 +31,10 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
 - Hub based projects vs Foundry based Projects
 - Deploy Large Language Models (LLM) in Azure AI Foundry
-- Prompt Engineering Fundamentals
 - Azure AI Foundry Model Router
+- Azure AI Foundry SDK & Microsoft.Extensions.AI
 - Using Jupyter Notebooks with Azure AI Foundry
 - Visual Studio Code AI Toolkit Extension
-- Azure AI Foundry SDK & Microsoft.Extensions.AI
 - Retrieval Augmented Generation (RAG) Basics
 - Evaluate generative AI Performance
 - Deploy AI Apps using Azure Developer CLI

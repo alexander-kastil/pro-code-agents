@@ -1,6 +1,9 @@
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]

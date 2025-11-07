@@ -6,8 +6,11 @@
 - Hub based projects vs Foundry based Projects
 - Deploy Large Language Models (LLM) in Azure AI Foundry
 - Azure AI Foundry Model Router
-- Visual Studio Code AI Toolkit Extension
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
+- Using Jupyter Notebooks with Azure AI Foundry
+- Visual Studio Code AI Toolkit Extension
+- Retrieval Augmented Generation (RAG) Basics
+- Evaluate generative AI Performance
 - Deploy AI Apps using Azure Developer CLI
 
 ## Agent Essentials

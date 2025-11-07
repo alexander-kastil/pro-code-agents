@@ -1,7 +1,10 @@
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.inference.prompts import PromptTemplate
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 def get_chat_response(messages, context):
     project_client = AIProjectClient.from_connection_string(
