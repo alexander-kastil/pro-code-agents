@@ -49,11 +49,18 @@ if [[ -d "$HOME/.dotnet/tools" ]]; then
   fi
 fi
 
+# Ensure .NET Interactive kernels are registered with Jupyter
+if command -v dotnet-interactive >/dev/null 2>&1; then
+  echo "Registering .NET Interactive kernels with Jupyter..."
+  dotnet interactive jupyter install
+else
+  echo "dotnet-interactive command not found; skipping Jupyter kernel registration"
+fi
+
 # Install Dev Tunnels CLI (optional, user-specific installation)
 if ! command -v devtunnel >/dev/null 2>&1; then
   echo "Installing Dev Tunnels CLI..."
   curl -sL https://aka.ms/DevTunnelCliInstall | bash
-  # Add ~/bin to PATH for current session
   export PATH="$HOME/bin:$PATH"
   echo "Dev Tunnels CLI installed successfully"
 else

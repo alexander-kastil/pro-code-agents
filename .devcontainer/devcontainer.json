@@ -1,5 +1,5 @@
 {
-  "name": "Copilot & Agents",
+  "name": "Agentic AI",
   "dockerComposeFile": "docker-compose.yml",
   "service": "devcontainer",
   "remoteUser": "vscode",
@@ -75,5 +75,5 @@
     5000,
     5001
   ],
-  "postCreateCommand": "bash ./.devcontainer/post-create.lf.sh"
+  "postCreateCommand": "bash ./.devcontainer/post-create.sh"
 }
