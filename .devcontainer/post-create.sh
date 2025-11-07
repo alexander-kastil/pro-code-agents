@@ -21,6 +21,26 @@ sudo chmod -R u+rwX,go+rX /workspace
 # Navigate to the workspace root
 cd /workspace
 
+# Create Python virtual environment at the root if it doesn't exist
+if [[ ! -d "/workspace/.venv" ]]; then
+  echo "Creating Python virtual environment at /workspace/.venv..."
+  python3 -m venv /workspace/.venv
+  echo "Python virtual environment created successfully."
+fi
+
+# Install requirements from requirements.txt
+if [[ -f "/workspace/requirements.txt" ]]; then
+  echo "Installing Python packages from requirements.txt..."
+  /workspace/.venv/bin/pip install --upgrade pip
+  /workspace/.venv/bin/pip install -r /workspace/requirements.txt
+  echo "Python packages installed successfully."
+else
+  echo "Warning: requirements.txt not found, skipping package installation."
+fi
+
+# Set proper ownership for the virtual environment
+chown -R "${TARGET_USER}:${TARGET_GROUP}" /workspace/.venv
+
 # Ensure npm global bin directory is on PATH for current and future shells
 GLOBAL_NPM_PREFIX="$(npm prefix -g 2>/dev/null || true)"
 if [[ -n "${GLOBAL_NPM_PREFIX}" ]]; then
@@ -81,5 +101,9 @@ if command -v dotnet-interactive >/dev/null 2>&1; then
 else
     echo "  - .NET Interactive: not found in PATH"
 fi
+echo ""
+echo "Python virtual environment created at /workspace/.venv"
+echo "To activate the virtual environment, run: source /workspace/.venv/bin/activate"
+echo "All Python scripts in demos/01-essentials will use this shared environment."
 echo ""
 echo "Ready for development with Jupyter notebook support for Python and C#!"
