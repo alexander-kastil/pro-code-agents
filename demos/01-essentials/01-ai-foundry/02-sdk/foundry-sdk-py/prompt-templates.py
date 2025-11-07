@@ -7,8 +7,9 @@ import os
 load_dotenv()
 
 def get_chat_response(messages, context):
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    project_client = AIProjectClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential()
     )
 
     template = PromptTemplate.from_string(
@@ -23,9 +24,9 @@ def get_chat_response(messages, context):
     system_message = template.create_messages()
 
     # add the prompt messages to the user messages
-    chat = project_client.inference.get_chat_completions_client()
-    return chat.complete(
-        model="gpt-4o-mini",
+    chat = project_client.get_openai_client()
+    return chat.chat.completions.create(
+        model=os.environ["MODEL"],
         messages=system_message + messages,
         temperature=1,
         frequency_penalty=0.5,

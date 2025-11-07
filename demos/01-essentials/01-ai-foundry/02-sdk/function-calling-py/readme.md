@@ -1,6 +1,6 @@
-# Foundry SDK Python Demo
+# Function Calling Python Demo
 
-This demo shows how to use Azure AI Foundry SDK with Python.
+This demo shows how to use Azure AI Foundry SDK with Python for function calling.
 
 ## Setup
 
@@ -24,8 +24,7 @@ This demo shows how to use Azure AI Foundry SDK with Python.
    MODEL="gpt-4.1-mini"
    ```
 
-4. Run the demos:
+4. Run the demo:
    ```bash
-   uv run python chat-foundry.py
-   uv run python prompt-templates.py
+   uv run python function-calling.py
    ```

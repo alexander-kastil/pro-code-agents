@@ -5,13 +5,14 @@ import os
 
 load_dotenv()
 
-project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential()
 )
 
-chat = project_client.inference.get_chat_completions_client()
-response = chat.complete(
-    model="gpt-4o-mini",
+chat = project_client.get_openai_client()
+response = chat.chat.completions.create(
+    model=os.environ["MODEL"],
     messages=[
         {
             "role": "system",

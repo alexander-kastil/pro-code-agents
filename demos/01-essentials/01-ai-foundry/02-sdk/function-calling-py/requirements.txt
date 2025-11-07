@@ -1,4 +1,5 @@
-python-dotenv
 azure-ai-projects
 azure-ai-inference
 azure-identity
+python-dotenv
+openai

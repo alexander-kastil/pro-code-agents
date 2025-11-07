@@ -1,20 +1,17 @@
 import json
 import os
-import azure.identity
-import openai
+from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+load_dotenv()
 
-token_provider = azure.identity.get_bearer_token_provider(
-    azure.identity.DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
+project_client = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential()
 )
-client = openai.AzureOpenAI(
-    api_version=os.environ["AZURE_OPENAI_VERSION"],
-    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-    api_key=os.environ["AZURE_OPENAI_KEY"],
-)
-MODEL_NAME = os.environ["AZURE_OPENAI_DEPLOYMENT"]
+client = project_client.get_openai_client()
+MODEL_NAME = os.environ["MODEL"]
 
 def lookup_weather(city_name=None, zip_code=None):
     """Lookup the weather for a given city name or zip code."""
@@ -61,7 +58,7 @@ response = client.chat.completions.create(
     tool_choice="auto",
 )
 
-print(f"Response from {MODEL_NAME} on {API_HOST}: \n")
+print(f"Response from {MODEL_NAME}: \n")
 
 # Now actually call the function as indicated
 
