@@ -32,8 +32,12 @@ fi
 if [[ -f "/workspace/requirements.txt" ]]; then
   echo "Installing Python packages from requirements.txt..."
   /workspace/.venv/bin/pip install --upgrade pip
-  /workspace/.venv/bin/pip install -r /workspace/requirements.txt
-  echo "Python packages installed successfully."
+  if /workspace/.venv/bin/pip install -r /workspace/requirements.txt; then
+    echo "Python packages installed successfully."
+  else
+    echo "ERROR: Failed to install Python packages. Check the logs above for details."
+    exit 1
+  fi
 else
   echo "Warning: requirements.txt not found, skipping package installation."
 fi

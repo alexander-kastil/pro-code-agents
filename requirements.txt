@@ -1,3 +1,6 @@
+# Python packages for demos/01-essentials
+# Note: Versions are not pinned to allow flexibility in development.
+# For production use, consider pinning specific versions.
 azure-ai-projects
 azure-ai-inference
 azure-ai-evaluation
