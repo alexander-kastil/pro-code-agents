@@ -2,7 +2,7 @@
 
 This five-day class is designed for Software Architects & Engineers for Agentic AI Solutions who want to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agents using Microsoft’s latest frameworks and services.
 
-The journey begins with the essentials: you’ll explore the foundations of Copilots, Agents, and the Azure AI Foundry. Learn how to deploy large language models, use the Azure AI Foundry SDK, and evaluate generative AI performance. Early sessions introduce Retrieval Augmented Generation (RAG), prompt and context engineering, and the principles of agentic reasoning and orchestration.
+The journey begins with the essentials: you’ll explore the foundations of Copilots, Agents, and the Azure AI Foundry. Learn how to deploy large language models, use the Azure AI Foundry SDK, and evaluate generative AI performance. Early sessions introduce Retrieval Augmented Generation (RAG), prompt and context engineering, and the principles of agentic reasoning and orchestration as well as a good foundation to implement you own MCP Servers.
 
 Next, you’ll discover how the Azure AI Agent Service provides a scalable, robust platform for hosting agents. You’ll work with threads, runs, and messages, connect action and knowledge tools, and automate workflows using agent-to-agent protocols. Security, monitoring, and governance are integrated throughout, ensuring your solutions are enterprise-ready.
 
@@ -167,6 +167,7 @@ By the end, you’ll have practical experience in implementing, orchestrating, a
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
 
 
 
