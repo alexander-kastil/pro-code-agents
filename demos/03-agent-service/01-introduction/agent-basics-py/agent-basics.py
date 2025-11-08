@@ -5,7 +5,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import ListSortOrder
 
-
 def main():
 
     # Clear the console to keep the output focused on the agent interaction
