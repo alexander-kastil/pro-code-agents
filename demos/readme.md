@@ -116,13 +116,11 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 ### Microsoft Agent Framework Workflows
 
-- Workflow vs Agents
 - Workflow Types & Overview
 - Executor & Edges
 - Orchestration Patterns (Sequential, Concurrent, ...)
-- Branching in Workflows
-- Human in the loop
 - Sharing States & Checkpoints
+- Branching in Workflows & Human in the loop
 - Observability & Wokflow Visualization
 - Using Agents in Workflows & Workflow as Agents
 
@@ -183,4 +181,5 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Copilot Security & Compliance
 - Introduction to Copilot Controls
 - Publish and Analyze Pro-Code Agents
+
 
