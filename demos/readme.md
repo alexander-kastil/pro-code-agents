@@ -58,7 +58,29 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Publishing MCP's to Azure (App Service, Functions, Container Apps)
 - MCP & Azure API Management Integration
 
-## Module 2: Develop AI Agents using Microsoft Agent Framework
+## Module 2: Designing & Implementing Agents using Azure AI Foundry Agent Service
+
+### Agent Service Basic Concepts
+
+- Introduction to Azure AI Foundry Agent Service
+- Threads, Runs, Messages, Inputs & Outputs
+- Using Action Tools: Code Interpreter, Function Calling, Azure Functions and OpenAPI Tools
+- Using Knowledge Tools: File Search, Azure AI Search
+- Deep Research and Bing Grounding
+- Connect MCP tools to Azure AI Agent Service
+- Automating UI Tasks using Computer Use Agent
+- Multi-Agent Workflows & Connected Agents
+- Agent-2-Agent Protocol (A2A)
+- Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
+
+### Securing, Monitoring and Evaluating Foundry Agents
+
+- Agent Guardrails and Data Controls
+- Ensuring App Behavior using Evaluations
+- Monitoring Risk and Alerts
+- Azure AI Foundry Agent Governance and Observability
+
+## Module 3: Develop AI Agents using Microsoft Agent Framework
 
 ### Microsoft Agent Framework Basics & Concepts
 
@@ -103,28 +125,6 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Request & Response Handling
 - Sharing States & Checkpoints
 - Observability & Visualization
-
-## Module 3: Designing & Implementing Agents using Azure AI Foundry Agent Service
-
-### Agent Service Basic Concepts
-
-- Introduction to Azure AI Foundry Agent Service
-- Threads, Runs & Messages
-- Using Action Tools: Code Interpreter, Function Calling, Azure Functions and OpenAPI Tools
-- Using Knowledge Tools: File Search, Azure AI Search
-- Deep Research and Bing Grounding
-- Connect MCP tools to Azure AI Agent Service
-- Automating UI Tasks using Computer Use Agent
-- Multi-Agent Workflows & Connected Agents
-- Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
-- Agent-2-Agent Protocol (A2A)
-
-### Securing, Monitoring and Evaluating Foundry Agents
-
-- Agent Guardrails and Data Controls
-- Ensuring App Behavior using Evaluations
-- Monitoring Risk and Alerts
-- Azure AI Foundry Agent Governance and Observability
 
 ## Module 4: Microsoft Copilot Pro-Code Extensibility
 
@@ -183,4 +183,3 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Copilot Security & Compliance
 - Introduction to Copilot Controls
 - Publish and Analyze Pro-Code Agents
-
