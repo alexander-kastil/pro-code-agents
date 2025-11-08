@@ -159,7 +159,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Providing Tools & Knowledge
 - Enhance your agent using custom data and Azure AI Search (RAG)
 
-## Module 5: Agent & Copilot Integration using Microsoft Agents SDK
+## Module 5: Agent & Copilot Integration using the Microsoft Agents SDK
 
 - Overview Microsoft Agents SDK
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
