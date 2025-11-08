@@ -164,10 +164,4 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Overview Microsoft Agents SDK
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
-- Providing Pro Code Agents in Copilot UI
-
-### Publishing & Monitoring Pro Code Agents
-
-- Copilot Security & Compliance
-- Introduction to Copilot Controls
-- Publish and Analyze Pro-Code Agents
+- Publishing Pro Code Agents to Copilot Chat and Teams
