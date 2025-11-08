@@ -1,12 +1,16 @@
-# Designing & Implementing Agents and Pro Code Copilots using Microsoft Agent Framework and Azure AI Agent Service
+# Implementing Pro Code Copilots & Agents using Microsoft Agent Framework and Azure AI Agent Service
 
-This in-depth course that takes developers from foundational concepts to advanced multi-agent orchestration using Microsoft's AI ecosystem. The course begins with Azure AI Foundry essentials, covering hubs, projects, and resources while establishing expertise in prompt engineering, GitHub Models, and the Agent-to-Agent (A2A) protocol fundamentals. Students dive deep into Semantic Kernel development, mastering chat completion, multi-modal capabilities, and advanced prompt templating using YAML, Handlebar, and Liquid formats.
+This five-day class is designed for Microsoft 365 and AI pro-code developers who want to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agents using Microsoft’s latest frameworks and services.
 
-The curriculum provides extensive coverage of Semantic Kernel's plugin architecture, including native functions, OpenAPI integrations, and MCP server implementations, alongside Kernel Memory and vector store connectors for RAG solutions. Participants will master both the Semantic Kernel Agent and Process Frameworks, learning to build multi-step task agents with personas while choosing between Orleans and Dapr runtimes. The course emphasizes Azure AI Foundry's multi-agent solutions, teaching students to leverage the Azure AI Foundry Agent Service with action tools (code interpreters, function calling) and knowledge tools (file search, Azure AI Search, Bing Grounding).
+The journey begins with the essentials: you’ll explore the foundations of Copilots, Agents, and the Azure AI Foundry. Learn how to deploy large language models, use the Azure AI Foundry SDK, and evaluate generative AI performance. Early sessions introduce Retrieval Augmented Generation (RAG), prompt and context engineering, and the principles of agentic reasoning and orchestration.
 
-Advanced topics include orchestrating complex multi-agent solutions, implementing human-in-the-loop patterns, and integrating .NET Aspire for scalable deployments. The final module ensures production readiness through security, monitoring, and evaluation strategies including agent guardrails, risk monitoring, and Azure AI Foundry's governance and observability features. By completion, students will architect and deploy secure, monitored multi-agent systems leveraging the full power of Azure AI Foundry's orchestration capabilities.
+Next, you’ll discover how the Azure AI Agent Service provides a scalable, robust platform for hosting agents. You’ll work with threads, runs, and messages, connect action and knowledge tools, and automate workflows using agent-to-agent protocols. Security, monitoring, and governance are integrated throughout, ensuring your solutions are enterprise-ready.
 
-Throughout all modules, you'll work with hands-on code samples in both Python and C#, giving you practical experience building production-ready AI agent solutions.
+The class then shifts to the Microsoft Agent Framework, where you’ll configure agents, enable multi-modal capabilities, and design complex workflows with branching, checkpoints, and human-in-the-loop patterns. You’ll see how this framework enables sophisticated orchestration and persistent memory across conversations.
+
+Moving into pro-code extensibility, you’ll build both declarative and custom engine agents, leverage the Microsoft 365 Agent Toolkit, and integrate Copilot connectors. Finally, you’ll use the Microsoft Agents SDK to bring your agents directly into the Copilot UI, connecting Copilot Studio- and Pro-Code Agents, and deploying your solutions to Copilot Chat and Teams.
+
+By the end, you’ll have practical experience in implementing, orchestrating, and integrating intelligent agents across the Microsoft ecosystem—ready to deliver scalable, enterprise-grade AI solutions.
 
 ## Duration
 
@@ -14,13 +18,13 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 ## Audience
 
+- Software Architects & Engineers for Agentic AI Solutions
 - Microsoft 365 & AI Pro-Code Developers
 
 ## Prerequisites & Requirements
 
-- Basic Microsoft 365 Platform Development Skills
-- Basic Azure Development Skills
 - Python, C#, Typescript
+- Microsoft 365 Development & Azure Development Skills helpful
 
 ## Modules
 
@@ -34,7 +38,6 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Azure AI Foundry Model Router
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
 - Using Jupyter Notebooks with Azure AI Foundry
-- Visual Studio Code AI Toolkit Extension
 - Retrieval Augmented Generation (RAG) Basics
 - Evaluate generative AI Performance
 - Deploy AI Apps using Azure Developer CLI
@@ -42,32 +45,30 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 ### Agent Essentials
 
 - Overview Agents & Agentic AI
-- Function Calling & Tools
 - Prompt Engineering vs Context Engineering
 - Retrieval Augmented Generation (RAG) vs Agentic RAG
+- Knowledge & Tools
+- REST & Model Context Protocol Servers (MCP)
 - Agentic Reasoning Process & Self Correction
-- Model Context Protocol Servers (MCP)
 - Multi Agent Solutions & Orchestration
+- Pro-Code Copilots and Agents Governance
 
 ### Implementing Model Context Protocol Servers (MCP)
 
-- Model Context Protocol (MCP) Overview
-- MCP Core Concepts
+- Model Context Protocol (MCP) Core Concepts
 - Transports STDIO vs Http Streaming
 - Testing & Debugging using MCP Inspector
 - MCP Authentication & Security
-- Publishing MCP's to Azure (App Service, Functions, Container Apps)
-- MCP & Azure API Management Integration
+- Azure Hosting Options & API Management Integration
 
-## Module 2: Designing & Implementing Agents using Azure AI Foundry Agent Service
+## Module 2: Implementing Agents using Azure AI Foundry Agent Service
 
 ### Agent Service Basic Concepts
 
 - Introduction to Azure AI Foundry Agent Service
 - Threads, Runs, Messages, Inputs & Outputs
 - Using Action Tools: Code Interpreter, Function Calling, Azure Functions and OpenAPI Tools
-- Using Knowledge Tools: File Search, Azure AI Search
-- Deep Research and Bing Grounding
+- Using Knowledge Tools: File Search, Azure AI Search & Grounding
 - Connect MCP tools to Azure AI Agent Service
 - Automating UI Tasks using Computer Use Agent
 - Multi-Agent Workflows & Connected Agents
@@ -159,9 +160,10 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Providing Tools & Knowledge
 - Enhance your agent using custom data and Azure AI Search (RAG)
 
-## Module 5: Agent & Copilot Integration using the Microsoft Agents SDK
+## Module 5: Integrating Agent & Copilot using the Microsoft Agents SDK
 
+- Copilot is the UI for Agents & AI
 - Overview Microsoft Agents SDK
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
-- Publishing Pro Code Agents to Copilot Chat and Teams
+- Deploying Pro Code Agents to Copilot Chat and Teams
