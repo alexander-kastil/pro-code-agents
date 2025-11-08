@@ -43,8 +43,10 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 - Overview Agents & Agentic AI
 - Function Calling & Tools
-- Mcp & A2A
 - Prompt Engineering vs Context Engineering
+- Retrieval Augmented Generation (RAG) vs Agentic RAG
+- Agentic Reasoning Process & Self Correction
+- Model Context Protocol Servers (MCP)
 - Multi Agent Solutions & Orchestration
 
 ### Implementing Model Context Protocol Servers (MCP)
@@ -108,8 +110,6 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 ### Knowledge & Retrieval Augmented Generation
 
-- Retrieval Augmented Generation (RAG) vs Agentic RAG
-- Agentic Reasoning Process & Self Correction
 - Understanding Microsoft.Extensions.AI RAG
 - Create Embeddings & using Vector Stores
 - Using Azure AI Search Agentic Retrieval
