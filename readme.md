@@ -2,19 +2,16 @@
 
 Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) containing:
 
-- [Getting Started](./tooling/00-getting-started)
 - [Instructor Demos](./demos)
-- [Requirements / tooling](./tooling)
-  - [Git & GitHub Basics](./tooling/01-git)
-  - [Visual Studio Code Basics](./tooling/02-vscode)
-  - [Using Markdown](./tooling/03-markdown)
-  - [Using Azure CLI & Cloud Shell](./tooling/04-cli)
-  - [Docker and WSL Setup](./tooling/08-docker-wsl)
-  - [Configure VS Code REST Client Extension](./tooling/07-rest-client)
-  - [Python Basics](./tooling/10-python)
-  - [Jupyter Notebooks](./tooling/09-jupyter)
-  - [Local LLMs](./tooling/11-llms)
 - [Labs](./labs/)
+
+## Modules
+
+- [Module 1: Copilot, Agents & Azure AI Foundry Essentials](./demos/01-foundry)
+- [Module 2: Implementing Agents using Azure AI Foundry Agent Service](./demos/02-agent-service)
+- [Module 3: Orchestrating Agents using Microsoft Agent Framework](./demos/03-agent-framework)
+- [Module 4: Pro-Code Extensibility using Microsoft 365 Agent Toolkit & Custom Engine Agents](./demos/04-pro-code-agents)
+- [Module 5: Agent & Copilot Integration using the Microsoft Agents SDK](./demos/05-integration)
 
 ## Cloning the Repository
 
@@ -47,4 +44,3 @@ Permission is hereby granted to to use, modify, and distribute the workshop mate
 - Share-Alike: Any derivative works based on these materials must be shared under the same license terms.
 
 For commercial use please contact the author via [LinkedIn](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) or [email](mailto:alexander.kastil@integrations.at)
-
