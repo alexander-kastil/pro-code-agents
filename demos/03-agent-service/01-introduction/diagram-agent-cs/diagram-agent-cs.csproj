@@ -13,4 +13,13 @@
     <PackageReference Include="Azure.Identity" Version="1.17.0" />
   </ItemGroup>
 
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="data/data.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+  </ItemGroup>
+
 </Project>
