@@ -54,7 +54,6 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Model Context Protocol (MCP) Overview
 - MCP Core Concepts
 - Transports STDIO vs Http Streaming
-- Develop MCP Servers
 - Testing & Debugging using MCP Inspector
 - MCP Authentication & Security
 - Publishing MCP's to Azure (App Service, Functions, Container Apps)
@@ -91,28 +90,20 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Agent Types & Configuration
 - Images & Multi-modal Capabilities
 - Structured Output for Chats
-- Middleware & Dependency Injection
 - Threads, Conversations Persistence & Memory
-- ChatReducer
-- Prompt Rendering Middleware
-- Supporting Authentication
+- Middleware & Dependency Injection
+- ChatReducer & Prompt Rendering Middleware
 
-### Tools & Model Context Protocol
+### Tools & Knowledge
 
 - Understand Tool Call
 - Builtin Tools (Code Interpreter, File Search, Web Search)
-- Implementing basic Tools
+- Integrate OpenApi & MCP Tools
 - Use Human in the loop with Tool Call
 - Using Function Calling Middleware
-- Integrate API's using OpenApi Plugins
-- Using existing MCP Tools
-- Exposing your Agents as MCP Server
-
-### Knowledge & Retrieval Augmented Generation
-
 - Understanding Microsoft.Extensions.AI RAG
-- Create Embeddings & using Vector Stores
-- Using Azure AI Search Agentic Retrieval
+- Embeddings & using Vector Stores
+- Azure AI Search Agentic Retrieval
 
 ### Microsoft Agent Framework Workflows
 
@@ -121,8 +112,8 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Orchestration Patterns (Sequential, Concurrent, ...)
 - Sharing States & Checkpoints
 - Branching in Workflows & Human in the loop
-- Observability & Wokflow Visualization
-- Using Agents in Workflows & Workflow as Agents
+- Observability & Workflow Visualization
+- Agents in Workflows / Workflow as Agents
 
 ## Module 4: Microsoft Copilot Pro-Code Extensibility
 
@@ -160,26 +151,23 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Extend Agents Actions with API Plugins
 - Implementing Key-based & EntraID Authentication
 
-### Custom Engine Agents using Microsoft Agent SDK
+### Custom Engine Agents Basics
 
-- Introduction & Benefits of using Microsoft Agent SDK
+- Overview Custom Engine Agents
+- Microsoft Agent SDK & Teams AI Library
 - Microsoft Agents Playground
-- Implementing Custom Engine Agents for Microsoft 365
-- Consuming Model Context Protocol (MCP) Tools
-- Running Copilot Studio Agents using Microsoft Agent SDK
+- Providing Tools & Knowledge
 - Enhance your agent using custom data and Azure AI Search (RAG)
-- Integrating Azure AI Foundry Agents in the Copilot UI
 
-### Custom Engine Agents using the Teams AI Library
+## Module 5: Agent & Copilot Integration using Microsoft Agents SDK
 
-- Introduction & Benefits of using Teams AI Library
-- Create a custom engine agent using Teams AI Library
-- Understanding Project Structure & Metadata
+- Overview Microsoft Agents SDK
+- Connecting Copilot Studio Agents using Microsoft Agent SDK
+- Connecting Azure AI Foundry Agents
+- Providing Pro Code Agents in Copilot UI
 
 ### Publishing & Monitoring Pro Code Agents
 
 - Copilot Security & Compliance
 - Introduction to Copilot Controls
 - Publish and Analyze Pro-Code Agents
-
-
