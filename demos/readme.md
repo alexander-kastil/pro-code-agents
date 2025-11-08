@@ -1,6 +1,6 @@
 # Implementing Pro Code Copilots & Agents using Microsoft Agent Framework and Azure AI Agent Service
 
-This five-day class is designed for Microsoft 365 and AI pro-code developers who want to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agents using Microsoft’s latest frameworks and services.
+This five-day class is designed for Software Architects & Engineers for Agentic AI Solutions who want to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agents using Microsoft’s latest frameworks and services.
 
 The journey begins with the essentials: you’ll explore the foundations of Copilots, Agents, and the Azure AI Foundry. Learn how to deploy large language models, use the Azure AI Foundry SDK, and evaluate generative AI performance. Early sessions introduce Retrieval Augmented Generation (RAG), prompt and context engineering, and the principles of agentic reasoning and orchestration.
 
@@ -167,3 +167,4 @@ By the end, you’ll have practical experience in implementing, orchestrating, a
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
