@@ -121,10 +121,10 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Executor & Edges
 - Orchestration Patterns (Sequential, Concurrent, ...)
 - Branching in Workflows
-- Using Agents in Workflows & Workflow as Agents
-- Request & Response Handling
+- Human in the loop
 - Sharing States & Checkpoints
-- Observability & Visualization
+- Observability & Wokflow Visualization
+- Using Agents in Workflows & Workflow as Agents
 
 ## Module 4: Microsoft Copilot Pro-Code Extensibility
 
@@ -183,3 +183,4 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Copilot Security & Compliance
 - Introduction to Copilot Controls
 - Publish and Analyze Pro-Code Agents
+
