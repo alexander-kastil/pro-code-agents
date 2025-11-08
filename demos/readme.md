@@ -43,6 +43,7 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 
 - Overview Agents & Agentic AI
 - Function Calling & Tools
+- Mcp & A2A
 - Prompt Engineering vs Context Engineering
 - Multi Agent Solutions & Orchestration
 
@@ -182,3 +183,4 @@ Throughout all modules, you'll work with hands-on code samples in both Python an
 - Copilot Security & Compliance
 - Introduction to Copilot Controls
 - Publish and Analyze Pro-Code Agents
+
