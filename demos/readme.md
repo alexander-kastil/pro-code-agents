@@ -153,7 +153,8 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Overview Microsoft Agents SDK
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
-- Deploying Pro Code Agents to Copilot Chat and Teams
+- Publishing Agentic Solutions to Copilot Chat and Teams
+
 
 
 
