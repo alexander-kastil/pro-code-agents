@@ -32,7 +32,22 @@
    uv run python create_search_index.py
    ```
 
-5. Load product documents:
+5. Test the search index (vector, hybrid, and semantic search):
+
+   ```bash
+   # Test all search types
+   uv run python test-index.py
+   
+   # Test specific search type
+   uv run python test-index.py --search-type vector
+   uv run python test-index.py --search-type hybrid
+   uv run python test-index.py --search-type semantic
+   
+   # Use custom query
+   uv run python test-index.py --query "waterproof jacket for hiking"
+   ```
+
+6. Load product documents:
    ```bash
    uv run python get_product_documents.py
    ```
