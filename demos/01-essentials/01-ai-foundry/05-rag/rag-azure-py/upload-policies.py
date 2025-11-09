@@ -1,3 +1,4 @@
+import json
 import mimetypes
 import os
 from pathlib import Path
@@ -27,17 +28,39 @@ def upload_folder(container_name: str, assets_dir: Path) -> None:
     if not files:
         return
 
+    # Create processed documents JSON structure
+    processed_documents = {
+        "policies": []
+    }
+
     for path in files:
-        blob_name = path.name
-        content_type, _ = mimetypes.guess_type(str(path))
-        content_settings = ContentSettings(content_type=content_type) if content_type else None
+        # Read file content
+        with path.open("r", encoding="utf-8") as f:
+            text_content = f.read()
 
-        with path.open("rb") as f:
-            data = f.read()
+        # Create document entry
+        document = {
+            "text": text_content,
+            "success": True,
+            "metadata": {
+                "file_name": path.name,
+                "file_type": "markdown"
+            }
+        }
+        processed_documents["policies"].append(document)
 
-        container_client.upload_blob(
-            name=blob_name, data=data, overwrite=True, content_settings=content_settings
-        )
+    # Upload the processed documents JSON file
+    blob_name = os.environ.get("PROCESSED_BLOB_NAME", "processed_documents_for_vectorization.json")
+    json_data = json.dumps(processed_documents, indent=2)
+    
+    container_client.upload_blob(
+        name=blob_name,
+        data=json_data.encode("utf-8"),
+        overwrite=True,
+        content_settings=ContentSettings(content_type="application/json")
+    )
+    
+    print(f"✅ Uploaded {len(processed_documents['policies'])} policy documents to {blob_name}")
 
 
 def main() -> None:
