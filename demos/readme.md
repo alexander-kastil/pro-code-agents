@@ -30,7 +30,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ## Module 1: Copilot, Agents & Azure AI Foundry Essentials
 
-### Introduction to Azure AI Foundry
+### Azure AI Foundry Essentials
 
 - Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
 - Hub based projects vs Foundry based Projects
@@ -140,6 +140,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Azure AI Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
