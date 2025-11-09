@@ -1,5 +1,7 @@
+from typing import Dict, List
+
+from azure.core.exceptions import HttpResponseError
 from azure.search.documents import SearchClient
-from typing import List, Dict
 
 
 class SearchTester:
@@ -19,10 +21,21 @@ class SearchTester:
         if category_filter:
             search_params["filter"] = f"category eq '{category_filter}'"
         
-        results = self.search_client.search(**search_params)
-        
+        try:
+            raw_results = self.search_client.search(**search_params)
+            hits = list(raw_results)
+        except HttpResponseError as error:
+            if "Semantic search is not enabled" in str(error):
+                fallback_params = search_params.copy()
+                fallback_params.pop("semantic_configuration_name", None)
+                fallback_params["query_type"] = "simple"
+                raw_results = self.search_client.search(**fallback_params)
+                hits = list(raw_results)
+            else:
+                raise
+
         search_results = []
-        for result in results:
+        for result in hits:
             search_results.append({
                 'id': result['id'],
                 'title': result['title'],
