@@ -2,7 +2,7 @@
 
 Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) containing:
 
-- [Instructor Demos](./demos)
+- [Demos](./demos)
 - [Labs](./labs/)
 
 ## Modules
@@ -44,4 +44,5 @@ Permission is hereby granted to to use, modify, and distribute the workshop mate
 - Share-Alike: Any derivative works based on these materials must be shared under the same license terms.
 
 For commercial use please contact the author via [LinkedIn](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) or [email](mailto:alexander.kastil@integrations.at)
+
 
