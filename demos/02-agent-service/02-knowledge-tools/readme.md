@@ -1,6 +1,6 @@
-# Action & Knowledge Tools
+# Knowledge & Tools
 
-[Knowledge Tools](https://learn.microsoft.com/en-us/azure/ai-services/agents/how-to/tools/bing-grounding)
+[Tools in Azure AI Foundry Agent Service](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/overview)
 
 ## Knowledge Tools
 
