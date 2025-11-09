@@ -137,7 +137,6 @@ By the end, you’ll have practical experience in implementing, orchestrating, a
 - Pro-Code Agents Overview & Extensibility Options
 - Introduction to Microsoft 365 Agent Toolkit & Agent Toolkit CLI
 - Pro Code Declarative Agents vs Custom Engine Agents
-- Custom Engine Agents: Microsoft Agent SDK vs Teams AI Library v2
 - When to use which type of Pro-Code Agent
 
 ### Declarative Agents for Microsoft 365
@@ -145,20 +144,18 @@ By the end, you’ll have practical experience in implementing, orchestrating, a
 - Declarative Agents for Microsoft 365 Copilot Overview
 - Creating Declarative Agents using Microsoft 365 Agent Toolkit
 - Base Files, Instructions & Conversation Starters
-- Knowledge Sources: WebSearch, SharePoint, Teams, ...
-- Managing Knowledge & Copilot Connectors
-- Adding Skills: Image Generation, Code Interpreter
-- Enhance Presentation using Adaptive Cards
+- Knowledge Sources: WebSearch, SharePoint, Teams & Copilot Connectors
+- Built-in Skills: Image Generation, Code Interpreter
 - Extend Agents Actions with API Plugins
-- Implementing Key-based & EntraID Authentication
+- Enhance Presentation using Adaptive Cards
+- Key-based & EntraID Authentication
 
 ### Custom Engine Agents Basics
 
 - Overview Custom Engine Agents
 - Microsoft Agent SDK & Teams AI Library
 - Microsoft Agents Playground
-- Providing Tools & Knowledge
-- Enhance your agent using custom data and Azure AI Search (RAG)
+- Tools, Knowledge and Azure AI Search (RAG)
 
 ## Module 5: Integrating Agent & Copilot using the Microsoft Agents SDK
 
@@ -167,6 +164,7 @@ By the end, you’ll have practical experience in implementing, orchestrating, a
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
 
 
 
