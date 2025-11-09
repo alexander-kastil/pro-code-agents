@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import CodeInterpreterTool
-from azure.ai.agents.models import FilePurpose, MessageRole
+from azure.ai.agents.models import FilePurpose, MessageAttachment, MessageRole
 from azure.identity import DefaultAzureCredential
 from pathlib import Path
 
@@ -55,6 +55,12 @@ def main():
             thread_id=thread.id,
             role="user",
             content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
+            attachments=[
+                MessageAttachment(
+                    file_id=file.id,
+                    tools=code_interpreter.definitions,
+                )
+            ],
         )
         print(f"Created message, message ID: {message.id}")
 
@@ -64,9 +70,6 @@ def main():
         if run.status == "failed":
             # Check if you got "Rate limit is exceeded.", then you want to get more quota
             print(f"Run failed: {run.last_error}")
-
-        agents_client.files.delete(file.id)
-        print("Deleted file")
 
         # [START get_messages_and_save_files]
         messages = agents_client.messages.list(thread_id=thread.id)
@@ -93,6 +96,9 @@ def main():
         last_msg = agents_client.messages.get_last_message_text_by_role(thread_id=thread.id, role=MessageRole.AGENT)
         if last_msg:
             print(f"Last Message: {last_msg.text.value}")
+
+        agents_client.files.delete(file.id)
+        print("Deleted file")
 
         agents_client.delete_agent(agent.id)
         print("Deleted agent")
