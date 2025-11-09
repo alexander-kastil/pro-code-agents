@@ -70,7 +70,6 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Tracing, Observability & Evaluations
 - Agent Triggers using Logic Apps
 - Multi-Agent-, Connected Agents and Agent-2-Agent Protocol (A2A)
-- Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 
 ## Module 3: Develop AI Agents using Microsoft Agent Framework
 
@@ -94,7 +93,6 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Using Function Calling Middleware
 - Understanding Microsoft.Extensions.AI RAG
 - Embeddings & using Vector Stores
-- Azure AI Search Agentic Retrieval
 
 ### Microsoft Agent Framework Workflows
 
@@ -152,7 +150,9 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Overview Microsoft Agents SDK
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
+- Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
