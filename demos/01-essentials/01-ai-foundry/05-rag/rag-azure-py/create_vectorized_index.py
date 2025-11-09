@@ -13,17 +13,45 @@ AZURE_STORAGE_CONNECTION_STRING = os.environ.get('STORAGE_CONNECTION_STRING')
 SEARCH_SERVICE_NAME = os.environ.get('SEARCH_SERVICE_NAME')
 SEARCH_SERVICE_ENDPOINT = os.environ.get('SEARCH_SERVICE_ENDPOINT')
 SEARCH_ADMIN_KEY = os.environ.get('SEARCH_ADMIN_KEY')
-PROJECT_ENDPOINT = os.environ.get('PROJECT_ENDPOINT')
+AZURE_AI_MODELS_ENDPOINT = os.environ.get('AZURE_AI_MODELS_ENDPOINT')
+AZURE_AI_MODELS_KEY = os.environ.get('AZURE_AI_MODELS_KEY')
 EMBEDDINGS_MODEL = os.environ.get('EMBEDDINGS_MODEL', 'text-embedding-ada-002')
-PROCESSED_CONTAINER = 'processed-documents'
+PROCESSED_CONTAINER = (
+    os.environ.get('PROCESSED_CONTAINER')
+    or os.environ.get('STORAGE_CONTAINER_NAME')
+    or 'processed-documents'
+)
+PROCESSED_BLOB_NAME = os.environ.get('PROCESSED_BLOB_NAME', 'processed_documents_for_vectorization.json')
 SEARCH_INDEX_NAME = 'insurance-documents-index'
 CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
 
 
+def validate_configuration() -> bool:
+    required_settings = {
+        'STORAGE_CONNECTION_STRING': AZURE_STORAGE_CONNECTION_STRING,
+        'SEARCH_SERVICE_ENDPOINT': SEARCH_SERVICE_ENDPOINT,
+        'SEARCH_ADMIN_KEY': SEARCH_ADMIN_KEY,
+        'AZURE_AI_MODELS_ENDPOINT': AZURE_AI_MODELS_ENDPOINT,
+    }
+
+    missing = [name for name, value in required_settings.items() if not value]
+    if missing:
+        print("❌ Missing required configuration values:")
+        for setting in missing:
+            print(f"   - {setting}")
+        print("➡️  Update your .env file and retry.")
+        return False
+
+    return True
+
+
 def main():
     print("🚀 Starting Azure AI Search Vectorized Index Creation")
     print("=" * 60)
+
+    if not validate_configuration():
+        return
     
     print("\n## 2. Initialize Azure Services")
     blob_service_client, search_index_client, search_client, embeddings_client = initialize_clients(
@@ -31,7 +59,9 @@ def main():
         search_endpoint=SEARCH_SERVICE_ENDPOINT,
         search_admin_key=SEARCH_ADMIN_KEY,
         search_index_name=SEARCH_INDEX_NAME,
-        project_endpoint=PROJECT_ENDPOINT
+        inference_endpoint=AZURE_AI_MODELS_ENDPOINT,
+        inference_key=AZURE_AI_MODELS_KEY,
+        embeddings_model=EMBEDDINGS_MODEL,
     )
     
     print("\n## 3. Create Azure AI Search Index with Integrated Vectorization")
@@ -48,13 +78,22 @@ def main():
         blob_service_client=blob_service_client,
         embeddings_client=embeddings_client,
         container_name=PROCESSED_CONTAINER,
+        blob_name=PROCESSED_BLOB_NAME,
         chunk_size=CHUNK_SIZE,
         chunk_overlap=CHUNK_OVERLAP,
         embeddings_model=EMBEDDINGS_MODEL
     )
+
+    if not search_documents:
+        print("\n❌ No documents prepared for upload. Exiting.")
+        return
     
     print("\n## 6. Upload Documents to Azure AI Search with Pre-computed Embeddings")
     upload_success = upload_documents(search_client, search_documents, index_manager)
+
+    if not upload_success:
+        print("\n❌ Upload failed. Skipping search validation steps.")
+        return
     
     print("\n## 7. Test the Search Index with Semantic and Vector Search")
     print("✅ Search tester initialized")

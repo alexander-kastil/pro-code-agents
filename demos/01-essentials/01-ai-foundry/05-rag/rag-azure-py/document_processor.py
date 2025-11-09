@@ -10,11 +10,12 @@ def retrieve_and_process_documents(
     blob_service_client,
     embeddings_client,
     container_name: str,
+    blob_name: str,
     chunk_size: int,
     chunk_overlap: int,
     embeddings_model: str
 ) -> List[Dict]:
-    retriever = DocumentRetriever(blob_service_client, container_name)
+    retriever = DocumentRetriever(blob_service_client, container_name, blob_name)
     chunker = TextChunker(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap
@@ -25,11 +26,17 @@ def retrieve_and_process_documents(
     print("="*60)
     
     processed_documents = retriever.get_all_processed_documents()
+    if not processed_documents:
+        print("❌ No processed documents available. Ensure the preprocessing notebook has been run.")
+        return []
     
     print(f"\n🎉 SUCCESS! Retrieved processed documents from blob storage")
     print(f"📊 Available categories: {list(processed_documents.keys())}")
     
     policies_only = {'policies': processed_documents.get('policies', [])}
+    if not policies_only['policies']:
+        print("❌ No policy documents were found in the processed dataset.")
+        return []
     
     print(f"🎯 Filtering to process POLICIES only...")
     print(f"📄 Found {len(policies_only['policies'])} policy documents")
@@ -54,11 +61,18 @@ def retrieve_and_process_documents(
             chunks = chunker.chunk_text_for_search(text_content, metadata)
             
             for chunk in chunks:
-                embedding_response = embeddings_client.embed(
-                    input=chunk['content'],
-                    model=embeddings_model
-                )
-                content_vector = embedding_response.data[0].embedding
+                try:
+                    embedding_response = embeddings_client.embed(
+                        input=[chunk['content']],
+                        model=embeddings_model,
+                    )
+                    content_vector = embedding_response.data[0].embedding
+                except Exception as error:  # noqa: BLE001
+                    print(
+                        f"⚠️ Failed to generate embedding for chunk {chunk['chunk_id']} "
+                        f"of {metadata.get('file_name', 'Unknown')}: {error}"
+                    )
+                    continue
                 
                 search_doc = {
                     'id': str(uuid.uuid4()),
