@@ -69,13 +69,25 @@ uv run python evaluate.py
 
 ## Document Vectorization
 
-The `create_vectorized_index.py` script implements the document vectorization workflow from the `2.document-vectorization.ipynb` notebook. It performs the following steps:
+The `create_vectorized_index.py` script implements the document vectorization workflow from the `2.document-vectorization.ipynb` notebook. The implementation is organized into separate modules for better readability:
 
-1. **Initialize Azure Services**: Connect to Azure Blob Storage, Azure AI Search, and Azure AI Projects
+**Modules:**
+- `initialize_clients.py`: Azure service client initialization
+- `search_index_manager.py`: Search index creation and management
+- `document_retriever.py`: Document retrieval from blob storage
+- `text_chunker.py`: Text chunking utilities
+- `document_processor.py`: Document processing and embedding generation
+- `search_index_uploader.py`: Document upload to search index
+- `search_tester.py`: Search testing utilities
+- `test_search.py`: Sample query testing
+- `upload_handler.py`: Upload orchestration
+
+**Workflow Steps:**
+1. **Initialize Azure Services**: Connect to Azure Blob Storage, Azure AI Search, and Azure AI Inference
 2. **Create Search Index**: Set up an Azure AI Search index with vector search and semantic search capabilities
 3. **Retrieve Documents**: Download processed insurance documents from Azure Blob Storage
 4. **Process Documents**: Chunk documents into optimally-sized pieces with overlapping content
-5. **Generate Embeddings**: Create vector embeddings using Azure AI Projects embeddings client
+5. **Generate Embeddings**: Create vector embeddings using Azure AI Inference EmbeddingsClient
 6. **Upload Documents**: Index the documents with their embeddings in Azure AI Search
 7. **Test Search**: Validate the index with sample insurance-related queries
 
