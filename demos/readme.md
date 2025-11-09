@@ -10,7 +10,7 @@ The class then shifts to the Microsoft Agent Framework, where you’ll configure
 
 Moving into pro-code extensibility, you’ll build both declarative and custom engine agents, leverage the Microsoft 365 Agent Toolkit, and integrate Copilot connectors. Finally, you’ll use the Microsoft Agents SDK to bring your agents directly into the Copilot UI, connecting Copilot Studio- and Pro-Code Agents, and deploying your solutions to Copilot Chat, Teams or the channel of your choice.
 
-By the end, you’ll have hands-on experience implementing, orchestrating, and integrating intelligent agents across the Microsoft ecosystem empowering you to deliver scalable, enterprise-grade AI solutions with seamless end-to-end integration into the Microsoft Copilot ecosystem.
+By the end, you’ll have hands-on experience implementing, orchestrating, and integrating intelligent Pro Code Agents across the Microsoft ecosystem empowering you to deliver scalable, enterprise-grade AI solutions with seamless end-to-end integration into the Microsoft Copilot ecosystem.
 
 ## Duration
 
@@ -163,6 +163,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
 
 
 
