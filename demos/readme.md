@@ -4,11 +4,11 @@ This five-day class is designed for Software Architects & Engineers for Agentic 
 
 The journey begins with the essentials: you’ll explore the foundations of Copilots, Agents, and the Azure AI Foundry. Learn how to deploy large language models, use the Azure AI Foundry SDK, and evaluate generative AI performance. Early sessions introduce Retrieval Augmented Generation (RAG), prompt and context engineering, and the principles of agentic reasoning and orchestration as well as a good foundation to implement you own MCP Servers.
 
-Next, you’ll discover how the Azure AI Agent Service provides a scalable, robust platform for hosting agents. You’ll work with threads, runs, and messages, connect action- and knowledge tools, and automate workflows using agent-to-agent protocols. Security, monitoring, and governance are integrated throughout, ensuring your solutions are enterprise-ready.
+Next, you’ll discover how the Azure AI Agent Service provides a scalable, robust platform for hosting agents. You’ll work with threads, runs, and messages, connect action- and knowledge tools, and automate workflows using multi agent solutions connected by agent-to-agent protocols. Security, monitoring, and governance are integrated throughout, ensuring your solutions are enterprise-ready.
 
-The class then shifts to the Microsoft Agent Framework, where you’ll configure agents, enable multi-modal capabilities, and design complex workflows with branching, checkpoints, and human-in-the-loop patterns. You’ll see how this framework enables sophisticated orchestration and persistent memory across conversations.
+The class then shifts to the Microsoft Agent Framework, where you’ll configure agents, enable multi-modal capabilities, and design complex workflows with branching, checkpoints, and human-in-the-loop patterns. You’ll see how to persistent memory across conversations and enable sophisticated orchestration of Azure AI Foundry Agents.
 
-Moving into pro-code extensibility, you’ll build both declarative and custom engine agents, leverage the Microsoft 365 Agent Toolkit, and integrate Copilot connectors. Finally, you’ll use the Microsoft Agents SDK to bring your agents directly into the Copilot UI, connecting Copilot Studio- and Pro-Code Agents, and deploying your solutions to Copilot Chat, Teams or the channel of your choice.
+Moving into pro-code extensibility, you’ll learn about Copilot Connectors as well as Copilot APIs. You will build both declarative and custom engine agents, leverage the Microsoft 365 Agent Toolkit. Finally, you’ll use the Microsoft Agents SDK to bring your agents directly into the Copilot UI, connecting Copilot Studio- and Pro-Code Agents, and deploying your solutions to Copilot Chat, Teams or the channel of your choice.
 
 By the end, you’ll have hands-on experience implementing, orchestrating, and integrating intelligent Pro Code Agents across the Microsoft ecosystem empowering you to deliver scalable, enterprise-grade AI solutions with seamless end-to-end integration into the Microsoft Copilot ecosystem.
 
@@ -163,6 +163,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
 
 
 
