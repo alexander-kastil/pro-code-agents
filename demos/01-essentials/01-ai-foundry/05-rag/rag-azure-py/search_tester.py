@@ -59,14 +59,14 @@ class SearchTester:
             return
         
         for i, result in enumerate(results, 1):
-            score = result.get('score', 0)
-            reranker_score = result.get('reranker_score', 0)
-            
+            score = float(result.get('score') or 0)
+            reranker_score = result.get('reranker_score')
+
             print(f"\n{i}. 📄 {result['title']}")
             print(f"   📂 Category: {result['category']}")
             print(f"   📊 Score: {score:.4f}", end="")
-            if reranker_score > 0:
-                print(f" | Reranker: {reranker_score:.4f}")
+            if isinstance(reranker_score, (int, float)) and reranker_score > 0:
+                print(f" | Reranker: {float(reranker_score):.4f}")
             else:
                 print()
             print(f"   📝 Chunk {result['chunk_id'] + 1}")
