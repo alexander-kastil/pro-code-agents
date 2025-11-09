@@ -49,7 +49,6 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Retrieval Augmented Generation (RAG) vs Agentic RAG
 - Knowledge & Tools
 - REST & Model Context Protocol Servers (MCP)
-- Agentic Reasoning Process & Self Correction
 - Multi Agent Solutions & Orchestration
 - Agents Governance & Guardrails
 
@@ -154,6 +153,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
