@@ -108,11 +108,9 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ### Pro-Code Agentic Extensibility Options & Fundamentals
 
-- Teams Developer Portal, Microsoft Agent Toolkit & DevTunnel
-- App Registrations & Single Sign-On (SSO)
-- Pro-Code Agents Overview & Extensibility Options
-- Introduction to Microsoft 365 Agent Toolkit & Agent Toolkit CLI
 - Pro Code Declarative Agents vs Custom Engine Agents
+-  Teams Developer Portal, Microsoft 365 Agent Toolkit & DevTunnel
+- App Registrations & Single Sign-On (SSO)
 
 ### Copilot Connectors & Copilot API Capabilities
 
@@ -122,9 +120,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ### Declarative Agents for Microsoft 365
 
-- Declarative Agents for Microsoft 365 Copilot Overview
-- Creating Declarative Agents using Microsoft 365 Agent Toolkit
-- Base Files, Instructions & Conversation Starters
+- Instructions & Conversation Starters
 - Knowledge Sources: WebSearch, SharePoint, Teams & Copilot Connectors
 - Built-in Skills: Image Generation, Code Interpreter
 - Extend Agents Actions with API Plugins
@@ -145,6 +141,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Azure AI Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
