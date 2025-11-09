@@ -30,28 +30,26 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ## Module 1: Copilot, Agents & Azure AI Foundry Essentials
 
-### Introduction to Azure AI Foundry
+### Azure AI Foundry Essentials
 
 - Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
 - Hub based projects vs Foundry based Projects
 - Deploy Large Language Models (LLM) in Azure AI Foundry
 - Azure AI Foundry Model Router
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
-- Using Jupyter Notebooks with Azure AI Foundry
 - Retrieval Augmented Generation (RAG)
-- Evaluate generative AI Performance
-- Deploy AI Apps using Azure Developer CLI
+- Prototyping with Jupyter Notebooks
+- Agentic IaC using Azure Developer CLI
 
 ### Agent Essentials
 
 - Overview Agents & Agentic AI
 - Prompt Engineering vs Context Engineering
 - Retrieval Augmented Generation (RAG) vs Agentic RAG
-- Knowledge & Tools
-- REST & Model Context Protocol Servers (MCP)
-- Agentic Reasoning Process & Self Correction
+- Function Calling, REST & Model Context Protocol Servers (MCP)
+- Evaluate generative AI Performance
 - Multi Agent Solutions & Orchestration
-- Pro-Code Copilots and Agents Governance
+- Agents Governance & Guardrails
 
 ### Implementing Model Context Protocol Servers (MCP)
 
@@ -63,23 +61,14 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ## Module 2: Implementing Agents using Azure AI Foundry Agent Service
 
-### Agent Service Basic Concepts
-
 - Introduction to Azure AI Foundry Agent Service
 - Threads, Runs, Messages, Inputs & Outputs
-- Using Knowledge Tools: File Search, Azure AI Search & Grounding
-- Using Action Tools: Code Interpreter, Azure Function, OpenAPI & MCP
-- Automating UI Tasks using Computer Use Agent
-- Testing Agents using Evaluations
+- Managing Knowledge: File Search, Azure AI Search & Bing Grounding
+- Invoking Action Tools: Code Interpreter, Azure Function, OpenAPI & MCP
+- Completing UI Tasks With Browser Automation
+- Tracing, Observability & Evaluations
 - Agent Triggers using Logic Apps
 - Multi-Agent-, Connected Agents and Agent-2-Agent Protocol (A2A)
-- Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
-
-### Securing, Monitoring and Evaluating Foundry Agents
-
-- Agent Guardrails and Data Controls
-- Monitoring Risk and Alerts
-- Azure AI Foundry Agent Governance and Observability
 
 ## Module 3: Develop AI Agents using Microsoft Agent Framework
 
@@ -103,7 +92,6 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Using Function Calling Middleware
 - Understanding Microsoft.Extensions.AI RAG
 - Embeddings & using Vector Stores
-- Azure AI Search Agentic Retrieval
 
 ### Microsoft Agent Framework Workflows
 
@@ -119,11 +107,9 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ### Pro-Code Agentic Extensibility Options & Fundamentals
 
-- Teams Developer Portal, Microsoft Agent Toolkit & DevTunnel
-- App Registrations & Single Sign-On (SSO)
-- Pro-Code Agents Overview & Extensibility Options
-- Introduction to Microsoft 365 Agent Toolkit & Agent Toolkit CLI
 - Pro Code Declarative Agents vs Custom Engine Agents
+-  Teams Developer Portal, Microsoft 365 Agent Toolkit & DevTunnel
+- App Registrations & Single Sign-On (SSO)
 
 ### Copilot Connectors & Copilot API Capabilities
 
@@ -131,38 +117,42 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Overview Copilot API Capabilities
 - Microsoft 365 Copilot Retrieval API
 
-#### Pro-Code Agentic Extensibility Options
-
-- Pro-Code Agents Overview & Extensibility Options
-- Introduction to Microsoft 365 Agent Toolkit & Agent Toolkit CLI
-- Pro Code Declarative Agents vs Custom Engine Agents
-- When to use which type of Pro-Code Agent
-
 ### Declarative Agents for Microsoft 365
 
-- Declarative Agents for Microsoft 365 Copilot Overview
-- Creating Declarative Agents using Microsoft 365 Agent Toolkit
-- Base Files, Instructions & Conversation Starters
+- Instructions & Conversation Starters
 - Knowledge Sources: WebSearch, SharePoint, Teams & Copilot Connectors
 - Built-in Skills: Image Generation, Code Interpreter
 - Extend Agents Actions with API Plugins
 - Enhance Presentation using Adaptive Cards
-- Key-based & EntraID Authentication
 
-### Custom Engine Agents Basics
+### Pro Code Custom Engine Agents 
 
-- Overview Custom Engine Agents
+- Custom Engine Agents Use Cases
 - Microsoft Agent SDK & Teams AI Library
 - Microsoft Agents Playground
 - Tools, Knowledge and Azure AI Search (RAG)
 
-## Module 5: Integrating Agent & Copilot using the Microsoft Agents SDK
+## Module 5: Integrating Agents & Copilots using the Microsoft Agents SDK
 
 - Copilot is the UI for Agents & AI
 - Overview Microsoft Agents SDK
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
-- Deploying Pro Code Agents to Copilot Chat and Teams
+- Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
+- Publishing Agentic AI Solutions to Copilot Chat and Teams
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
