@@ -128,7 +128,6 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Pro-Code Agents Overview & Extensibility Options
 - Introduction to Microsoft 365 Agent Toolkit & Agent Toolkit CLI
 - Pro Code Declarative Agents vs Custom Engine Agents
-- When to use which type of Pro-Code Agent
 
 ### Declarative Agents for Microsoft 365
 
@@ -155,6 +154,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
 
 
 
