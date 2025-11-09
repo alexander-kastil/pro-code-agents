@@ -68,7 +68,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Introduction to Azure AI Foundry Agent Service
 - Threads, Runs, Messages, Inputs & Outputs
 - Using Knowledge Tools: File Search, Azure AI Search & Grounding
-- Using Action Tools: Code Interpreter, Azure Functions and OpenAPI Tool & MCP
+- Using Action Tools: Code Interpreter, Azure Function, OpenAPI & MCP
 - Automating UI Tasks using Computer Use Agent
 - Testing Agents using Evaluations
 - Agent Triggers using Logic Apps
@@ -163,6 +163,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
 
 
 
