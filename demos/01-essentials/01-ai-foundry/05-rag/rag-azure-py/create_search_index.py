@@ -1,18 +1,23 @@
 import os
+from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ConnectionType
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
-from config import get_logger
 
-# initialize logging object
-logger = get_logger(__name__)
+# Load environment variables
+load_dotenv()
+
+# Simple configuration variables at the top
+PROJECT_ENDPOINT = os.environ.get("PROJECT_ENDPOINT")
+AISEARCH_INDEX_NAME = os.environ.get("AISEARCH_INDEX_NAME")
+EMBEDDINGS_MODEL = os.environ.get("EMBEDDINGS_MODEL")
 
 # create a project client using environment variables loaded from the .env file
 project = AIProjectClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential()
+    endpoint=PROJECT_ENDPOINT, credential=DefaultAzureCredential()
 )
 
 # create a vector embeddings client that will be used to generate vector embeddings
@@ -158,16 +163,16 @@ def create_index_from_csv(index_name, csv_file):
     try:
         index_definition = index_client.get_index(index_name)
         index_client.delete_index(index_name)
-        logger.info(f"🗑️  Found existing index named '{index_name}', and deleted it")
+        print(f"🗑️  Found existing index named '{index_name}', and deleted it")
     except Exception:
         pass
 
     # create an empty search index
-    index_definition = create_index_definition(index_name, model=os.environ["EMBEDDINGS_MODEL"])
+    index_definition = create_index_definition(index_name, model=EMBEDDINGS_MODEL)
     index_client.create_index(index_definition)
 
     # create documents from the products.csv file, generating vector embeddings for the "description" column
-    docs = create_docs_from_csv(path=csv_file, content_column="description", model=os.environ["EMBEDDINGS_MODEL"])
+    docs = create_docs_from_csv(path=csv_file, content_column="description", model=EMBEDDINGS_MODEL)
 
     # Add the documents to the index using the Azure AI Search client
     search_client = SearchClient(
@@ -177,7 +182,7 @@ def create_index_from_csv(index_name, csv_file):
     )
 
     search_client.upload_documents(docs)
-    logger.info(f"➕ Uploaded {len(docs)} documents to '{index_name}' index")
+    print(f"➕ Uploaded {len(docs)} documents to '{index_name}' index")
 
 if __name__ == "__main__":
     import argparse
@@ -187,7 +192,7 @@ if __name__ == "__main__":
         "--index-name",
         type=str,
         help="index name to use when creating the AI Search index",
-        default=os.environ["AISEARCH_INDEX_NAME"],
+        default=AISEARCH_INDEX_NAME,
     )
     parser.add_argument(
         "--csv-file", type=str, help="path to data for creating search index", default="assets/products.csv"

@@ -6,3 +6,4 @@ azure-search-documents
 python-dotenv
 azure-monitor-opentelemetry
 azure-storage-blob
+pandas
