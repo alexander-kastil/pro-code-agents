@@ -135,14 +135,14 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Built-in Skills: Image Generation, Code Interpreter
 - Extend Agents Actions with API Plugins
 - Enhance Presentation using Adaptive Cards
-- Key-based & EntraID Authentication
 
-### Custom Engine Agents Basics
+### Pro Code Custom Engine Agents 
 
-- Overview Custom Engine Agents
+- Custom Engine Agents Use Cases
 - Microsoft Agent SDK & Teams AI Library
 - Microsoft Agents Playground
 - Tools, Knowledge and Azure AI Search (RAG)
+- Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 
 ## Module 5: Integrating Agents & Copilots using the Microsoft Agents SDK
 
@@ -150,8 +150,8 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Overview Microsoft Agents SDK
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
-- Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
