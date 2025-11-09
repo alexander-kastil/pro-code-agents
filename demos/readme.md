@@ -71,8 +71,7 @@ By the end, you’ll have practical experience in implementing, orchestrating, a
 - Using Action Tools: Code Interpreter, Azure Functions and OpenAPI Tool & MCP
 - Automating UI Tasks using Computer Use Agent
 - Agent Triggers using Logic Apps
-- Multi-Agent Workflows & Connected Agents
-- Agent-2-Agent Protocol (A2A)
+- Multi-Agent-, Connected Agents and Agent-2-Agent Protocol (A2A)
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 
 ### Securing, Monitoring and Evaluating Foundry Agents
@@ -164,4 +163,5 @@ By the end, you’ll have practical experience in implementing, orchestrating, a
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
 
