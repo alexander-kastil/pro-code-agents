@@ -120,12 +120,6 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Overview Copilot API Capabilities
 - Microsoft 365 Copilot Retrieval API
 
-#### Pro-Code Agentic Extensibility Options
-
-- Pro-Code Agents Overview & Extensibility Options
-- Introduction to Microsoft 365 Agent Toolkit & Agent Toolkit CLI
-- Pro Code Declarative Agents vs Custom Engine Agents
-
 ### Declarative Agents for Microsoft 365
 
 - Declarative Agents for Microsoft 365 Copilot Overview
@@ -151,6 +145,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Azure AI Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
