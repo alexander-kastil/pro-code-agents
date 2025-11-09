@@ -2437,6 +2437,7 @@ dependencies = [
     { name = "azure-search-documents" },
     { name = "azure-storage-blob" },
     { name = "python-dotenv" },
+    { name = "tqdm" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -2450,6 +2451,7 @@ requires-dist = [
     { name = "azure-search-documents" },
     { name = "azure-storage-blob" },
     { name = "python-dotenv" },
+    { name = "tqdm" },
     { name = "uvicorn", extras = ["standard"] },
 ]
 
