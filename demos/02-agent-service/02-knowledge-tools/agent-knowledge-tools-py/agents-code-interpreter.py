@@ -40,7 +40,7 @@ def main():
         agent = agents_client.create_agent(
             model=model,
             name="code-interpreter-agent",
-            instructions="You are a helpful agent with access to code interpreter tools. Use the code interpreter to analyze the uploaded CSV file and create visualizations. The sector is in column 'sector' and the operating profit is in column 'operating_profit'. Build a bar chart for the operating profit and provide the file to the user as a downloadable link.",
+            instructions="You are a helpful agent with access to code interpreter tools. Use the code interpreter to analyze the uploaded CSV file and create visualizations. The sector is in column 'sector' and the operating profit is in column 'operating_profit'. Build a bar chart for the operating profit in the TRANSPORTATION sector and display it as an image. Provide the image directly in your response.",
             tools=code_interpreter.definitions,
             tool_resources=code_interpreter.resources,
         )
@@ -54,7 +54,7 @@ def main():
         message = agents_client.messages.create(
             thread_id=thread.id,
             role="user",
-            content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
+            content="Could you please create a bar chart for the operating profit in the TRANSPORTATION sector from the uploaded csv file and display it as an image?",
             attachments=[
                 MessageAttachment(
                     file_id=file.id,
@@ -75,13 +75,31 @@ def main():
         messages = agents_client.messages.list(thread_id=thread.id)
         print(f"Messages: {messages}")
 
+        downloads_dir = Path.cwd() / "assets" / "downloads"
+        downloads_dir.mkdir(parents=True, exist_ok=True)
+
         for msg in messages:
             # Save every image file in the message
             for img in msg.image_contents:
                 file_id = img.image_file.file_id
                 file_name = f"{file_id}_image_file.png"
-                agents_client.files.save(file_id=file_id, file_name=file_name)
-                print(f"Saved image file to: {Path.cwd() / file_name}")
+                file_path = downloads_dir / file_name
+                agents_client.files.save(file_id=file_id, file_name=str(file_path))
+                print(f"Saved image file to: {file_path}")
+
+            # Save files from file-path annotations
+            for ann in msg.file_path_annotations:
+                if hasattr(ann.file_path, 'file_id') and ann.file_path.file_id:
+                    file_id = ann.file_path.file_id
+                    file_name = ann.text.split('/')[-1]  # Extract filename from path
+                    file_path = downloads_dir / file_name
+                    try:
+                        agents_client.files.save(file_id=file_id, file_name=str(file_path))
+                        print(f"Saved file from annotation to: {file_path}")
+                    except Exception as e:
+                        print(f"Failed to save file {file_name}: {e}")
+                else:
+                    print(f"No file_id for annotation: {ann.text}")
 
             # Print details of every file-path annotation
             for ann in msg.file_path_annotations:
