@@ -51,7 +51,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - REST & Model Context Protocol Servers (MCP)
 - Agentic Reasoning Process & Self Correction
 - Multi Agent Solutions & Orchestration
-- Pro-Code Copilots and Agents Governance
+- Agents Governance & Guardrails
 
 ### Implementing Model Context Protocol Servers (MCP)
 
@@ -63,23 +63,15 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ## Module 2: Implementing Agents using Azure AI Foundry Agent Service
 
-### Agent Service Basic Concepts
-
 - Introduction to Azure AI Foundry Agent Service
 - Threads, Runs, Messages, Inputs & Outputs
-- Using Knowledge Tools: File Search, Azure AI Search & Grounding
-- Using Action Tools: Code Interpreter, Azure Function, OpenAPI & MCP
-- Automating UI Tasks using Computer Use Agent
-- Testing Agents using Evaluations
+- Managing Knowledge: File Search, Azure AI Search & Bing Grounding
+- Invoking Action Tools: Code Interpreter, Azure Function, OpenAPI & MCP
+- Completing UI Tasks With Browser Automation
+- Tracing, Observability & Evaluations
 - Agent Triggers using Logic Apps
 - Multi-Agent-, Connected Agents and Agent-2-Agent Protocol (A2A)
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
-
-### Securing, Monitoring and Evaluating Foundry Agents
-
-- Agent Guardrails and Data Controls
-- Monitoring Risk and Alerts
-- Azure AI Foundry Agent Governance and Observability
 
 ## Module 3: Develop AI Agents using Microsoft Agent Framework
 
@@ -163,6 +155,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
 
 
 
