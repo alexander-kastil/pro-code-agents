@@ -37,18 +37,17 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Deploy Large Language Models (LLM) in Azure AI Foundry
 - Azure AI Foundry Model Router
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
-- Using Jupyter Notebooks with Azure AI Foundry
 - Retrieval Augmented Generation (RAG)
-- Evaluate generative AI Performance
-- Deploy AI Apps using Azure Developer CLI
+- Prototyping with Jupyter Notebooks
+- Agentic IaC using Azure Developer CLI
 
 ### Agent Essentials
 
 - Overview Agents & Agentic AI
 - Prompt Engineering vs Context Engineering
 - Retrieval Augmented Generation (RAG) vs Agentic RAG
-- Knowledge & Tools
-- REST & Model Context Protocol Servers (MCP)
+- Function Calling, REST & Model Context Protocol Servers (MCP)
+- Evaluate generative AI Performance
 - Multi Agent Solutions & Orchestration
 - Agents Governance & Guardrails
 
@@ -141,6 +140,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Azure AI Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
