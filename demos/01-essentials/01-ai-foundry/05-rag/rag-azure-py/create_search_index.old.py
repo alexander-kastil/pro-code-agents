@@ -3,8 +3,6 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ConnectionType
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
-from azure.identity import DefaultAzureCredential
-from azure.storage.blob import BlobServiceClient
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from config import get_logger
@@ -34,15 +32,11 @@ index_client = SearchIndexClient(
 # Create the search index
 import pandas as pd
 from azure.search.documents.indexes.models import (
-    SearchIndex,
+    SemanticSearch,
     SearchField,
-    SearchFieldDataType,
     SimpleField,
     SearchableField,
-    VectorSearch,
-    VectorSearchProfile,
-    HnswAlgorithmConfiguration,
-    ExhaustiveKnnAlgorithmConfiguration,
+    SearchFieldDataType,
     SemanticConfiguration,
     SemanticPrioritizedFields,
     SemanticField,
