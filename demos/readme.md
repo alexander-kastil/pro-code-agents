@@ -38,7 +38,7 @@ By the end, you’ll have practical experience in implementing, orchestrating, a
 - Azure AI Foundry Model Router
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
 - Using Jupyter Notebooks with Azure AI Foundry
-- Retrieval Augmented Generation (RAG) Basics
+- Retrieval Augmented Generation (RAG)
 - Evaluate generative AI Performance
 - Deploy AI Apps using Azure Developer CLI
 
@@ -164,6 +164,7 @@ By the end, you’ll have practical experience in implementing, orchestrating, a
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
 - Deploying Pro Code Agents to Copilot Chat and Teams
+
 
 
 
