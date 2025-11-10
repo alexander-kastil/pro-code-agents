@@ -16,7 +16,7 @@ var projectEndpoint = configuration["ProjectEndpoint"];
 var evalModel = configuration["EvalModel"];
 var azureOpenAIEndpoint = configuration["AzureOpenAIEndpoint"];
 
-if (string.IsNullOrWhiteSpace(projectEndpoint) || string.IsNullOrWhiteSpace(evalModel) || 
+if (string.IsNullOrWhiteSpace(projectEndpoint) || string.IsNullOrWhiteSpace(evalModel) ||
     string.IsNullOrWhiteSpace(azureOpenAIEndpoint))
 {
     Console.WriteLine("Configure ProjectEndpoint, EvalModel, and AzureOpenAIEndpoint in appsettings.json before running the sample.");
@@ -60,6 +60,56 @@ var chatConfiguration = new ChatConfiguration(chatClient);
 var groundednessEvaluator = new GroundednessEvaluator();
 var relevanceEvaluator = new RelevanceEvaluator();
 
+// Helper to print metric details using reflection (works across SDK versions)
+void PrintMetric(object metric)
+{
+    if (metric == null)
+    {
+        Console.WriteLine("Metric: <null>");
+        return;
+    }
+
+#pragma warning disable IL2075 // Reflection on obj.GetType() for dynamic property access
+    var t = metric.GetType();
+
+    // Get Value
+    var valueProp = t.GetProperty("Value");
+    var value = valueProp?.GetValue(metric);
+    if (value != null)
+    {
+        Console.WriteLine($"Score: {value}");
+    }
+
+    // Get Reason
+    var reasonProp = t.GetProperty("Reason");
+    var reason = reasonProp?.GetValue(metric);
+    if (reason != null && !string.IsNullOrEmpty(reason.ToString()))
+    {
+        Console.WriteLine($"Reason: {reason}");
+    }
+
+    // Get Interpretation
+    var interpProp = t.GetProperty("Interpretation");
+    var interp = interpProp?.GetValue(metric);
+    if (interp != null)
+    {
+        var interpType = interp.GetType();
+        var ratingProp = interpType.GetProperty("Rating");
+        var rating = ratingProp?.GetValue(interp);
+        if (rating != null)
+        {
+            Console.WriteLine($"Rating: {rating}");
+        }
+
+        var interpReasonProp = interpType.GetProperty("Reason");
+        var interpReason = interpReasonProp?.GetValue(interp);
+        if (interpReason != null && !string.IsNullOrEmpty(interpReason.ToString()))
+        {
+            Console.WriteLine($"Interpretation: {interpReason}");
+        }
+    }
+#pragma warning restore IL2075
+}
 // Create evaluation context for groundedness (includes the context/grounding data)
 var groundingContext = new List<EvaluationContext>
 {
@@ -77,12 +127,17 @@ try
         additionalContext: groundingContext,
         cancellationToken: CancellationToken.None
     );
-    
-    // Get the groundedness metric from the result
-    var groundednessMetric = groundednessResult.Get<NumericMetric>(GroundednessEvaluator.GroundednessMetricName);
-    
-    Console.WriteLine($"Groundedness Score: {groundednessMetric.Value}");
-    Console.WriteLine($"Groundedness Interpretation: {groundednessMetric.Interpretation}");
+
+    // Get the groundedness metric from the result using TryGet
+    if (groundednessResult.TryGet(GroundednessEvaluator.GroundednessMetricName, out NumericMetric? groundednessMetric))
+    {
+        PrintMetric(groundednessMetric);
+    }
+    else
+    {
+        Console.WriteLine("Groundedness metric not found in result");
+    }
+
 }
 catch (Exception ex)
 {
@@ -100,12 +155,17 @@ try
         additionalContext: null,
         cancellationToken: CancellationToken.None
     );
-    
-    // Get the relevance metric from the result
-    var relevanceMetric = relevanceResult.Get<NumericMetric>(RelevanceEvaluator.RelevanceMetricName);
-    
-    Console.WriteLine($"Relevance Score: {relevanceMetric.Value}");
-    Console.WriteLine($"Relevance Interpretation: {relevanceMetric.Interpretation}");
+
+    // Get the relevance metric from the result using TryGet
+    if (relevanceResult.TryGet(RelevanceEvaluator.RelevanceMetricName, out NumericMetric? relevanceMetric))
+    {
+        PrintMetric(relevanceMetric);
+    }
+    else
+    {
+        Console.WriteLine("Relevance metric not found in result");
+    }
+
 }
 catch (Exception ex)
 {
