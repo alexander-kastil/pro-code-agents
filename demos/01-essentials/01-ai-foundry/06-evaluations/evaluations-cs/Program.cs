@@ -1,60 +1,125 @@
-﻿using Azure.AI.OpenAI;
+﻿using Azure.AI.Projects;
+using Azure.AI.OpenAI;
 using Azure.Identity;
-using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.AI;
+using Microsoft.Extensions.AI.Evaluation;
+using Microsoft.Extensions.AI.Evaluation.Quality;
+using Microsoft.Extensions.AI.Evaluation.Safety;
 
+// Load configuration from appsettings.json
 IConfiguration configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false)
     .Build();
 
-var endpoint = configuration["AzureOpenAIEndpoint"];
-var model = configuration["Model"];
+var projectEndpoint = configuration["ProjectEndpoint"];
+var evalModel = configuration["EvalModel"];
+var azureOpenAIEndpoint = configuration["AzureOpenAIEndpoint"];
 
-if (string.IsNullOrWhiteSpace(endpoint) || string.IsNullOrWhiteSpace(model))
+if (string.IsNullOrWhiteSpace(projectEndpoint) || string.IsNullOrWhiteSpace(evalModel) || 
+    string.IsNullOrWhiteSpace(azureOpenAIEndpoint))
 {
-    Console.WriteLine("Configure AzureOpenAIEndpoint and Model in appsettings.json before running the sample.");
+    Console.WriteLine("Configure ProjectEndpoint, EvalModel, and AzureOpenAIEndpoint in appsettings.json before running the sample.");
     return;
 }
 
-var azureOpenAIClient = new AzureOpenAIClient(new Uri(endpoint), new DefaultAzureCredential());
+// Resolve credential once so both client and evaluator share it
+var credential = new DefaultAzureCredential();
 
-IChatClient client = new ChatClientBuilder(
-        azureOpenAIClient.GetChatClient(model).AsIChatClient())
-    .UseFunctionInvocation()
-    .Build();
+// Create project client (useful when you want to interact with the project later)
+var projectClient = new AIProjectClient(new Uri(projectEndpoint), credential);
 
-var chatOptions = new ChatOptions
+// Create Azure OpenAI client for evaluators
+var azureOpenAIClient = new AzureOpenAIClient(new Uri(azureOpenAIEndpoint), credential);
+IChatClient chatClient = azureOpenAIClient.GetChatClient(evalModel).AsIChatClient();
+
+// Quick diagnostics
+Console.WriteLine($"[eval] using deployment='{evalModel}' endpoint='{azureOpenAIEndpoint}' api_version='2024-10-21'");
+
+// Example conversation with image URL components
+var query = "Can you describe this image?";
+var response = "The image shows a person with short dark hair wearing a blue checkered shirt. The background appears to be a wall with shadows cast on it";
+var context = "You are an AI assistant that understands images.";
+
+// Create chat messages for evaluation
+var messages = new List<ChatMessage>
 {
-    Tools =
-    [
-        // Expose the lookup_weather function to the model so it can fetch weather details.
-        AIFunctionFactory.Create(
-            (string? cityName, string? zipCode) => LookupWeather(cityName, zipCode),
-            "lookup_weather",
-            "Lookup the weather for a given city name or zip code.")
-    ]
+    new ChatMessage(ChatRole.System, context),
+    new ChatMessage(ChatRole.User, query)
 };
 
-var chatHistory = new List<ChatMessage>
+// Create the model response
+var modelResponse = new ChatResponse(
+    new ChatMessage(ChatRole.Assistant, response)
+);
+
+// Create chat configuration for LLM-based evaluators
+var chatConfiguration = new ChatConfiguration(chatClient);
+
+// Create evaluators
+var groundednessEvaluator = new GroundednessEvaluator();
+var relevanceEvaluator = new RelevanceEvaluator();
+
+// Create evaluation context for groundedness (includes the context/grounding data)
+var groundingContext = new List<EvaluationContext>
 {
-    new(ChatRole.System, "You are a weather chatbot. Always respond using Celsius only; never mention Fahrenheit."),
-    new(ChatRole.User, "is it sunny in Berkeley CA?")
+    new GroundednessEvaluatorContext(context)
 };
 
-ChatResponse response = await client.GetResponseAsync(chatHistory, chatOptions);
-
-foreach (ChatMessage message in response.Messages)
+// Groundedness evaluation
+Console.WriteLine("\n=== Groundedness Evaluation ===");
+try
 {
-    if (message.Role == ChatRole.Assistant && !string.IsNullOrWhiteSpace(message.Text))
-    {
-        Console.WriteLine($"Assistant >>> {message.Text}");
-    }
+    var groundednessResult = await groundednessEvaluator.EvaluateAsync(
+        messages: messages,
+        modelResponse: modelResponse,
+        chatConfiguration: chatConfiguration,
+        additionalContext: groundingContext,
+        cancellationToken: CancellationToken.None
+    );
+    
+    // Get the groundedness metric from the result
+    var groundednessMetric = groundednessResult.Get<NumericMetric>(GroundednessEvaluator.GroundednessMetricName);
+    
+    Console.WriteLine($"Groundedness Score: {groundednessMetric.Value}");
+    Console.WriteLine($"Groundedness Interpretation: {groundednessMetric.Interpretation}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Groundedness evaluation failed: {ex.Message}");
 }
 
-static WeatherReport LookupWeather(string? cityName, string? zipCode) => new(
-    CityName: cityName,
-    ZipCode: zipCode,
-    Weather: "sunny",
-    TemperatureCelsius: 24);
+// Relevance evaluation
+Console.WriteLine("\n=== Relevance Evaluation ===");
+try
+{
+    var relevanceResult = await relevanceEvaluator.EvaluateAsync(
+        messages: messages,
+        modelResponse: modelResponse,
+        chatConfiguration: chatConfiguration,
+        additionalContext: null,
+        cancellationToken: CancellationToken.None
+    );
+    
+    // Get the relevance metric from the result
+    var relevanceMetric = relevanceResult.Get<NumericMetric>(RelevanceEvaluator.RelevanceMetricName);
+    
+    Console.WriteLine($"Relevance Score: {relevanceMetric.Value}");
+    Console.WriteLine($"Relevance Interpretation: {relevanceMetric.Interpretation}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Relevance evaluation failed: {ex.Message}");
+}
 
-internal sealed record WeatherReport(string? CityName, string? ZipCode, string Weather, int TemperatureCelsius);
+// Content Safety evaluation
+Console.WriteLine("\n=== Content Safety Evaluation ===");
+Console.WriteLine("Note: Content safety evaluation requires Azure AI Content Safety configuration.");
+Console.WriteLine("To enable content safety evaluation, configure the following in appsettings.json:");
+Console.WriteLine("- Azure AI Foundry project endpoint or subscription/resource group/project name");
+Console.WriteLine("For more information, see: https://learn.microsoft.com/en-us/azure/ai-foundry/");
+Console.WriteLine("\nContent safety would evaluate for:");
+Console.WriteLine("- Hate and fairness");
+Console.WriteLine("- Sexual content");
+Console.WriteLine("- Violence");
+Console.WriteLine("- Self-harm");
