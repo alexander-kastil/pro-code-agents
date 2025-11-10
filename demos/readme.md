@@ -90,7 +90,6 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Integrate OpenApi & MCP Tools
 - Use Human in the loop with Tool Call
 - Using Function Calling Middleware
-- Understanding Microsoft.Extensions.AI RAG
 - Embeddings & using Vector Stores
 
 ### Microsoft Agent Framework Workflows
@@ -140,6 +139,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Azure AI Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
