@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Azure.AI.Inference;
 using Azure.AI.OpenAI;
 using Azure.Storage.Blobs;
@@ -40,7 +41,12 @@ public class DocumentProcessor
         var download = await blobClient.DownloadContentAsync();
         var jsonContent = download.Value.Content.ToString();
         
-        var processedDocuments = JsonSerializer.Deserialize<ProcessedDocumentsWrapper>(jsonContent);
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        
+        var processedDocuments = JsonSerializer.Deserialize<ProcessedDocumentsWrapper>(jsonContent, options);
         
         if (processedDocuments?.Policies == null || processedDocuments.Policies.Count == 0)
         {
@@ -157,19 +163,28 @@ public class DocumentProcessor
 
 public class ProcessedDocumentsWrapper
 {
+    [JsonPropertyName("policies")]
     public List<ProcessedDocument> Policies { get; set; } = new();
 }
 
 public class ProcessedDocument
 {
+    [JsonPropertyName("text")]
     public string Text { get; set; } = string.Empty;
+    
+    [JsonPropertyName("success")]
     public bool Success { get; set; }
+    
+    [JsonPropertyName("metadata")]
     public DocumentMetadata? Metadata { get; set; }
 }
 
 public class DocumentMetadata
 {
+    [JsonPropertyName("file_name")]
     public string FileName { get; set; } = string.Empty;
+    
+    [JsonPropertyName("file_type")]
     public string FileType { get; set; } = string.Empty;
 }
 
