@@ -1,0 +1,10 @@
+name: pro-code-agents
+metadata:
+  template: pro-code-agents
+infra:
+  provider: bicep
+  path: ./infra
+  template: main.bicep
+  parameters:
+    location: ${AZURE_LOCATION}
+    servicePrincipalObjectId: ${SERVICE_PRINCIPAL_OBJECT_ID:-''}

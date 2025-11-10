@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <RootNamespace>SKOrchestration</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Azure.AI.Projects"
+                          Version="1.0.0-beta.8" />
+        <PackageReference Include="Azure.Identity"
+                          Version="1.13.2" />
+        <PackageReference Include="Microsoft.Extensions.Configuration"
+                          Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder"
+                          Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions"
+                          Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json"
+                          Version="9.0.4" />
+        <PackageReference Include="Microsoft.SemanticKernel.Agents.OpenAI"
+                          Version="1.47.0-preview" />
+        <PackageReference Include="System.Configuration.ConfigurationManager"
+                          Version="9.0.4" />
+        <PackageReference Include="Microsoft.SemanticKernel"
+                          Version="1.47.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.Agents.Core"
+                          Version="1.47.0" />
+        <PackageReference Include="Microsoft.SemanticKernel.Agents.AzureAI"
+                          Version="1.47.0-preview" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="logs\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);SKEXP0110; SKEXPOOO1;SKEXP0001</NoWarn>
+    </PropertyGroup>
+</Project>

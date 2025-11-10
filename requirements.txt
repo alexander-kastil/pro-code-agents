@@ -1,0 +1,7 @@
+azure-ai-projects
+azure-ai-inference
+azure-ai-evaluation
+azure-identity
+python-dotenv
+agent-framework
+ipykernel
