@@ -83,7 +83,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Middleware & Dependency Injection
 - ChatReducer & Prompt Rendering Middleware
 
-### Tools & Knowledge
+### Mastering Tools & Knowledge
 
 - Understand Tool Call
 - Builtin Tools (Code Interpreter, File Search, Web Search)
@@ -140,6 +140,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Azure AI Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
