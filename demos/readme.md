@@ -41,11 +41,11 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Prototyping with Jupyter Notebooks
 - Agentic IaC using Azure Developer CLI
 
-### Agent Essentials
+### Agentic AI Fundamentals
 
 - Overview Agents & Agentic AI
 - Prompt Engineering vs Context Engineering
-- Retrieval Augmented Generation (RAG) vs Agentic RAG
+- Knowledge & Agentic Retrieval Augmented Generation
 - Function Calling, REST & Model Context Protocol Servers (MCP)
 - Evaluate generative AI Performance
 - Multi Agent Solutions & Orchestration
@@ -140,6 +140,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Azure AI Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+
 
 
 
