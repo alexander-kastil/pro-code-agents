@@ -1,12 +1,13 @@
-# Agent Essentials
+# Agentic AI Fundamentals
 
 - Overview Agents & Agentic AI
-- Function Calling & Tools
 - Prompt Engineering vs Context Engineering
+- Knowledge & Agentic Retrieval Augmented Generation
+- Function Calling, REST & Model Context Protocol Servers (MCP)
+- Evaluate generative AI Performance
 - Multi Agent Solutions & Orchestration
+- Agents Governance & Guardrails
 
 ## Links & Resources
 
-https://techcommunity.microsoft.com/blog/azure-ai-services-blog/introducing-agentic-retrieval-in-azure-ai-search/4414677
-
-https://azure.microsoft.com/en-us/blog/azure-ai-foundry-your-ai-app-and-agent-factory/
+[Azure AI Foundry: New agentic retrieval engine](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/introducing-agentic-retrieval-in-azure-ai-search/4414677)
