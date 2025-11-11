@@ -9,6 +9,10 @@ This demo demonstrates a multi-agent ticket triage system where a main orchestra
 3. Run the agent: `uv run python agent_triage.py` (or `python agent_triage.py`)
 4. Optional: Set `VERBOSE_OUTPUT=true` for detailed logging
 
+## What This Demo Shows
+
+This example demonstrates the **ConnectedAgentTool** pattern in Azure AI Agent Service. Each specialized agent is wrapped as a `ConnectedAgentTool` and added to the main orchestrator agent's toolset. When the orchestrator receives a user query, it automatically delegates to the appropriate connected agents based on their descriptions, enabling multi-agent collaboration without manual routing logic. The demo showcases agent creation, tool registration, thread management, and proper cleanup of all agent resources.
+
 ## Prerequisites
 
 - Python 3.8+
