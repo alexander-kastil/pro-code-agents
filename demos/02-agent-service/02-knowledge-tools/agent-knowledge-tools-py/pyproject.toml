@@ -1,12 +1,12 @@
 [project]
-name = "diagram-agent-py"
+name = "agent-knowledge-tools-py"
 version = "0.1.0"
-description = "AI Agent demo with diagram generation"
+description = "AI Agent demo with function calling and knowledge tools"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = [
     "python-dotenv>=1.0.0",
     "azure-identity>=1.16.0",
     "azure-ai-projects>=1.0.0b4",
-    "pathlib>=1.0.1"
+    "azure-ai-agents>=1.2.0b2"
 ]
