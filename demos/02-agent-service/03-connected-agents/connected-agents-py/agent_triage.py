@@ -16,10 +16,14 @@ load_dotenv()
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
 azure_http_log = os.getenv("AZURE_HTTP_LOG", "false") == "true"
+create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
 
 # Setup logging with explicit parameters
 logging_config = LoggingConfig()
-logging_config.setup_logging(verbose=verbose_output, azure_http_log=azure_http_log)
+logging_config.setup_logging(verbose=verbose_output, azure_http_log=azure_http_log, create_mermaid=create_mermaid_diagram)
+
+# Get mermaid logger reference for easy access
+mermaid_logger = logging_config.mermaid_logger
 
 # Read required settings
 project_endpoint = os.getenv("PROJECT_ENDPOINT")
@@ -98,6 +102,8 @@ with agents_client:
         instructions=priority_agent_instructions
     )
     logging.info(f"Priority agent created: id={priority_agent.id}")
+    if mermaid_logger:
+        mermaid_logger.log_agent_creation(priority_agent_name, priority_agent.id)
 
     # Create a connected agent tool for the priority agent
     priority_agent_tool = ConnectedAgentTool(
@@ -114,6 +120,8 @@ with agents_client:
         instructions=team_agent_instructions
     )
     logging.info(f"Team agent created: id={team_agent.id}")
+    if mermaid_logger:
+        mermaid_logger.log_agent_creation(team_agent_name, team_agent.id)
     
     team_agent_tool = ConnectedAgentTool(
         id=team_agent.id, 
@@ -129,6 +137,8 @@ with agents_client:
         instructions=effort_agent_instructions
     )
     logging.info(f"Effort agent created: id={effort_agent.id}")
+    if mermaid_logger:
+        mermaid_logger.log_agent_creation(effort_agent_name, effort_agent.id)
     
     effort_agent_tool = ConnectedAgentTool(
         id=effort_agent.id, 
@@ -150,6 +160,11 @@ with agents_client:
     )
     logging.info(f"Triage agent created: id={agent.id}")
     logging.debug(f"Tool definitions: {[t for t in agent.tools]}")
+    if mermaid_logger:
+        mermaid_logger.log_agent_creation("triage-agent", agent.id)
+        mermaid_logger.log_tool_registration("triage-agent", priority_agent_name)
+        mermaid_logger.log_tool_registration("triage-agent", team_agent_name)
+        mermaid_logger.log_tool_registration("triage-agent", effort_agent_name)
     
     # Create thread for the chat session
     logging.info("Creating a new thread for the triage session ...")
@@ -168,12 +183,18 @@ with agents_client:
         content=prompt,
     )
     logging.info(f"Message sent: id={message.id}, role={message.role}")
+    if mermaid_logger:
+        mermaid_logger.log_message_sent("User", "triage-agent", "user_prompt", prompt)
     
     # Create and process Agent run in thread with tools
     logging.info("Starting run (create_and_process) ...")
+    if mermaid_logger:
+        mermaid_logger.log_run_started("triage-agent", thread.id)
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     logging.info(f"Run finished: id={run.id}, status={run.status}")
     logging.debug(f"Run raw object: {run}")
+    if mermaid_logger:
+        mermaid_logger.log_run_completed("triage-agent", run.status)
     
     if run.status == "failed":
         logging.error(f"Run failed: {run.last_error}")
@@ -188,6 +209,14 @@ with agents_client:
             # Show role and content succinctly
             logging.info(f"Message ({message.role}): {last_msg.text.value.strip()}")
             logging.debug(f"Full message object: {message}")
+            
+            # Log message exchange in mermaid
+            if mermaid_logger and message.role == "assistant":
+                mermaid_logger.log_message_sent("triage-agent", "User", "result", last_msg.text.value.strip())
+    
+    # Save Mermaid diagram if enabled
+    if mermaid_logger and mermaid_logger.is_enabled:
+        mermaid_logger.save_diagram()
     
     # Delete the agent when done
     logging.info("Cleaning up agents ...")

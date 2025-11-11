@@ -5,10 +5,13 @@ This module provides centralized logging setup with:
 - Color-coded output (yellow for INFO, white for DEBUG)
 - Verbose mode control via parameters
 - ANSI color support for Windows via colorama
+- Mermaid diagram generation for agent interactions
 """
 
 import os
 import logging
+from typing import List, Dict, Any, Optional
+from datetime import datetime
 
 # Optional ANSI color support on Windows
 try:
@@ -39,6 +42,209 @@ class ColoredFormatter(logging.Formatter):
         return base
 
 
+class MermaidLogger:
+    """
+    Logger for collecting agent interaction events that can be used to generate Mermaid diagrams.
+    
+    Captures:
+    - Agent invocations
+    - Tool usages
+    - Message exchanges between agents
+    
+    The collected data is structured to be easily translatable into Mermaid sequence diagram syntax.
+    """
+    
+    def __init__(self, enabled: bool = False, verbose: bool = False):
+        """
+        Initialize the Mermaid logger.
+        
+        Args:
+            enabled: Whether to collect mermaid diagram data
+            verbose: Whether verbose output is enabled (affects what gets collected)
+        """
+        self._enabled = enabled
+        self._verbose = verbose
+        self._events: List[Dict[str, Any]] = []
+        self._participants: set = set()
+        
+    def log_agent_creation(self, agent_name: str, agent_id: str):
+        """Log the creation of an agent."""
+        if not self._enabled:
+            return
+            
+        self._participants.add(agent_name)
+        self._events.append({
+            'type': 'agent_creation',
+            'timestamp': datetime.now().isoformat(),
+            'agent_name': agent_name,
+            'agent_id': agent_id
+        })
+        
+        if self._verbose:
+            logging.debug(f"[Mermaid] Agent created: {agent_name} (id={agent_id})")
+    
+    def log_tool_registration(self, agent_name: str, tool_name: str):
+        """Log the registration of a tool with an agent."""
+        if not self._enabled:
+            return
+            
+        self._participants.add(tool_name)
+        self._events.append({
+            'type': 'tool_registration',
+            'timestamp': datetime.now().isoformat(),
+            'agent_name': agent_name,
+            'tool_name': tool_name
+        })
+        
+        if self._verbose:
+            logging.debug(f"[Mermaid] Tool registered: {tool_name} -> {agent_name}")
+    
+    def log_message_sent(self, from_entity: str, to_entity: str, message_type: str, content_summary: Optional[str] = None):
+        """
+        Log a message sent between entities (user, agent, tool).
+        
+        Args:
+            from_entity: The sender (e.g., 'User', 'triage-agent')
+            to_entity: The receiver (e.g., 'priority_agent', 'Thread')
+            message_type: Type of message (e.g., 'user_prompt', 'tool_call', 'tool_response')
+            content_summary: Brief summary of the content (optional)
+        """
+        if not self._enabled:
+            return
+            
+        self._participants.add(from_entity)
+        self._participants.add(to_entity)
+        
+        event = {
+            'type': 'message',
+            'timestamp': datetime.now().isoformat(),
+            'from': from_entity,
+            'to': to_entity,
+            'message_type': message_type
+        }
+        
+        if content_summary:
+            event['content'] = content_summary
+            
+        self._events.append(event)
+        
+        if self._verbose:
+            content_part = f": {content_summary}" if content_summary else ""
+            logging.debug(f"[Mermaid] Message: {from_entity} -> {to_entity} ({message_type}){content_part}")
+    
+    def log_run_started(self, agent_name: str, thread_id: str):
+        """Log when an agent run starts."""
+        if not self._enabled:
+            return
+            
+        self._events.append({
+            'type': 'run_started',
+            'timestamp': datetime.now().isoformat(),
+            'agent_name': agent_name,
+            'thread_id': thread_id
+        })
+        
+        if self._verbose:
+            logging.debug(f"[Mermaid] Run started: {agent_name} on thread {thread_id}")
+    
+    def log_run_completed(self, agent_name: str, status: str):
+        """Log when an agent run completes."""
+        if not self._enabled:
+            return
+            
+        self._events.append({
+            'type': 'run_completed',
+            'timestamp': datetime.now().isoformat(),
+            'agent_name': agent_name,
+            'status': status
+        })
+        
+        if self._verbose:
+            logging.debug(f"[Mermaid] Run completed: {agent_name} (status={status})")
+    
+    def get_mermaid_diagram(self) -> str:
+        """
+        Generate a Mermaid sequence diagram from collected events.
+        
+        Returns:
+            A string containing the Mermaid diagram syntax
+        """
+        if not self._enabled or not self._events:
+            return ""
+        
+        lines = ["sequenceDiagram"]
+        
+        # Add participants
+        for participant in sorted(self._participants):
+            lines.append(f"    participant {participant}")
+        
+        # Add interactions
+        for event in self._events:
+            if event['type'] == 'message':
+                from_entity = event['from']
+                to_entity = event['to']
+                msg_type = event['message_type']
+                content = event.get('content', '')
+                
+                # Format the message label
+                label = f"{msg_type}"
+                if content:
+                    # Truncate long content
+                    if len(content) > 40:
+                        content = content[:37] + "..."
+                    label = f"{msg_type}: {content}"
+                
+                # Use different arrow types based on message type
+                if msg_type in ['tool_call', 'delegation']:
+                    lines.append(f"    {from_entity}->>{to_entity}: {label}")
+                elif msg_type in ['tool_response', 'result']:
+                    lines.append(f"    {to_entity}-->>{from_entity}: {label}")
+                else:
+                    lines.append(f"    {from_entity}->{to_entity}: {label}")
+            
+            elif event['type'] == 'agent_creation':
+                agent_name = event['agent_name']
+                lines.append(f"    Note over {agent_name}: Created")
+            
+            elif event['type'] == 'run_started':
+                agent_name = event['agent_name']
+                lines.append(f"    activate {agent_name}")
+            
+            elif event['type'] == 'run_completed':
+                agent_name = event['agent_name']
+                status = event['status']
+                lines.append(f"    Note over {agent_name}: {status}")
+                lines.append(f"    deactivate {agent_name}")
+        
+        return "\n".join(lines)
+    
+    def save_diagram(self, filepath: str = "agent_interactions.mmd"):
+        """
+        Save the Mermaid diagram to a file.
+        
+        Args:
+            filepath: Path to save the diagram file
+        """
+        if not self._enabled:
+            return
+            
+        diagram = self.get_mermaid_diagram()
+        if diagram:
+            with open(filepath, 'w') as f:
+                f.write(diagram)
+            logging.info(f"Mermaid diagram saved to: {filepath}")
+    
+    def clear(self):
+        """Clear all collected events."""
+        self._events.clear()
+        self._participants.clear()
+    
+    @property
+    def is_enabled(self) -> bool:
+        """Return whether mermaid logging is enabled."""
+        return self._enabled
+
+
 class LoggingConfig:
     """
     Centralized logging configuration for the application.
@@ -47,13 +253,15 @@ class LoggingConfig:
     - Root logger setup with color formatting
     - Azure SDK logger configuration
     - Console clearing behavior
+    - Mermaid diagram logging
     """
     
     def __init__(self):
         self._verbose = False
         self._azure_http_log = False
+        self._mermaid_logger: Optional[MermaidLogger] = None
     
-    def setup_logging(self, verbose: bool = False, azure_http_log: bool = False) -> logging.Logger:
+    def setup_logging(self, verbose: bool = False, azure_http_log: bool = False, create_mermaid: bool = False) -> logging.Logger:
         """
         Configure the root logger and Azure SDK loggers.
         
@@ -62,12 +270,16 @@ class LoggingConfig:
                     If False, sets level to INFO and shows only INFO (yellow) messages.
             azure_http_log: If True, enables Azure SDK HTTP request/response logging.
                            If False, suppresses HTTP logs unless verbose is True.
+            create_mermaid: If True, enables Mermaid diagram data collection.
         
         Returns:
             The configured root logger.
         """
         self._verbose = verbose
         self._azure_http_log = azure_http_log
+        
+        # Initialize Mermaid logger
+        self._mermaid_logger = MermaidLogger(enabled=create_mermaid, verbose=verbose)
         
         logger = logging.getLogger()
         logger.handlers.clear()
@@ -115,6 +327,11 @@ class LoggingConfig:
     def is_verbose(self) -> bool:
         """Return whether verbose mode is enabled."""
         return self._verbose
+    
+    @property
+    def mermaid_logger(self) -> Optional[MermaidLogger]:
+        """Return the Mermaid logger instance."""
+        return self._mermaid_logger
 
 
 def vdebug(msg: str):
