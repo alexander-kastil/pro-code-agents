@@ -66,6 +66,7 @@ class MermaidLogger:
         self._verbose = verbose
         self._events: List[Dict[str, Any]] = []
         self._participants: set = set()
+        self._user_prompt: Optional[str] = None
         
     def log_agent_creation(self, agent_name: str, agent_id: str):
         """Log the creation of an agent."""
@@ -111,6 +112,10 @@ class MermaidLogger:
         """
         if not self._enabled:
             return
+        
+        # Capture the user prompt for later use in filename/documentation
+        if message_type == 'user_prompt' and from_entity == 'User' and content_summary:
+            self._user_prompt = content_summary
             
         self._participants.add(from_entity)
         self._participants.add(to_entity)
@@ -218,21 +223,61 @@ class MermaidLogger:
         
         return "\n".join(lines)
     
-    def save_diagram(self, filepath: str = "agent_interactions.mmd"):
+    def save_diagram(self, output_dir: Optional[str] = None):
         """
-        Save the Mermaid diagram to a file.
+        Save the Mermaid diagram to a markdown file with timestamp and case description.
         
         Args:
-            filepath: Path to save the diagram file
+            output_dir: Directory to save the diagram file. If None, uses current directory.
         """
         if not self._enabled:
             return
             
         diagram = self.get_mermaid_diagram()
-        if diagram:
-            with open(filepath, 'w') as f:
-                f.write(diagram)
-            logging.info(f"Mermaid diagram saved to: {filepath}")
+        if not diagram:
+            return
+        
+        # Generate filename with case description and timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        
+        # Create a safe filename from the user prompt
+        if self._user_prompt:
+            # Take first few words of prompt for filename
+            case_name = "_".join(self._user_prompt.split()[:5])
+            # Remove special characters
+            case_name = "".join(c if c.isalnum() or c in ('_', '-') else '_' for c in case_name)
+            case_name = case_name[:50]  # Limit length
+        else:
+            case_name = "case"
+        
+        filename = f"{case_name}_{timestamp}.md"
+        
+        # Prepare output directory
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+            filepath = os.path.join(output_dir, filename)
+        else:
+            filepath = filename
+        
+        # Create markdown content with task description and diagram
+        content_lines = []
+        
+        if self._user_prompt:
+            content_lines.append(f"# Agent Interaction: {self._user_prompt}\n")
+            content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        else:
+            content_lines.append(f"# Agent Interaction\n")
+            content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        
+        content_lines.append("## Sequence Diagram\n")
+        content_lines.append("```mermaid")
+        content_lines.append(diagram)
+        content_lines.append("```\n")
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write("\n".join(content_lines))
+        
+        logging.info(f"Mermaid diagram saved to: {filepath}")
     
     def clear(self):
         """Clear all collected events."""

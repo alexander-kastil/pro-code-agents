@@ -17,6 +17,7 @@ load_dotenv()
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
 azure_http_log = os.getenv("AZURE_HTTP_LOG", "false") == "true"
 create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
+mermaid_dir = os.getenv("MERMAID_DIR", "diagrams")
 
 # Setup logging with explicit parameters
 logging_config = LoggingConfig()
@@ -216,7 +217,7 @@ with agents_client:
     
     # Save Mermaid diagram if enabled
     if mermaid_logger and mermaid_logger.is_enabled:
-        mermaid_logger.save_diagram()
+        mermaid_logger.save_diagram(output_dir=mermaid_dir)
     
     # Delete the agent when done
     logging.info("Cleaning up agents ...")
