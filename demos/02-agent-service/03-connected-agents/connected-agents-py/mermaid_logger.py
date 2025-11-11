@@ -9,6 +9,7 @@ import os
 import logging
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+from jinja2 import Environment, FileSystemLoader
 
 
 class MermaidLogger:
@@ -21,21 +22,33 @@ class MermaidLogger:
     - Message exchanges between agents
     
     The collected data is structured to be easily translatable into Mermaid sequence diagram syntax.
+    Supports three log levels: default, verbose, and http-log.
     """
     
-    def __init__(self, enabled: bool = False, verbose: bool = False):
+    def __init__(self, enabled: bool = False, verbose: bool = False, http_log: bool = False):
         """
         Initialize the Mermaid logger.
         
         Args:
             enabled: Whether to collect mermaid diagram data
             verbose: Whether verbose output is enabled (affects what gets collected)
+            http_log: Whether HTTP-level logging is enabled
         """
         self._enabled = enabled
         self._verbose = verbose
-        self._events: List[Dict[str, Any]] = []
+        self._http_log = http_log
+        
+        # Separate event collections for each log level
+        self._default_events: List[Dict[str, Any]] = []
+        self._verbose_events: List[Dict[str, Any]] = []
+        self._http_events: List[Dict[str, Any]] = []
+        
         self._participants: set = set()
         self._user_prompt: Optional[str] = None
+        
+        # Setup Jinja2 environment
+        template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+        self._jinja_env = Environment(loader=FileSystemLoader(template_dir))
         
     def log_agent_creation(self, agent_name: str, agent_id: str):
         """Log the creation of an agent."""
@@ -43,12 +56,16 @@ class MermaidLogger:
             return
             
         self._participants.add(agent_name)
-        self._events.append({
+        event = {
             'type': 'agent_creation',
             'timestamp': datetime.now().isoformat(),
             'agent_name': agent_name,
             'agent_id': agent_id
-        })
+        }
+        
+        # Default level: skip agent creation details
+        # Verbose level: include agent creation
+        self._verbose_events.append(event)
         
         if self._verbose:
             logging.debug(f"[Mermaid] Agent created: {agent_name} (id={agent_id})")
@@ -59,12 +76,16 @@ class MermaidLogger:
             return
             
         self._participants.add(tool_name)
-        self._events.append({
+        event = {
             'type': 'tool_registration',
             'timestamp': datetime.now().isoformat(),
             'agent_name': agent_name,
             'tool_name': tool_name
-        })
+        }
+        
+        # Default level: skip tool registration details
+        # Verbose level: include tool registration
+        self._verbose_events.append(event)
         
         if self._verbose:
             logging.debug(f"[Mermaid] Tool registered: {tool_name} -> {agent_name}")
@@ -99,9 +120,20 @@ class MermaidLogger:
         
         if content_summary:
             event['content'] = content_summary
-            
-        self._events.append(event)
         
+        # All log levels capture message events
+        self._default_events.append(event)
+        self._verbose_events.append(event)
+        
+        # HTTP log captures API-level communication
+        if message_type in ['tool_call', 'tool_response', 'user_prompt', 'result']:
+            self._http_events.append({
+                'type': 'http_event',
+                'timestamp': datetime.now().isoformat(),
+                'description': f"API call: {from_entity} → {to_entity}",
+                'details': f"{message_type}" + (f": {content_summary}" if content_summary else "")
+            })
+            
         if self._verbose:
             content_part = f": {content_summary}" if content_summary else ""
             logging.debug(f"[Mermaid] Message: {from_entity} -> {to_entity} ({message_type}){content_part}")
@@ -111,12 +143,16 @@ class MermaidLogger:
         if not self._enabled:
             return
             
-        self._events.append({
+        event = {
             'type': 'run_started',
             'timestamp': datetime.now().isoformat(),
             'agent_name': agent_name,
             'thread_id': thread_id
-        })
+        }
+        
+        # Default level: include run lifecycle
+        self._default_events.append(event)
+        self._verbose_events.append(event)
         
         if self._verbose:
             logging.debug(f"[Mermaid] Run started: {agent_name} on thread {thread_id}")
@@ -126,24 +162,42 @@ class MermaidLogger:
         if not self._enabled:
             return
             
-        self._events.append({
+        event = {
             'type': 'run_completed',
             'timestamp': datetime.now().isoformat(),
             'agent_name': agent_name,
             'status': status
-        })
+        }
+        
+        # Default level: include run lifecycle
+        self._default_events.append(event)
+        self._verbose_events.append(event)
         
         if self._verbose:
             logging.debug(f"[Mermaid] Run completed: {agent_name} (status={status})")
     
-    def get_mermaid_diagram(self) -> str:
+    def get_mermaid_diagram(self, log_level: str = 'default') -> str:
         """
         Generate a Mermaid sequence diagram from collected events.
+        
+        Args:
+            log_level: Which log level to use ('default', 'verbose', or 'http')
         
         Returns:
             A string containing the Mermaid diagram syntax
         """
-        if not self._enabled or not self._events:
+        if not self._enabled:
+            return ""
+        
+        # Select event collection based on log level
+        if log_level == 'verbose':
+            events = self._verbose_events
+        elif log_level == 'http':
+            events = self._http_events
+        else:
+            events = self._default_events
+            
+        if not events:
             return ""
         
         lines = ["sequenceDiagram"]
@@ -153,7 +207,7 @@ class MermaidLogger:
             lines.append(f"    participant {participant}")
         
         # Add interactions
-        for event in self._events:
+        for event in events:
             if event['type'] == 'message':
                 from_entity = event['from']
                 to_entity = event['to']
@@ -199,63 +253,51 @@ class MermaidLogger:
         
         return "\n".join(lines)
     
-    def _compose_markdown(self, diagram: str, timestamp: str) -> str:
+    def _render_template(self, template_name: str, diagram: str, timestamp: str) -> str:
         """
-        Compose the markdown report content for a ticket, placing the
-        non-technical description first, followed by the technical details
-        and the Mermaid diagram.
-
+        Render a Jinja2 template with diagram and metadata.
+        
         Args:
+            template_name: Name of the template file (e.g., 'default.md.j2')
             diagram: Mermaid sequence diagram content (no code fences)
             timestamp: Timestamp string used for the ticket and header
-
+        
         Returns:
-            A markdown string
+            Rendered markdown string
         """
-        # Create markdown content with task description and diagram
-        content_lines: List[str] = []
-
+        template = self._jinja_env.get_template(template_name)
+        
         # Generate virtual ticket number based on timestamp
         ticket_number = f"TICKET-{timestamp}"
-
-        if self._user_prompt:
-            content_lines.append(f"# {ticket_number}\n")
-            content_lines.append(f"**Description:** {self._user_prompt}\n")
-            content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        else:
-            content_lines.append(f"# {ticket_number}\n")
-            content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-
-        # Outcome (non-technical summary) first
-        content_lines.append("## Outcome\n")
-        content_lines.append("The ticket was processed through a multi-agent triage system where specialized agents analyzed different aspects:\n")
-        content_lines.append("- **Priority Agent**: Assessed urgency based on impact and user-facing issues\n")
-        content_lines.append("- **Team Agent**: Determined optimal team assignment based on ticket content\n")
-        content_lines.append("- **Effort Agent**: Estimated required work and complexity\n")
-        content_lines.append("\nThe main orchestrator agent coordinated these assessments to provide comprehensive triage results.\n")
-
-        # Technical section after the outcome
-        content_lines.append("## Technical Process\n")
-        content_lines.append("The triage agent used connected agents as tools. Each specialized agent operates independently with its own instructions, while the main agent delegates tasks and aggregates responses.\n")
-        content_lines.append("### Agent Interaction Diagram\n")
-        content_lines.append("```mermaid")
-        content_lines.append(diagram)
-        content_lines.append("```\n")
-
-        return "\n".join(content_lines)
+        
+        context = {
+            'ticket_number': ticket_number,
+            'user_prompt': self._user_prompt or 'No description provided',
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'diagram': diagram,
+            'events': None,
+            'http_events': None
+        }
+        
+        # Add verbose events if rendering verbose template
+        if template_name == 'verbose.md.j2':
+            context['events'] = self._verbose_events
+        
+        # Add HTTP events if rendering HTTP template
+        if template_name == 'http.md.j2':
+            context['http_events'] = self._http_events
+        
+        return template.render(**context)
 
     def save_diagram(self, output_dir: Optional[str] = None):
         """
-        Save the Mermaid diagram to a markdown file with timestamp and case description.
+        Save the Mermaid diagrams to markdown files with timestamp and case description.
+        Generates three separate files for default, verbose, and HTTP log levels.
         
         Args:
-            output_dir: Directory to save the diagram file. If None, uses current directory.
+            output_dir: Directory to save the diagram files. If None, uses current directory.
         """
         if not self._enabled:
-            return
-            
-        diagram = self.get_mermaid_diagram()
-        if not diagram:
             return
         
         # Generate filename with case description and timestamp
@@ -271,26 +313,50 @@ class MermaidLogger:
         else:
             case_name = "case"
         
-        filename = f"{case_name}_{timestamp}.md"
-        
         # Prepare output directory
         if output_dir:
             os.makedirs(output_dir, exist_ok=True)
-            filepath = os.path.join(output_dir, filename)
-        else:
-            filepath = filename
         
-        # Compose markdown in a dedicated helper to keep save_diagram lean
-        markdown_output = self._compose_markdown(diagram=diagram, timestamp=timestamp)
-
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(markdown_output)
+        # Generate and save each log level diagram
+        log_levels = [
+            ('default', 'default.md.j2'),
+            ('verbose', 'verbose.md.j2'),
+            ('http', 'http.md.j2')
+        ]
         
-        logging.info(f"Mermaid diagram saved to: {filepath}")
+        for level_name, template_name in log_levels:
+            diagram = self.get_mermaid_diagram(log_level=level_name)
+            
+            # Skip if no diagram content (only applies to http level if not enabled)
+            if not diagram and level_name == 'http':
+                # For HTTP level, still generate the file to show it's available
+                diagram = "sequenceDiagram\n    Note over User: No HTTP events captured"
+            
+            if diagram:
+                filename = f"{case_name}_{timestamp}_{level_name}.md"
+                
+                if output_dir:
+                    filepath = os.path.join(output_dir, filename)
+                else:
+                    filepath = filename
+                
+                # Render template with Jinja2
+                markdown_output = self._render_template(
+                    template_name=template_name,
+                    diagram=diagram,
+                    timestamp=timestamp
+                )
+                
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    f.write(markdown_output)
+                
+                logging.info(f"Mermaid diagram ({level_name}) saved to: {filepath}")
     
     def clear(self):
         """Clear all collected events."""
-        self._events.clear()
+        self._default_events.clear()
+        self._verbose_events.clear()
+        self._http_events.clear()
         self._participants.clear()
     
     @property

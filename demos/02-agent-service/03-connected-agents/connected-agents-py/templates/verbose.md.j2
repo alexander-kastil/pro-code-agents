@@ -1,0 +1,47 @@
+# {{ ticket_number }} - Verbose Analysis
+
+**Description:** {{ user_prompt }}
+
+**Timestamp:** {{ timestamp }}
+
+## Outcome
+
+The ticket was processed through a multi-agent triage system where specialized agents analyzed different aspects:
+- **Priority Agent**: Assessed urgency based on impact and user-facing issues
+- **Team Agent**: Determined optimal team assignment based on ticket content
+- **Effort Agent**: Estimated required work and complexity
+
+The main orchestrator agent coordinated these assessments to provide comprehensive triage results.
+
+## Technical Process (Verbose)
+
+The triage agent used connected agents as tools. Each specialized agent operates independently with its own instructions, while the main agent delegates tasks and aggregates responses.
+
+### Detailed Agent Interaction Flow
+
+This verbose diagram includes additional details about agent creation, tool registration, and internal processing steps that are typically hidden in the default view.
+
+```mermaid
+{{ diagram }}
+```
+
+### Event Log
+
+{% if events %}
+The following events were captured during processing:
+{% for event in events %}
+- **{{ event.type }}** at {{ event.timestamp }}
+  {% if event.type == 'agent_creation' %}
+  - Agent: {{ event.agent_name }} (ID: {{ event.agent_id }})
+  {% elif event.type == 'tool_registration' %}
+  - Tool: {{ event.tool_name }} registered with {{ event.agent_name }}
+  {% elif event.type == 'message' %}
+  - From: {{ event.from }} → To: {{ event.to }} ({{ event.message_type }})
+  {% if event.content %}  - Content: {{ event.content }}{% endif %}
+  {% elif event.type == 'run_started' %}
+  - Agent: {{ event.agent_name }} on thread {{ event.thread_id }}
+  {% elif event.type == 'run_completed' %}
+  - Agent: {{ event.agent_name }} (Status: {{ event.status }})
+  {% endif %}
+{% endfor %}
+{% endif %}

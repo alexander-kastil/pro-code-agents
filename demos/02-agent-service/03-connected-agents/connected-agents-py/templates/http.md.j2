@@ -1,0 +1,38 @@
+# {{ ticket_number }} - HTTP Communication Log
+
+**Description:** {{ user_prompt }}
+
+**Timestamp:** {{ timestamp }}
+
+## Outcome
+
+The ticket was processed through a multi-agent triage system where specialized agents analyzed different aspects:
+- **Priority Agent**: Assessed urgency based on impact and user-facing issues
+- **Team Agent**: Determined optimal team assignment based on ticket content
+- **Effort Agent**: Estimated required work and complexity
+
+The main orchestrator agent coordinated these assessments to provide comprehensive triage results.
+
+## HTTP Communication Analysis
+
+This diagram focuses on HTTP-level communication patterns between the client and Azure AI Agent Service, including API calls, requests, and responses.
+
+### HTTP Interaction Diagram
+
+```mermaid
+{{ diagram }}
+```
+
+### HTTP Events Summary
+
+{% if http_events %}
+The following HTTP-level events were captured:
+{% for event in http_events %}
+- **{{ event.timestamp }}**: {{ event.description }}
+  {% if event.details %}
+  - Details: {{ event.details }}
+  {% endif %}
+{% endfor %}
+{% else %}
+Note: HTTP-level logging must be enabled with `AZURE_HTTP_LOG=true` to capture detailed HTTP events.
+{% endif %}

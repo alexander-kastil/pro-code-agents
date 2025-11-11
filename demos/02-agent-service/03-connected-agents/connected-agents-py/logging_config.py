@@ -76,7 +76,7 @@ class LogUtil:
         self._azure_http_log = azure_http_log
         
         # Initialize Mermaid logger
-        self._mermaid_logger = MermaidLogger(enabled=create_mermaid, verbose=verbose)
+        self._mermaid_logger = MermaidLogger(enabled=create_mermaid, verbose=verbose, http_log=azure_http_log)
         
         logger = logging.getLogger()
         logger.handlers.clear()
