@@ -12,34 +12,70 @@ This example demonstrates the **ConnectedAgentTool** pattern in Azure AI Agent S
 2. Install dependencies: `uv sync` (or `pip install -r requirements.txt`)
 3. Run the agent: `uv run python agent_triage.py` (or `python agent_triage.py`)
 4. Optional: Set `VERBOSE_OUTPUT=true` for detailed logging
-5. Optional: Set `CREATE_MERMAID_DIAGRAM=true` to generate Mermaid sequence diagrams of agent interactions (see [MERMAID_DIAGRAMS.md](MERMAID_DIAGRAMS.md))
+5. Optional: Set `CREATE_MERMAID_DIAGRAM=true` to generate Mermaid sequence diagrams of agent interactions
+6. Optional: Set `AZURE_HTTP_LOG=true` to enable detailed HTTP-level visualization (requires `CREATE_MERMAID_DIAGRAM=true`)
 
 ## Multi-Level Mermaid Diagram Generation
 
-When `CREATE_MERMAID_DIAGRAM=true` is set, the system generates **three separate Mermaid diagram files** for each run, providing different levels of detail:
+When `CREATE_MERMAID_DIAGRAM=true` is set, the system generates **a single comprehensive Mermaid diagram file** for each run, with multiple sections providing different levels of detail:
 
-### 1. Default Diagram (`*_default.md`)
+### 1. Default Level - Agent Interaction Diagram
 - Shows the basic agent interactions and message flows
-- Focuses on user-facing communication patterns
+- Focuses on user-facing communication patterns  
 - Best for understanding the high-level workflow
+- Sequence diagram format showing message exchanges
 
-### 2. Verbose Diagram (`*_verbose.md`)
-- Includes all events from the default diagram
-- Adds agent creation and tool registration details
-- Contains a detailed event log with timestamps
+### 2. Verbose Level - System Setup Flowchart
+- Includes agent creation and tool registration details
+- Shows the complete setup and execution flow
 - Best for debugging and understanding internal processes
+- Flowchart format showing system initialization
 
-### 3. HTTP Diagram (`*_http.md`)
-- Focuses on API-level communication patterns
-- Captures HTTP requests and responses between components
-- Lists HTTP events with timestamps and details
-- Best for understanding the network communication layer
+### 3. HTTP Level - API Communication Layer ✨ **NEW & IMPROVED**
+- **Detailed HTTP request/response visualization** with enhanced features:
+  - 📤 Sequential numbering for each API call (e.g., [1], [2], [3])
+  - 📝 Operation descriptions (e.g., "Create agent", "Start run", "List messages")
+  - ✓ Status code indicators (✓ = success, ⚠ = client error, ✗ = server error)
+  - 🔗 Normalized endpoint paths with {id} placeholders
+  - 📊 HTTP events timeline table showing all requests chronologically
+- Captures complete HTTP communication between client and Azure AI Agent Service
+- Shows API-level patterns including agent creation, threading, messaging, and cleanup
+- Best for understanding the network communication layer and API usage
 
-All three diagrams are generated using **Jinja2 templates** located in the `templates/` directory, making them easy to customize for your specific needs.
+The diagram is generated using **Jinja2 templates** located in the `templates/` directory, making it easy to customize for your specific needs.
 
 ### Environment Variables for Logging
 
 - `VERBOSE_OUTPUT=true` - Enable detailed console logging
-- `AZURE_HTTP_LOG=true` - Enable Azure SDK HTTP-level logging (captured in HTTP diagram)
-- `CREATE_MERMAID_DIAGRAM=true` - Generate all three Mermaid diagram files
+- `AZURE_HTTP_LOG=true` - Enable Azure SDK HTTP-level logging (captured in HTTP diagram section)
+- `CREATE_MERMAID_DIAGRAM=true` - Generate comprehensive Mermaid diagram file
 - `MERMAID_DIR=diagrams` - Directory to save diagram files (default: `diagrams`)
+
+### Demo Script
+
+To see the HTTP visualization improvements without needing Azure credentials, run:
+
+```bash
+python demo_http_visualization.py
+```
+
+This demo script simulates a complete agent triage workflow and shows:
+- The generated HTTP sequence diagram with all improvements
+- HTTP events summary with 13+ API calls
+- Saved diagram file in the `demo_diagrams/` directory
+
+### Running Tests
+
+To verify the HTTP visualization functionality:
+
+```bash
+python -m unittest test_http_visualization -v
+```
+
+All 9 tests should pass, covering:
+- Endpoint normalization
+- Operation descriptions
+- Pattern matching
+- Status emoji indicators
+- HTTP event capturing
+- Complete workflow integration
