@@ -42,6 +42,53 @@ class ColoredFormatter(logging.Formatter):
         return base
 
 
+class HttpLogHandler(logging.Handler):
+    """Custom handler to capture HTTP logs and add them to Mermaid logger."""
+    
+    def __init__(self, mermaid_logger: Optional[MermaidLogger] = None):
+        super().__init__()
+        self.mermaid_logger = mermaid_logger
+        self.current_request_method = None
+        self.current_request_url = None
+    
+    def emit(self, record: logging.LogRecord):
+        """Capture HTTP request/response logs."""
+        if not self.mermaid_logger or not self.mermaid_logger._http_log:
+            return
+        
+        message = record.getMessage()
+        
+        # Capture request method and URL
+        if "Request method:" in message:
+            self.current_request_method = message.split("'")[1] if "'" in message else None
+        elif "Request URL:" in message and self.current_request_method:
+            # Extract the endpoint path from the URL
+            if "/assistants?" in message:
+                endpoint = "/assistants"
+            elif "/threads?" in message:
+                endpoint = "/threads"
+            elif "/messages?" in message:
+                endpoint = "/messages"
+            elif "/runs?" in message:
+                endpoint = "/runs"
+            elif "/assistants/" in message and "?" in message:
+                endpoint = "/assistants/{id}"
+            else:
+                endpoint = message.split('/api/projects/')[1].split('?')[0] if '/api/projects/' in message else "unknown"
+            
+            self.current_request_url = f"{self.current_request_method} {endpoint}"
+        elif "Response status:" in message and self.current_request_url:
+            # Extract status code
+            status = message.split("Response status:")[1].strip()
+            
+            # Add to HTTP events
+            self.mermaid_logger.log_http_request(self.current_request_url, status)
+            
+            # Reset for next request
+            self.current_request_method = None
+            self.current_request_url = None
+
+
 class LogUtil:
     """
     Centralized logging configuration for the application.
@@ -99,6 +146,12 @@ class LogUtil:
         http_logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         identity_logger = logging.getLogger("azure.identity")
         azure_logger = logging.getLogger("azure")
+
+        # Add HTTP log handler for Mermaid diagram capture
+        if create_mermaid and azure_http_log:
+            http_capture_handler = HttpLogHandler(self._mermaid_logger)
+            http_capture_handler.setLevel(logging.INFO)
+            http_logger.addHandler(http_capture_handler)
 
         # Suppress noisy HTTP logs unless explicitly enabled or in verbose mode
         if verbose or azure_http_log:

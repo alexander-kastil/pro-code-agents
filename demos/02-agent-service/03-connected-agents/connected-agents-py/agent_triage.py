@@ -194,8 +194,19 @@ with agents_client:
     run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     logging.info(f"Run finished: id={run.id}, status={run.status}")
     logging.debug(f"Run raw object: {run}")
+    
+    # Extract usage information if available
+    usage = None
+    if hasattr(run, 'usage') and run.usage:
+        usage = {
+            'prompt_tokens': run.usage.prompt_tokens if hasattr(run.usage, 'prompt_tokens') else 0,
+            'completion_tokens': run.usage.completion_tokens if hasattr(run.usage, 'completion_tokens') else 0,
+            'total_tokens': run.usage.total_tokens if hasattr(run.usage, 'total_tokens') else 0
+        }
+        logging.info(f"Token usage: {usage}")
+    
     if mermaid_logger:
-        mermaid_logger.log_run_completed("triage-agent", run.status)
+        mermaid_logger.log_run_completed("triage-agent", run.status, usage)
     
     if run.status == "failed":
         logging.error(f"Run failed: {run.last_error}")

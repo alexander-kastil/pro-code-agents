@@ -39,6 +39,7 @@ class MermaidLogger:
         self._http_log = http_log
         
         # Separate event collections for each log level
+        # Only active levels will have data collected
         self._default_events: List[Dict[str, Any]] = []
         self._verbose_events: List[Dict[str, Any]] = []
         self._http_events: List[Dict[str, Any]] = []
@@ -46,9 +47,26 @@ class MermaidLogger:
         self._participants: set = set()
         self._user_prompt: Optional[str] = None
         
+        # Token usage tracking
+        self._total_tokens_in: int = 0
+        self._total_tokens_out: int = 0
+        
+        # Triage results tracking
+        self._triage_result: Optional[str] = None
+        
         # Setup Jinja2 environment
         template_dir = os.path.join(os.path.dirname(__file__), 'templates')
         self._jinja_env = Environment(loader=FileSystemLoader(template_dir))
+    
+    @property
+    def active_log_levels(self) -> List[str]:
+        """Return list of active log levels based on configuration."""
+        levels = ['default']  # Always active
+        if self._verbose:
+            levels.append('verbose')
+        if self._http_log:
+            levels.append('http')
+        return levels
         
     def log_agent_creation(self, agent_name: str, agent_id: str):
         """Log the creation of an agent."""
@@ -63,11 +81,9 @@ class MermaidLogger:
             'agent_id': agent_id
         }
         
-        # Default level: skip agent creation details
-        # Verbose level: include agent creation
-        self._verbose_events.append(event)
-        
+        # Only verbose level includes agent creation details
         if self._verbose:
+            self._verbose_events.append(event)
             logging.debug(f"[Mermaid] Agent created: {agent_name} (id={agent_id})")
     
     def log_tool_registration(self, agent_name: str, tool_name: str):
@@ -83,11 +99,9 @@ class MermaidLogger:
             'tool_name': tool_name
         }
         
-        # Default level: skip tool registration details
-        # Verbose level: include tool registration
-        self._verbose_events.append(event)
-        
+        # Only verbose level includes tool registration details
         if self._verbose:
+            self._verbose_events.append(event)
             logging.debug(f"[Mermaid] Tool registered: {tool_name} -> {agent_name}")
     
     def log_message_sent(self, from_entity: str, to_entity: str, message_type: str, content_summary: Optional[str] = None):
@@ -106,6 +120,10 @@ class MermaidLogger:
         # Capture the user prompt for later use in filename/documentation
         if message_type == 'user_prompt' and from_entity == 'User' and content_summary:
             self._user_prompt = content_summary
+        
+        # Capture the triage result (agent's final response)
+        if message_type == 'result' and from_entity == 'triage-agent' and content_summary:
+            self._triage_result = content_summary
             
         self._participants.add(from_entity)
         self._participants.add(to_entity)
@@ -121,12 +139,15 @@ class MermaidLogger:
         if content_summary:
             event['content'] = content_summary
         
-        # All log levels capture message events
+        # Default level: always collect message events
         self._default_events.append(event)
-        self._verbose_events.append(event)
         
-        # HTTP log captures API-level communication
-        if message_type in ['tool_call', 'tool_response', 'user_prompt', 'result']:
+        # Verbose level: collect if enabled
+        if self._verbose:
+            self._verbose_events.append(event)
+        
+        # HTTP log: capture API-level communication if enabled
+        if self._http_log and message_type in ['tool_call', 'tool_response', 'user_prompt', 'result']:
             self._http_events.append({
                 'type': 'http_event',
                 'timestamp': datetime.now().isoformat(),
@@ -152,13 +173,41 @@ class MermaidLogger:
         
         # Default level: include run lifecycle
         self._default_events.append(event)
-        self._verbose_events.append(event)
         
+        # Verbose level: collect if enabled
         if self._verbose:
+            self._verbose_events.append(event)
             logging.debug(f"[Mermaid] Run started: {agent_name} on thread {thread_id}")
     
-    def log_run_completed(self, agent_name: str, status: str):
-        """Log when an agent run completes."""
+    def log_http_request(self, request: str, status: str):
+        """
+        Log an HTTP request/response for the HTTP level diagram.
+        
+        Args:
+            request: The HTTP request (e.g., "POST /assistants")
+            status: The HTTP response status code
+        """
+        if not self._enabled or not self._http_log:
+            return
+        
+        self._http_events.append({
+            'type': 'http_request',
+            'timestamp': datetime.now().isoformat(),
+            'request': request,
+            'status': status
+        })
+        
+        logging.debug(f"[Mermaid] HTTP: {request} -> {status}")
+    
+    def log_run_completed(self, agent_name: str, status: str, usage: Optional[Dict[str, Any]] = None):
+        """
+        Log when an agent run completes.
+        
+        Args:
+            agent_name: Name of the agent
+            status: Status of the run
+            usage: Optional usage statistics with prompt_tokens, completion_tokens, total_tokens
+        """
         if not self._enabled:
             return
             
@@ -169,16 +218,26 @@ class MermaidLogger:
             'status': status
         }
         
+        # Track token usage if provided
+        if usage:
+            event['usage'] = usage
+            self._total_tokens_in += usage.get('prompt_tokens', 0)
+            self._total_tokens_out += usage.get('completion_tokens', 0)
+        
         # Default level: include run lifecycle
         self._default_events.append(event)
-        self._verbose_events.append(event)
         
+        # Verbose level: collect if enabled
         if self._verbose:
-            logging.debug(f"[Mermaid] Run completed: {agent_name} (status={status})")
+            self._verbose_events.append(event)
+            if usage:
+                logging.debug(f"[Mermaid] Run completed: {agent_name} (status={status}, tokens={usage})")
+            else:
+                logging.debug(f"[Mermaid] Run completed: {agent_name} (status={status})")
     
     def get_mermaid_diagram(self, log_level: str = 'default') -> str:
         """
-        Generate a Mermaid sequence diagram from collected events.
+        Generate a Mermaid diagram from collected events.
         
         Args:
             log_level: Which log level to use ('default', 'verbose', or 'http')
@@ -189,14 +248,17 @@ class MermaidLogger:
         if not self._enabled:
             return ""
         
-        # Select event collection based on log level
+        # Route to appropriate diagram generator based on level
         if log_level == 'verbose':
-            events = self._verbose_events
+            return self._generate_verbose_flowchart()
         elif log_level == 'http':
-            events = self._http_events
+            return self._generate_http_timeline()
         else:
-            events = self._default_events
-            
+            return self._generate_default_sequence()
+    
+    def _generate_default_sequence(self) -> str:
+        """Generate sequence diagram for default log level."""
+        events = self._default_events
         if not events:
             return ""
         
@@ -237,10 +299,6 @@ class MermaidLogger:
                 else:
                     lines.append(f"    {from_entity}->{to_entity}: {label}")
             
-            elif event['type'] == 'agent_creation':
-                agent_name = event['agent_name']
-                lines.append(f"    Note over {agent_name}: Created")
-            
             elif event['type'] == 'run_started':
                 agent_name = event['agent_name']
                 lines.append(f"    activate {agent_name}")
@@ -253,104 +311,163 @@ class MermaidLogger:
         
         return "\n".join(lines)
     
-    def _render_template(self, template_name: str, diagram: str, timestamp: str) -> str:
+    def _generate_verbose_flowchart(self) -> str:
+        """Generate flowchart for verbose log level showing setup and execution flow."""
+        events = self._verbose_events
+        if not events:
+            return ""
+        
+        lines = ["graph TD"]
+        
+        # Track agents and tools
+        agents_created = []
+        tools_registered = {}
+        
+        for event in events:
+            if event['type'] == 'agent_creation':
+                agent_name = event['agent_name']
+                agents_created.append(agent_name)
+            elif event['type'] == 'tool_registration':
+                agent_name = event['agent_name']
+                tool_name = event['tool_name']
+                if agent_name not in tools_registered:
+                    tools_registered[agent_name] = []
+                tools_registered[agent_name].append(tool_name)
+        
+        # Build flowchart
+        lines.append("    Start([System Start])")
+        
+        # Agent creation phase
+        for i, agent in enumerate(agents_created):
+            node_id = f"Agent{i}"
+            lines.append(f"    {node_id}[Create {agent}]")
+            if i == 0:
+                lines.append(f"    Start --> {node_id}")
+            else:
+                lines.append(f"    Agent{i-1} --> {node_id}")
+        
+        # Tool registration phase
+        if tools_registered:
+            last_agent_id = f"Agent{len(agents_created)-1}"
+            lines.append(f"    ToolReg{{Tool Registration}}")
+            lines.append(f"    {last_agent_id} --> ToolReg")
+            
+            for agent, tools in tools_registered.items():
+                for tool in tools:
+                    safe_tool = tool.replace('-', '_').replace(' ', '_')
+                    lines.append(f"    Tool_{safe_tool}[{tool}]")
+                    lines.append(f"    ToolReg --> Tool_{safe_tool}")
+        
+        # Execution phase
+        lines.append("    Exec[Execute Triage]")
+        if tools_registered:
+            lines.append("    ToolReg --> Exec")
+        else:
+            lines.append(f"    Agent{len(agents_created)-1} --> Exec")
+        
+        lines.append("    Complete([Complete])")
+        lines.append("    Exec --> Complete")
+        
+        return "\n".join(lines)
+    
+    def _generate_http_timeline(self) -> str:
+        """Generate detailed HTTP sequence diagram showing actual API calls."""
+        events = self._http_events
+        if not events:
+            return ""
+        
+        # Create detailed sequence diagram showing HTTP interactions
+        lines = ["sequenceDiagram"]
+        lines.append("    participant Client as Client App")
+        lines.append("    participant API as Azure AI Agent Service")
+        
+        for event in events:
+            if event['type'] == 'http_request':
+                request = event.get('request', '')
+                status = event.get('status', '')
+                
+                # Parse request to get method and endpoint
+                if ' ' in request:
+                    method, endpoint = request.split(' ', 1)
+                    
+                    # Determine if it's a request or response based on method
+                    if method in ['POST', 'GET', 'DELETE', 'PUT', 'PATCH']:
+                        # Request arrow
+                        lines.append(f"    Client->>API: {method} {endpoint}")
+                        # Response arrow
+                        lines.append(f"    API-->>Client: {status}")
+        
+        return "\n".join(lines)
+    
+    def _render_template(self, timestamp: str) -> str:
         """
-        Render a Jinja2 template with diagram and metadata.
+        Render a combined Jinja2 template with all active log level diagrams.
         
         Args:
-            template_name: Name of the template file (e.g., 'default.md.j2')
-            diagram: Mermaid sequence diagram content (no code fences)
             timestamp: Timestamp string used for the ticket and header
         
         Returns:
-            Rendered markdown string
+            Rendered markdown string with sections for each active log level
         """
-        template = self._jinja_env.get_template(template_name)
+        template = self._jinja_env.get_template('combined.md.j2')
         
         # Generate virtual ticket number based on timestamp
         ticket_number = f"TICKET-{timestamp}"
+        
+        # Collect diagrams for active log levels
+        diagrams = {}
+        for level in self.active_log_levels:
+            diagram = self.get_mermaid_diagram(log_level=level)
+            if diagram:
+                diagrams[level] = diagram
         
         context = {
             'ticket_number': ticket_number,
             'user_prompt': self._user_prompt or 'No description provided',
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'diagram': diagram,
-            'events': None,
-            'http_events': None
+            'diagrams': diagrams,
+            'active_levels': self.active_log_levels,
+            'tokens_in': self._total_tokens_in,
+            'tokens_out': self._total_tokens_out,
+            'tokens_total': self._total_tokens_in + self._total_tokens_out,
+            'triage_result': self._triage_result
         }
-        
-        # Add verbose events if rendering verbose template
-        if template_name == 'verbose.md.j2':
-            context['events'] = self._verbose_events
-        
-        # Add HTTP events if rendering HTTP template
-        if template_name == 'http.md.j2':
-            context['http_events'] = self._http_events
         
         return template.render(**context)
 
     def save_diagram(self, output_dir: Optional[str] = None):
         """
-        Save the Mermaid diagrams to markdown files with timestamp and case description.
-        Generates three separate files for default, verbose, and HTTP log levels.
+        Save a combined Mermaid diagram markdown file with sections for all active log levels.
+        Only generates one file containing diagrams for currently active log levels.
         
         Args:
-            output_dir: Directory to save the diagram files. If None, uses current directory.
+            output_dir: Directory to save the diagram file. If None, uses current directory.
         """
         if not self._enabled:
             return
         
-        # Generate filename with case description and timestamp
+        # Generate timestamp and ticket number
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        ticket_number = f"TICKET-{timestamp}"
         
-        # Create a safe filename from the user prompt
-        if self._user_prompt:
-            # Take first few words of prompt for filename
-            case_name = "_".join(self._user_prompt.split()[:5])
-            # Remove special characters
-            case_name = "".join(c if c.isalnum() or c in ('_', '-') else '_' for c in case_name)
-            case_name = case_name[:50]  # Limit length
-        else:
-            case_name = "case"
+        # Use ticket number as filename
+        filename = f"{ticket_number}.md"
         
         # Prepare output directory
         if output_dir:
             os.makedirs(output_dir, exist_ok=True)
+            filepath = os.path.join(output_dir, filename)
+        else:
+            filepath = filename
         
-        # Generate and save each log level diagram
-        log_levels = [
-            ('default', 'default.md.j2'),
-            ('verbose', 'verbose.md.j2'),
-            ('http', 'http.md.j2')
-        ]
+        # Render combined template with all active log levels
+        markdown_output = self._render_template(timestamp=timestamp)
         
-        for level_name, template_name in log_levels:
-            diagram = self.get_mermaid_diagram(log_level=level_name)
-            
-            # Skip if no diagram content (only applies to http level if not enabled)
-            if not diagram and level_name == 'http':
-                # For HTTP level, still generate the file to show it's available
-                diagram = "sequenceDiagram\n    Note over User: No HTTP events captured"
-            
-            if diagram:
-                filename = f"{case_name}_{timestamp}_{level_name}.md"
-                
-                if output_dir:
-                    filepath = os.path.join(output_dir, filename)
-                else:
-                    filepath = filename
-                
-                # Render template with Jinja2
-                markdown_output = self._render_template(
-                    template_name=template_name,
-                    diagram=diagram,
-                    timestamp=timestamp
-                )
-                
-                with open(filepath, 'w', encoding='utf-8') as f:
-                    f.write(markdown_output)
-                
-                logging.info(f"Mermaid diagram ({level_name}) saved to: {filepath}")
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(markdown_output)
+        
+        levels_str = ', '.join(self.active_log_levels)
+        logging.info(f"Mermaid diagram saved to: {filepath} (levels: {levels_str})")
     
     def clear(self):
         """Clear all collected events."""

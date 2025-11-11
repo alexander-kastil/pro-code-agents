@@ -1,0 +1,69 @@
+# {{ ticket_number }}
+
+**Description:** {{ user_prompt }}
+
+**Timestamp:** {{ timestamp }}
+
+**Active Log Levels:** {{ active_levels | join(', ') }}
+
+## Outcome
+
+Your support ticket has been automatically analyzed and categorized. Our AI-powered triage system has:
+
+✅ **Assessed the priority** of your issue to ensure urgent matters get immediate attention  
+✅ **Identified the right team** to handle your request based on the technical area  
+✅ **Estimated the effort** required so you know what to expect for resolution time  
+
+{% if triage_result %}
+**Analysis Result:**
+
+{{ triage_result }}
+
+{% endif %}
+The analysis is complete and your ticket has been routed to the appropriate team for action.
+
+## Technical Process
+
+The triage agent used connected agents as tools. Each specialized agent operates independently with its own instructions, while the main agent delegates tasks and aggregates responses.
+
+**System Architecture:**
+- **Priority Agent**: Assessed urgency based on impact and user-facing issues
+- **Team Agent**: Determined optimal team assignment based on ticket content
+- **Effort Agent**: Estimated required work and complexity
+
+The main orchestrator agent coordinated these assessments to provide comprehensive triage results.
+
+**Token Usage:**
+- Input Tokens: {{ tokens_in }}
+- Output Tokens: {{ tokens_out }}
+- Total Tokens: {{ tokens_total }}
+
+{% if 'default' in diagrams %}
+### Default Level - Agent Interaction Diagram
+
+Sequence diagram showing the core message flow and run lifecycle between agents.
+
+```mermaid
+{{ diagrams['default'] }}
+```
+{% endif %}
+
+{% if 'verbose' in diagrams %}
+### Verbose Level - System Setup Flowchart
+
+Flowchart showing agent creation, tool registration, and execution flow.
+
+```mermaid
+{{ diagrams['verbose'] }}
+```
+{% endif %}
+
+{% if 'http' in diagrams %}
+### HTTP Level - API Communication Layer
+
+Detailed sequence diagram showing the complete HTTP request/response conversation between the client application and Azure AI Agent Service API, including all message exchanges and internal processing notes.
+
+```mermaid
+{{ diagrams['http'] }}
+```
+{% endif %}
