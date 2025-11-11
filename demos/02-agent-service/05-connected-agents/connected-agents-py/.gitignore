@@ -27,6 +27,11 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Virtual environments
+venv/
+.venv/
+ENV/
+
 # PyInstaller
 *.manifest
 *.spec
@@ -72,3 +77,10 @@ cython_debug/
 
 # VS Code settings
 .vscode/
+
+# Environment variables
+.env
+.env.local
+
+# uv lock file
+uv.lock
