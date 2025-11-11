@@ -1,9 +1,18 @@
-from semantic_kernel.functions.kernel_function_decorator import kernel_function
+from typing import Any, Callable, Set
 
-class LogFilePlugin:
-    """A plugin that reads and writes log files."""
+def read_log_file(filepath: str = "") -> str:
+    """Accesses the given file path string and returns the file contents as a string.
+    
+    Args:
+        filepath: The path to the log file to read
+        
+    Returns:
+        The contents of the log file
+    """
+    with open(filepath, 'r', encoding='utf-8') as file:
+        return file.read()
 
-    @kernel_function(description="Accesses the given file path string and returns the file contents as a string")
-    def read_log_file(self, filepath: str = "") -> str:
-        with open(filepath, 'r', encoding='utf-8') as file:
-            return file.read()
+# Define the set of log file functions
+log_functions: Set[Callable[..., Any]] = {
+    read_log_file
+}

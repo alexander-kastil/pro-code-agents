@@ -1,14 +1,22 @@
-from semantic_kernel.functions import kernel_function
-from typing import Annotated
+from typing import Any, Callable, Set
 
-class EmailPlugin:
-    """A Plugin to simulate email functionality."""
+def send_email(to: str, subject: str, body: str) -> str:
+    """Sends an email.
     
-    @kernel_function(description="Sends an email.")
-    def send_email(self,
-                to: Annotated[str, "Who to send the email to"],
-                subject: Annotated[str, "The subject of the email."],
-                body: Annotated[str, "The text body of the email."]):
-        print("\nTo:", to)
-        print("Subject:", subject)
-        print(body, "\n")
+    Args:
+        to: Who to send the email to
+        subject: The subject of the email.
+        body: The text body of the email.
+    
+    Returns:
+        A confirmation message
+    """
+    print("\nTo:", to)
+    print("Subject:", subject)
+    print(body, "\n")
+    return f"Email sent successfully to {to}"
+
+# Define the set of user functions for the agent
+user_functions: Set[Callable[..., Any]] = {
+    send_email
+}

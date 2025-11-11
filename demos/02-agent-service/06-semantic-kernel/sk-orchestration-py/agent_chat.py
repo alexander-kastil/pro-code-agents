@@ -6,14 +6,10 @@ from pathlib import Path
 import shutil
 
 from azure.identity.aio import DefaultAzureCredential
-from semantic_kernel.agents import AgentGroupChat
-from semantic_kernel.agents import AzureAIAgent, AzureAIAgentSettings
-from semantic_kernel.contents.chat_message_content import ChatMessageContent
-from semantic_kernel.contents.utils.author_role import AuthorRole
-from semantic_kernel.functions.kernel_function_decorator import kernel_function
-from log_plugin import LogFilePlugin
-from strategies import SelectionStrategy, ApprovalTerminationStrategy
-from devops_plugin import DevopsPlugin
+from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import FunctionTool, ToolSet, ConnectedAgentTool
+from log_plugin import log_functions
+from devops_plugin import devops_functions
 
 INCIDENT_MANAGER = "INCIDENT_MANAGER"
 INCIDENT_MANAGER_INSTRUCTIONS = """
@@ -61,86 +57,144 @@ async def main():
 
     # Read the model deployment name from the environment variable
     load_dotenv()
-    ai_agent_settings = AzureAIAgentSettings.create()
-
+    project_endpoint = os.getenv("PROJECT_ENDPOINT")
+    model_deployment = os.getenv("MODEL_DEPLOYMENT_NAME")
 
     async with (
-       DefaultAzureCredential(
-         exclude_environment_credential=True,
-         exclude_managed_identity_credential=True) as creds,
-        AzureAIAgent.create_client(
-         credential=creds
-     ) as client,
+        DefaultAzureCredential(
+            exclude_environment_credential=True,
+            exclude_managed_identity_credential=True) as creds,
+        AIProjectClient(
+            endpoint=project_endpoint,
+            credential=creds
+        ) as client,
     ):
-    
+        # Create function tools for log reading
+        log_tool = FunctionTool(log_functions)
+        log_toolset = ToolSet()
+        log_toolset.add(log_tool)
+        
         # Create the incident manager agent on the Azure AI agent service
-        incident_agent_definition = await client.agents.create_agent(
-            model=ai_agent_settings.model_deployment_name,
+        incident_agent = await client.agents.create_agent(
+            model=model_deployment,
             name=INCIDENT_MANAGER,
-            instructions=INCIDENT_MANAGER_INSTRUCTIONS
+            instructions=INCIDENT_MANAGER_INSTRUCTIONS,
+            toolset=log_toolset
         )
 
-        # Create a Semantic Kernel agent for the Azure AI incident manager agent
-        agent_incident = AzureAIAgent(
-            client=client,
-            definition=incident_agent_definition,
-            plugins=[LogFilePlugin()]
-        )
-
+        # Create function tools for devops operations
+        devops_tool = FunctionTool(devops_functions)
+        devops_toolset = ToolSet()
+        devops_toolset.add(devops_tool)
+        
         # Create the devops agent on the Azure AI agent service
-        devops_agent_definition = await client.agents.create_agent(
-            model=ai_agent_settings.model_deployment_name,
+        devops_agent = await client.agents.create_agent(
+            model=model_deployment,
             name=DEVOPS_ASSISTANT,
             instructions=DEVOPS_ASSISTANT_INSTRUCTIONS,
+            toolset=devops_toolset
         )
 
-        # Create a Semantic Kernel agent for the devops Azure AI agent
-        agent_devops = AzureAIAgent(
-            client=client,
-            definition=devops_agent_definition,
-            plugins=[DevopsPlugin()]
+        # Create a connected agent tool for the devops assistant
+        devops_connected_tool = ConnectedAgentTool(
+            id=devops_agent.id,
+            name=DEVOPS_ASSISTANT,
+            description="Performs devops operations like restart service, rollback transaction, redeploy resource, increase quota, or escalate issue"
         )
+        
+        # Create orchestrator agent that coordinates the two agents
+        orchestrator_agent = await client.agents.create_agent(
+            model=model_deployment,
+            name="orchestrator",
+            instructions=f"""You are an orchestrator that coordinates incident management.
+            
+When given a log file path:
+1. First, analyze the log file yourself to understand the issue
+2. Then call the {DEVOPS_ASSISTANT} tool with the recommendation for what action to take
+3. Report the outcome
 
-        # Add the agents to a group chat with a custom termination and selection strategy
-        chat = AgentGroupChat(
-            agents=[agent_incident, agent_devops],
-            termination_strategy=ApprovalTerminationStrategy(
-                agents=[agent_incident], 
-                maximum_iterations=5, 
-                automatic_reset=True
-            ),
-            selection_strategy=SelectionStrategy(agents=[agent_incident,agent_devops]),      
-        )        
+If the issue is resolved, respond with "No action needed."
+Keep iterating until the issue is resolved or no further action is needed.
+Maximum 5 iterations per log file.""",
+            tools=devops_connected_tool.definitions + log_toolset.definitions,
+        )
 
         delay = 15
+        max_iterations = 5
 
-         # Process log files
+        # Process log files
         for filename in os.listdir(file_path):
-            logfile_msg = ChatMessageContent(role=AuthorRole.USER, content=f"USER > {file_path}/{filename}")
+            logfile_path = f"{file_path}/{filename}"
             
-            print(f"\nReady to process log file: {filename}\n")
-            # Append the current log file to the chat
-            await chat.add_chat_message(logfile_msg)
-            print()
-
+            print(f"\nProcessing log file: {filename}\n")
+            
+            # Create a new thread for each log file
+            thread = await client.agents.create_thread()
+            
             try:
-                print()
-
-                # Invoke a response from the agents
-                async for response in chat.invoke():
-                    if response is None or not response.name:
-                        continue
-                    print(f"{response.content}")
-                await asyncio.sleep(delay) # Wait to reduce TPM
+                iteration = 0
+                resolved = False
+                
+                while iteration < max_iterations and not resolved:
+                    iteration += 1
+                    
+                    # Create the prompt for this iteration
+                    if iteration == 1:
+                        prompt = f"Analyze this log file and take appropriate corrective action: {logfile_path}"
+                    else:
+                        prompt = f"Check if the issue in {logfile_path} has been resolved. If not, take further action."
+                    
+                    # Create message
+                    await client.agents.create_message(
+                        thread_id=thread.id,
+                        role="user",
+                        content=prompt
+                    )
+                    
+                    # Run the orchestrator
+                    run = await client.agents.create_and_process_run(
+                        thread_id=thread.id,
+                        agent_id=orchestrator_agent.id
+                    )
+                    
+                    if run.status == "failed":
+                        print(f"Run failed: {run.last_error}")
+                        if "Rate limit is exceeded" in str(run.last_error):
+                            print("Waiting for rate limit...")
+                            await asyncio.sleep(60)
+                            continue
+                        else:
+                            break
+                    
+                    # Get the latest message
+                    messages = await client.agents.list_messages(thread_id=thread.id)
+                    last_msg = messages.get_last_text_message_by_role("assistant")
+                    
+                    if last_msg:
+                        response_content = last_msg.text.value
+                        print(f"Iteration {iteration}: {response_content}\n")
+                        
+                        # Check if resolved
+                        if "no action needed" in response_content.lower():
+                            resolved = True
+                            print(f"Issue in {filename} resolved.\n")
+                    
+                    await asyncio.sleep(delay)  # Wait to reduce TPM
+                
+                # Clean up thread
+                await client.agents.delete_thread(thread.id)
+                
             except Exception as e:
-                print(f"Error during chat invocation: {e}")
-                # If TPM rate exceeded, wait 60 secs
+                print(f"Error processing {filename}: {e}")
                 if "Rate limit is exceeded" in str(e):
-                    print ("Waiting...")
+                    print("Waiting...")
                     await asyncio.sleep(60)
-                    continue
-                else:
-                    break
+                continue
+
+        # Clean up agents
+        await client.agents.delete_agent(orchestrator_agent.id)
+        await client.agents.delete_agent(incident_agent.id)
+        await client.agents.delete_agent(devops_agent.id)
 
 # Start the app
 if __name__ == "__main__":
