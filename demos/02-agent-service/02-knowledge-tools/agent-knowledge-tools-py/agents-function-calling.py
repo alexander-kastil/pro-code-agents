@@ -45,7 +45,7 @@ def main():
             toolset=toolset
         )
 
-        thread = project_client.agents.create_thread()
+        thread = project_client.agents.threads.create()
         print(f"You're chatting with: {agent.name} ({agent.id})")
     
         # Loop until the user types 'quit'
