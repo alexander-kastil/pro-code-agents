@@ -5,9 +5,10 @@ public class AppConfig
     public LoggingConfig? Logging { get; set; }
     public string Model { get; set; }
 
-    public string ApiKey { get; set; }
+    public required string ApiKey { get; set; }
     public string ProjectConnectionString { get; set; }
     public string AgentName { get; set; }
+    public string LogDirectory { get; set; }
     public ModelParamsConfig? ModelParams { get; set; }
     public string? AllowedHosts { get; set; }
     public string Endpoint { get; set; }
@@ -18,6 +19,7 @@ public class AppConfig
         Model = string.Empty;
         ProjectConnectionString = string.Empty;
         AgentName = string.Empty;
+        LogDirectory = string.Empty;
         ModelParams = new ModelParamsConfig();
         AllowedHosts = string.Empty;
         Endpoint = string.Empty;

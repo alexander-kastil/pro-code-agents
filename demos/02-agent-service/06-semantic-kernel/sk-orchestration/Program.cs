@@ -1,4 +1,4 @@
-﻿using Azure.AI.Projects;
+﻿using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using SKOrchestration;
@@ -8,38 +8,38 @@ var builder = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 IConfiguration configuration = builder.Build();
-var appConfig = configuration.Get<AppConfig>();
+var appConfig = configuration.Get<AppConfig>() ?? throw new InvalidOperationException("Failed to load configuration");
 
-AIProjectClient client = new AIProjectClient(appConfig.ProjectConnectionString, new AzureCliCredential());
-AgentsClient agentsClient = client.GetAgentsClient();
+// Create the Persistent Agents Client
+PersistentAgentsClient client = new PersistentAgentsClient(
+    appConfig.ProjectConnectionString,
+    new AzureCliCredential());
 
 // Create the incident manager agent with log file reading capability
-Agent incidentAgent = await agentsClient.CreateAgentAsync(
+PersistentAgent incidentAgent = await client.Administration.CreateAgentAsync(
     model: appConfig.Model,
     name: IncidentManager.Name,
-    description: IncidentManager.Description,
     instructions: IncidentManager.Instructions,
     tools: new List<ToolDefinition> { LogFilePlugin.GetToolDefinition() }
 );
 
 // Create the devops agent with devops operation capabilities
-Agent devOpsAgent = await agentsClient.CreateAgentAsync(
+PersistentAgent devOpsAgent = await client.Administration.CreateAgentAsync(
     model: appConfig.Model,
     name: DevOpsAssistant.Name,
-    description: DevOpsAssistant.Description,
     instructions: DevOpsAssistant.Instructions,
     tools: DevopsPlugin.GetToolDefinitions()
 );
 
 // Get all log files in the "logs" directory
-var logDirectory = Path.Combine(Directory.GetCurrentDirectory(), "logs");
+var logDirectory = Path.Combine(Directory.GetCurrentDirectory(), appConfig.LogDirectory);
 foreach (var filePath in Directory.GetFiles(logDirectory))
 {
     var fileName = Path.GetFileName(filePath);
     Console.WriteLine($"\nProcessing log file: {fileName}\n");
 
     // Create a new thread for each log file
-    AgentThread thread = await agentsClient.CreateThreadAsync();
+    PersistentAgentThread thread = await client.Threads.CreateThreadAsync();
 
     try
     {
@@ -57,24 +57,24 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
                 : $"Check if the issue in {filePath} has been resolved. If not, recommend further action.";
 
             // Create user message
-            await agentsClient.CreateMessageAsync(
+            await client.Messages.CreateMessageAsync(
                 threadId: thread.Id,
                 role: MessageRole.User,
                 content: prompt
             );
 
             // Run the incident manager
-            ThreadRun incidentRun = await agentsClient.CreateRunAsync(
-                threadId: thread.Id,
-                assistantId: incidentAgent.Id
+            ThreadRun incidentRun = await client.Runs.CreateRunAsync(
+                thread: thread,
+                agent: incidentAgent
             );
 
-            // Process the incident manager's run
-            incidentRun = await ProcessRunWithToolCalls(agentsClient, thread.Id, incidentRun);
+            // Process the incident manager run
+            incidentRun = await ProcessRunWithToolCalls(client, thread.Id, incidentRun);
 
             if (incidentRun.Status == RunStatus.Failed)
             {
-                Console.WriteLine($"Incident manager run failed: {incidentRun.LastError}");
+                Console.WriteLine($"Incident manager run failed: {incidentRun.LastError?.Message}");
                 if (incidentRun.LastError?.Code == "rate_limit_exceeded")
                 {
                     Console.WriteLine("Waiting for rate limit...");
@@ -84,9 +84,20 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
                 break;
             }
 
-            // Get the incident manager's recommendation
-            PageableList<ThreadMessage> messages = await agentsClient.GetMessagesAsync(thread.Id);
-            ThreadMessage? lastMessage = messages.Data.FirstOrDefault(m => m.Role == MessageRole.Assistant);
+            // Get the incident manager recommendation
+            var messages = client.Messages.GetMessagesAsync(
+                threadId: thread.Id,
+                order: ListSortOrder.Descending);
+
+            PersistentThreadMessage? lastMessage = null;
+            await foreach (var msg in messages)
+            {
+                if (msg.Role == MessageRole.Agent)
+                {
+                    lastMessage = msg;
+                    break;
+                }
+            }
 
             if (lastMessage?.ContentItems.FirstOrDefault() is MessageTextContent textContent)
             {
@@ -102,34 +113,42 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
                 }
 
                 // Create a message for the devops agent
-                await agentsClient.CreateMessageAsync(
+                await client.Messages.CreateMessageAsync(
                     threadId: thread.Id,
                     role: MessageRole.User,
                     content: recommendation
                 );
 
                 // Run the devops agent
-                ThreadRun devopsRun = await agentsClient.CreateRunAsync(
-                    threadId: thread.Id,
-                    assistantId: devOpsAgent.Id
+                ThreadRun devopsRun = await client.Runs.CreateRunAsync(
+                    thread: thread,
+                    agent: devOpsAgent
                 );
 
-                // Process the devops agent's run
-                devopsRun = await ProcessRunWithToolCalls(agentsClient, thread.Id, devopsRun);
+                // Process the devops agent run
+                devopsRun = await ProcessRunWithToolCalls(client, thread.Id, devopsRun);
 
                 if (devopsRun.Status == RunStatus.Failed)
                 {
-                    Console.WriteLine($"DevOps agent run failed: {devopsRun.LastError}");
+                    Console.WriteLine($"DevOps agent run failed: {devopsRun.LastError?.Message}");
                     break;
                 }
 
-                // Get the devops agent's response
-                messages = await agentsClient.GetMessagesAsync(thread.Id);
-                lastMessage = messages.Data.FirstOrDefault(m => m.Role == MessageRole.Assistant);
+                // Get the devops agent response
+                var devopsMessages = client.Messages.GetMessagesAsync(
+                    threadId: thread.Id,
+                    order: ListSortOrder.Descending);
 
-                if (lastMessage?.ContentItems.FirstOrDefault() is MessageTextContent devopsText)
+                await foreach (var msg in devopsMessages)
                 {
-                    Console.WriteLine($"Iteration {iteration} - DevOps Assistant: {devopsText.Text}\n");
+                    if (msg.Role == MessageRole.Agent)
+                    {
+                        if (msg.ContentItems.FirstOrDefault() is MessageTextContent devopsText)
+                        {
+                            Console.WriteLine($"Iteration {iteration} - DevOps Assistant: {devopsText.Text}\n");
+                        }
+                        break;
+                    }
                 }
             }
 
@@ -137,7 +156,7 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
         }
 
         // Clean up thread
-        await agentsClient.DeleteThreadAsync(thread.Id);
+        await client.Threads.DeleteThreadAsync(thread.Id);
     }
     catch (Exception e)
     {
@@ -152,16 +171,16 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
 }
 
 // Clean up agents
-await agentsClient.DeleteAgentAsync(incidentAgent.Id);
-await agentsClient.DeleteAgentAsync(devOpsAgent.Id);
+await client.Administration.DeleteAgentAsync(incidentAgent.Id);
+await client.Administration.DeleteAgentAsync(devOpsAgent.Id);
 
 // Helper method to process runs with tool calls
-static async Task<ThreadRun> ProcessRunWithToolCalls(AgentsClient agentsClient, string threadId, ThreadRun run)
+static async Task<ThreadRun> ProcessRunWithToolCalls(PersistentAgentsClient client, string threadId, ThreadRun run)
 {
     while (run.Status == RunStatus.Queued || run.Status == RunStatus.InProgress || run.Status == RunStatus.RequiresAction)
     {
         await Task.Delay(1000);
-        run = await agentsClient.GetRunAsync(threadId, run.Id);
+        run = await client.Runs.GetRunAsync(threadId, run.Id);
 
         if (run.Status == RunStatus.RequiresAction && run.RequiredAction is SubmitToolOutputsAction submitToolOutputsAction)
         {
@@ -181,7 +200,7 @@ static async Task<ThreadRun> ProcessRunWithToolCalls(AgentsClient agentsClient, 
 
             if (toolOutputs.Any())
             {
-                run = await agentsClient.SubmitToolOutputsToRunAsync(threadId, run.Id, toolOutputs);
+                run = await client.Runs.SubmitToolOutputsToRunAsync(run, toolOutputs);
             }
         }
     }

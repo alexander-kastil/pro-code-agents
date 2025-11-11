@@ -1,4 +1,4 @@
-using Azure.AI.Projects;
+﻿using Azure.AI.Agents.Persistent;
 using System.Text.Json;
 
 namespace SKOrchestration;
