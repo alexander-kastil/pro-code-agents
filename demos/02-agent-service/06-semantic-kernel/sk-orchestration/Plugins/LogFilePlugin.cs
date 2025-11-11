@@ -1,13 +1,34 @@
-using System.ComponentModel;
-using Microsoft.SemanticKernel;
+using Azure.AI.Projects;
+using System.Text.Json;
 
 namespace SKOrchestration;
 
-public class LogFilePlugin
+public static class LogFilePlugin
 {
-    [KernelFunction, Description("Accesses the given file path string and returns the file contents as a string")]
-    public string ReadLogFile(string filepath = "")
+    public static string ReadLogFile(string filepath = "")
     {
         return File.ReadAllText(filepath);
+    }
+
+    public static FunctionToolDefinition GetToolDefinition()
+    {
+        return new FunctionToolDefinition(
+            name: nameof(ReadLogFile),
+            description: "Accesses the given file path string and returns the file contents as a string",
+            parameters: BinaryData.FromObjectAsJson(new
+            {
+                Type = "object",
+                Properties = new
+                {
+                    Filepath = new
+                    {
+                        Type = "string",
+                        Description = "The path to the log file to read"
+                    }
+                },
+                Required = new[] { "filepath" }
+            },
+            new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+        );
     }
 }

@@ -25,10 +25,6 @@
                           Version="9.0.4" />
         <PackageReference Include="System.Configuration.ConfigurationManager"
                           Version="9.0.4" />
-        <PackageReference Include="Microsoft.SemanticKernel"
-                          Version="1.47.0" />
-        <PackageReference Include="Microsoft.SemanticKernel.Agents.AzureAI"
-                          Version="1.47.0-preview" />
     </ItemGroup>
     <ItemGroup>
         <None Update="appsettings.json">
@@ -38,7 +34,4 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-    <PropertyGroup>
-        <NoWarn>$(NoWarn);SKEXP0110</NoWarn>
-    </PropertyGroup>
 </Project>

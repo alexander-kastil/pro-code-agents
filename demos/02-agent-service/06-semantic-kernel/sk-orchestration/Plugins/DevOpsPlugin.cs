@@ -1,17 +1,16 @@
-using System.ComponentModel;
-using Microsoft.SemanticKernel;
+using Azure.AI.Projects;
+using System.Text.Json;
 
 namespace SKOrchestration;
 
-public class DevopsPlugin
+public static class DevopsPlugin
 {
-    private void AppendToLogFile(string filepath, string content)
+    private static void AppendToLogFile(string filepath, string content)
     {
         File.AppendAllText(filepath, "\n" + content.Trim());
     }
 
-    [KernelFunction, Description("A function that restarts the named service")]
-    public string RestartService(string serviceName = "", string logfile = "")
+    public static string RestartService(string serviceName = "", string logfile = "")
     {
         var logEntries = new[]
         {
@@ -26,8 +25,7 @@ public class DevopsPlugin
         return $"Service {serviceName} restarted successfully.";
     }
 
-    [KernelFunction, Description("A function that rolls back the transaction")]
-    public string RollbackTransaction(string logfile = "")
+    public static string RollbackTransaction(string logfile = "")
     {
         var logEntries = new[]
         {
@@ -42,8 +40,7 @@ public class DevopsPlugin
         return "Transaction rolled back successfully.";
     }
 
-    [KernelFunction, Description("A function that redeploys the named resource")]
-    public string RedeployResource(string resourceName = "", string logfile = "")
+    public static string RedeployResource(string resourceName = "", string logfile = "")
     {
         var logEntries = new[]
         {
@@ -56,5 +53,113 @@ public class DevopsPlugin
         AppendToLogFile(logfile, logMessage);
 
         return $"Resource '{resourceName}' redeployed successfully.";
+    }
+
+    public static string IncreaseQuota(string logfile = "")
+    {
+        var logEntries = new[]
+        {
+            $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ALERT  DevopsAssistant: High request volume detected. Increasing quota.",
+            $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] INFO   APIManager: Quota increase request submitted.",
+            $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] INFO   APIManager: Quota successfully increased to 150% of previous limit."
+        };
+
+        var logMessage = string.Join("\n", logEntries);
+        AppendToLogFile(logfile, logMessage);
+
+        return "Successfully increased quota.";
+    }
+
+    public static string EscalateIssue(string logfile = "")
+    {
+        var logEntries = new[]
+        {
+            $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ALERT  DevopsAssistant: Cannot resolve issue.",
+            $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ALERT  DevopsAssistant: Requesting escalation."
+        };
+
+        var logMessage = string.Join("\n", logEntries);
+        AppendToLogFile(logfile, logMessage);
+
+        return "Submitted escalation request.";
+    }
+
+    public static List<FunctionToolDefinition> GetToolDefinitions()
+    {
+        return new List<FunctionToolDefinition>
+        {
+            new FunctionToolDefinition(
+                name: nameof(RestartService),
+                description: "A function that restarts the named service",
+                parameters: BinaryData.FromObjectAsJson(new
+                {
+                    Type = "object",
+                    Properties = new
+                    {
+                        ServiceName = new { Type = "string", Description = "The name of the service to restart" },
+                        Logfile = new { Type = "string", Description = "The path to the log file" }
+                    },
+                    Required = new[] { "serviceName", "logfile" }
+                },
+                new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+            ),
+            new FunctionToolDefinition(
+                name: nameof(RollbackTransaction),
+                description: "A function that rolls back the transaction",
+                parameters: BinaryData.FromObjectAsJson(new
+                {
+                    Type = "object",
+                    Properties = new
+                    {
+                        Logfile = new { Type = "string", Description = "The path to the log file" }
+                    },
+                    Required = new[] { "logfile" }
+                },
+                new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+            ),
+            new FunctionToolDefinition(
+                name: nameof(RedeployResource),
+                description: "A function that redeploys the named resource",
+                parameters: BinaryData.FromObjectAsJson(new
+                {
+                    Type = "object",
+                    Properties = new
+                    {
+                        ResourceName = new { Type = "string", Description = "The name of the resource to redeploy" },
+                        Logfile = new { Type = "string", Description = "The path to the log file" }
+                    },
+                    Required = new[] { "resourceName", "logfile" }
+                },
+                new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+            ),
+            new FunctionToolDefinition(
+                name: nameof(IncreaseQuota),
+                description: "A function that increases the quota",
+                parameters: BinaryData.FromObjectAsJson(new
+                {
+                    Type = "object",
+                    Properties = new
+                    {
+                        Logfile = new { Type = "string", Description = "The path to the log file" }
+                    },
+                    Required = new[] { "logfile" }
+                },
+                new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+            ),
+            new FunctionToolDefinition(
+                name: nameof(EscalateIssue),
+                description: "A function that escalates the issue",
+                parameters: BinaryData.FromObjectAsJson(new
+                {
+                    Type = "object",
+                    Properties = new
+                    {
+                        Logfile = new { Type = "string", Description = "The path to the log file" }
+                    },
+                    Required = new[] { "logfile" }
+                },
+                new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+            )
+        };
     }
 }
