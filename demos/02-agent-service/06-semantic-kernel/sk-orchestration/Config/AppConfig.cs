@@ -9,6 +9,7 @@ public class AppConfig
     public string ProjectConnectionString { get; set; }
     public string AgentName { get; set; }
     public string LogDirectory { get; set; }
+    public string OutcomeDirectory { get; set; }
     public ModelParamsConfig? ModelParams { get; set; }
     public string? AllowedHosts { get; set; }
     public string Endpoint { get; set; }
@@ -20,6 +21,7 @@ public class AppConfig
         ProjectConnectionString = string.Empty;
         AgentName = string.Empty;
         LogDirectory = string.Empty;
+        OutcomeDirectory = string.Empty;
         ModelParams = new ModelParamsConfig();
         AllowedHosts = string.Empty;
         Endpoint = string.Empty;

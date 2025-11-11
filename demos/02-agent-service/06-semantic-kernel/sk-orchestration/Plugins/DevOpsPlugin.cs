@@ -5,10 +5,17 @@ namespace SKOrchestration;
 
 public static class DevopsPlugin
 {
+    public static string OutcomeDirectory { get; set; } = string.Empty;
+
     private static void AppendToLogFile(string filepath, string content)
     {
-        // Write to progress log file to track actions as they happen
-        var progressLogPath = filepath.Replace(".log", "-progress.log");
+        // Write to progress log file in outcome directory to track actions as they happen
+        var fileName = Path.GetFileName(filepath);
+        var progressLogPath = Path.Combine(OutcomeDirectory, fileName.Replace(".log", "-progress.log"));
+
+        // Ensure outcome directory exists
+        Directory.CreateDirectory(OutcomeDirectory);
+
         File.AppendAllText(progressLogPath, "\n" + content.Trim());
     }
 

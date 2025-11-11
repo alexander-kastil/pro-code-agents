@@ -22,6 +22,11 @@ PersistentAgent incidentAgent = await client.Administration.CreateAgentAsync(
     instructions: IncidentManager.Instructions,
     tools: new List<ToolDefinition> { LogFilePlugin.GetToolDefinition() }
 );
+// Set outcome directory for plugins
+var outcomeDirectory = Path.Combine(Directory.GetCurrentDirectory(), appConfig.OutcomeDirectory);
+DevopsPlugin.OutcomeDirectory = outcomeDirectory;
+LogFilePlugin.OutcomeDirectory = outcomeDirectory;
+
 
 // Create the devops agent with devops operation capabilities
 PersistentAgent devOpsAgent = await client.Administration.CreateAgentAsync(
@@ -37,6 +42,9 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
 {
     var fileName = Path.GetFileName(filePath);
     Console.WriteLine($"\nProcessing log file: {fileName}\n");
+
+    // Write a yellow summary of log severities before analysis
+    LogFilePlugin.PrintLogSummary(filePath);
 
     // Create a new thread for each log file
     PersistentAgentThread thread = await client.Threads.CreateThreadAsync();
@@ -163,11 +171,10 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
         }
 
         // Write final outcome
-        var outcomeLogPath = filePath.Replace(".log", "-outcome.log");
         var outcomeMessage = resolved
             ? $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] RESOLVED: Issue in {fileName} was successfully resolved after {iteration} iteration(s).\n"
             : $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] INCOMPLETE: Issue in {fileName} could not be fully resolved after {maxIterations} iterations.\n";
-        File.WriteAllText(outcomeLogPath, outcomeMessage);
+        LogFilePlugin.WriteOutcome(filePath, outcomeMessage);
 
         // Clean up thread
         await client.Threads.DeleteThreadAsync(thread.Id);

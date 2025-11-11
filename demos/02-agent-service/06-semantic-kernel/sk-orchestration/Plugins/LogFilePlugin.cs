@@ -5,10 +5,53 @@ namespace SKOrchestration;
 
 public static class LogFilePlugin
 {
+    public static string OutcomeDirectory { get; set; } = string.Empty;
+
+    public static void PrintLogSummary(string filepath)
+    {
+        try
+        {
+            var lines = File.ReadAllLines(filepath);
+            int errorCount = lines.Count(l => l.Contains(" ERROR "));
+            int warningCount = lines.Count(l => l.Contains(" WARNING "));
+            int alertCount = lines.Count(l => l.Contains(" ALERT "));
+            int criticalCount = lines.Count(l => l.Contains(" CRITICAL "));
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Summary: errors={errorCount}, warnings={warningCount}, alerts={alertCount}, critical={criticalCount}");
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Summary unavailable: {ex.Message}");
+        }
+        finally
+        {
+            Console.ResetColor();
+        }
+    }
+
+    public static void WriteOutcome(string originalLogPath, string outcomeText)
+    {
+        var fileName = Path.GetFileName(originalLogPath);
+        Directory.CreateDirectory(OutcomeDirectory);
+        var outcomeLogPath = Path.Combine(OutcomeDirectory, fileName.Replace(".log", "-outcome.log"));
+        File.WriteAllText(outcomeLogPath, outcomeText);
+    }
+
+    public static void PrintOutcome(string message)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(message);
+        Console.ResetColor();
+    }
+
     public static string ReadLogFile(string filepath = "")
     {
         var originalLog = File.ReadAllText(filepath);
-        var progressLogPath = filepath.Replace(".log", "-progress.log");
+
+        // Look for progress log in outcome directory
+        var fileName = Path.GetFileName(filepath);
+        var progressLogPath = Path.Combine(OutcomeDirectory, fileName.Replace(".log", "-progress.log"));
 
         // Check if progress log exists and append it
         if (File.Exists(progressLogPath))
