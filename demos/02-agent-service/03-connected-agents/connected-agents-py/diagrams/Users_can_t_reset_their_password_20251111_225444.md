@@ -1,3 +1,9 @@
+# Agent Interaction: Users can't reset their password from the mobile app.
+
+**Timestamp:** 2025-11-11 22:54:44
+
+## Sequence Diagram
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -13,5 +19,5 @@ sequenceDiagram
     activate triage-agent
     Note over triage-agent: RunStatus.COMPLETED
     deactivate triage-agent
-    User-->>triage-agent: result: ### Ticket Triage Summary
+    User-->>triage-agent: result
 ```

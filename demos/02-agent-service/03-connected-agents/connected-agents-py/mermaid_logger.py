@@ -161,12 +161,19 @@ class MermaidLogger:
                 content = event.get('content', '')
                 
                 # Format the message label
-                label = f"{msg_type}"
-                if content:
-                    # Truncate long content
-                    if len(content) > 40:
-                        content = content[:37] + "..."
-                    label = f"{msg_type}: {content}"
+                # For result messages, omit the content to avoid markdown syntax issues
+                if msg_type == 'result':
+                    label = msg_type
+                else:
+                    label = f"{msg_type}"
+                    if content:
+                        # Truncate long content and sanitize for Mermaid
+                        if len(content) > 40:
+                            content = content[:37] + "..."
+                        # Remove characters that can break Mermaid syntax
+                        content = content.replace('#', '').replace('*', '').replace('-', '').strip()
+                        if content:  # Only add content if there's something left after sanitizing
+                            label = f"{msg_type}: {content}"
                 
                 # Use different arrow types based on message type
                 if msg_type in ['tool_call', 'delegation']:
@@ -231,14 +238,20 @@ class MermaidLogger:
         # Create markdown content with task description and diagram
         content_lines = []
         
+        # Generate virtual ticket number based on timestamp
+        ticket_number = f"TICKET-{timestamp}"
+        
         if self._user_prompt:
-            content_lines.append(f"# Agent Interaction: {self._user_prompt}\n")
+            content_lines.append(f"# {ticket_number}\n")
+            content_lines.append(f"**Description:** {self._user_prompt}\n")
             content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         else:
-            content_lines.append(f"# Agent Interaction\n")
+            content_lines.append(f"# {ticket_number}\n")
             content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         
-        content_lines.append("## Sequence Diagram\n")
+        content_lines.append("## Outcome\n")
+        content_lines.append("The ticket was processed through a multi-agent triage system. The main orchestrator agent delegated analysis to specialized agents for priority assessment, team assignment, and effort estimation. The results were combined to provide a comprehensive triage outcome.\n")
+        content_lines.append("### Agent Interaction Diagram\n")
         content_lines.append("```mermaid")
         content_lines.append(diagram)
         content_lines.append("```\n")
