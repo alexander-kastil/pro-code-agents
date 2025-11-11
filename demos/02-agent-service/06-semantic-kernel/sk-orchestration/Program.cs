@@ -116,14 +116,14 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
                 if (recommendation.Contains("No action needed", StringComparison.OrdinalIgnoreCase))
                 {
                     resolved = true;
-                    Console.WriteLine($"Issue in {fileName} resolved.\n");
+                    LogFilePlugin.PrintOutcome($"Issue in {fileName} resolved.\n");
                     break;
                 }
 
                 if (recommendation.Contains("Escalate issue", StringComparison.OrdinalIgnoreCase))
                 {
                     resolved = true;
-                    Console.WriteLine($"Issue in {fileName} escalated to higher support tier.\n");
+                    LogFilePlugin.PrintOutcome($"Issue in {fileName} escalated to higher support tier.\n");
                     // Still execute the escalation action before breaking
                 }
 
@@ -172,9 +172,10 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
 
         // Write final outcome
         var outcomeMessage = resolved
-            ? $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] RESOLVED: Issue in {fileName} was successfully resolved after {iteration} iteration(s).\n"
-            : $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] INCOMPLETE: Issue in {fileName} could not be fully resolved after {maxIterations} iterations.\n";
-        LogFilePlugin.WriteOutcome(filePath, outcomeMessage);
+            ? $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] RESOLVED: Issue in {fileName} was successfully resolved after {iteration} iteration(s)."
+            : $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] INCOMPLETE: Issue in {fileName} could not be fully resolved after {maxIterations} iterations.";
+        LogFilePlugin.WriteOutcome(filePath, outcomeMessage + "\n");
+        LogFilePlugin.PrintOutcome(outcomeMessage + "\n");
 
         // Clean up thread
         await client.Threads.DeleteThreadAsync(thread.Id);
