@@ -7,7 +7,17 @@ public static class LogFilePlugin
 {
     public static string ReadLogFile(string filepath = "")
     {
-        return File.ReadAllText(filepath);
+        var originalLog = File.ReadAllText(filepath);
+        var progressLogPath = filepath.Replace(".log", "-progress.log");
+
+        // Check if progress log exists and append it
+        if (File.Exists(progressLogPath))
+        {
+            var progressLog = File.ReadAllText(progressLogPath);
+            return $"{originalLog}\n\n--- ACTIONS IN PROGRESS ---\n{progressLog}";
+        }
+
+        return originalLog;
     }
 
     public static FunctionToolDefinition GetToolDefinition()

@@ -7,7 +7,9 @@ public static class DevopsPlugin
 {
     private static void AppendToLogFile(string filepath, string content)
     {
-        File.AppendAllText(filepath, "\n" + content.Trim());
+        // Write to progress log file to track actions as they happen
+        var progressLogPath = filepath.Replace(".log", "-progress.log");
+        File.AppendAllText(progressLogPath, "\n" + content.Trim());
     }
 
     public static string RestartService(string serviceName = "", string logfile = "")

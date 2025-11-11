@@ -54,7 +54,7 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
             // Create the prompt for this iteration
             string prompt = iteration == 1
                 ? $"Analyze this log file and recommend corrective action: {filePath}"
-                : $"Check if the issue in {filePath} has been resolved. If not, recommend further action.";
+                : $"Re-read the log file {filePath} to verify if the previous issue has been resolved. If the error is gone, respond with 'No action needed'. If the error still exists or a new error appeared, recommend the appropriate corrective action.";
 
             // Create user message
             await client.Messages.CreateMessageAsync(
@@ -104,12 +104,19 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
                 string recommendation = textContent.Text;
                 Console.WriteLine($"Iteration {iteration} - Incident Manager: {recommendation}\n");
 
-                // Check if resolved
+                // Check if resolved or escalated
                 if (recommendation.Contains("No action needed", StringComparison.OrdinalIgnoreCase))
                 {
                     resolved = true;
                     Console.WriteLine($"Issue in {fileName} resolved.\n");
                     break;
+                }
+
+                if (recommendation.Contains("Escalate issue", StringComparison.OrdinalIgnoreCase))
+                {
+                    resolved = true;
+                    Console.WriteLine($"Issue in {fileName} escalated to higher support tier.\n");
+                    // Still execute the escalation action before breaking
                 }
 
                 // Create a message for the devops agent
@@ -154,6 +161,13 @@ foreach (var filePath in Directory.GetFiles(logDirectory))
 
             await Task.Delay(1000); // Wait to reduce TPM
         }
+
+        // Write final outcome
+        var outcomeLogPath = filePath.Replace(".log", "-outcome.log");
+        var outcomeMessage = resolved
+            ? $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] RESOLVED: Issue in {fileName} was successfully resolved after {iteration} iteration(s).\n"
+            : $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] INCOMPLETE: Issue in {fileName} could not be fully resolved after {maxIterations} iterations.\n";
+        File.WriteAllText(outcomeLogPath, outcomeMessage);
 
         // Clean up thread
         await client.Threads.DeleteThreadAsync(thread.Id);
