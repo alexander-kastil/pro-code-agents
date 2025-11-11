@@ -1,6 +1,13 @@
 # Connected Agents Python Demo
 
-This demo shows how to create a multi-agent solution using Azure AI Agent Service with connected agents for ticket triage.
+This demo demonstrates a multi-agent ticket triage system where a main orchestrator agent delegates specialized tasks to three connected sub-agents. The Priority Agent assesses ticket urgency, the Team Agent determines ownership, and the Effort Agent estimates required work. Each connected agent operates independently with its own instructions, while the main agent coordinates their outputs to provide comprehensive ticket analysis.
+
+## How to Run
+
+1. Copy `.env.copy` to `.env` and configure your Azure AI project endpoint and model deployment
+2. Install dependencies: `uv sync` (or `pip install -r requirements.txt`)
+3. Run the agent: `uv run python agent_triage.py` (or `python agent_triage.py`)
+4. Optional: Set `VERBOSE_OUTPUT=true` for detailed logging
 
 ## Prerequisites
 
