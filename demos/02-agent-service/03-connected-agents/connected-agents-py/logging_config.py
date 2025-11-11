@@ -50,6 +50,62 @@ class HttpLogHandler(logging.Handler):
         self.mermaid_logger = mermaid_logger
         self.current_request_method = None
         self.current_request_url = None
+        self.current_endpoint = None
+    
+    def _parse_endpoint(self, url: str) -> str:
+        """
+        Parse and normalize the endpoint from a full URL.
+        
+        Args:
+            url: Full URL string
+            
+        Returns:
+            Normalized endpoint path
+        """
+        try:
+            # Extract the path after /api/projects/{project_id}/
+            if '/api/projects/' in url:
+                # Split on /api/projects/ and get the part after
+                parts = url.split('/api/projects/')
+                if len(parts) > 1:
+                    # Get everything after the project ID, before query parameters
+                    path_with_params = parts[1]
+                    # Remove query parameters
+                    path = path_with_params.split('?')[0]
+                    
+                    # Split into segments
+                    segments = path.split('/')
+                    
+                    # Skip the project ID (first segment)
+                    if len(segments) > 1:
+                        resource_path = '/'.join(segments[1:])
+                        
+                        # Normalize common patterns
+                        # Replace UUIDs and IDs with placeholders
+                        normalized_segments = []
+                        for i, segment in enumerate(resource_path.split('/')):
+                            # Check if segment looks like an ID
+                            # IDs are typically:
+                            # - Very long (>20 chars) like UUIDs
+                            # - Or contain hyphens and are reasonably long (>8 chars) like "thread-abc123"
+                            # - Or start with common prefixes like "asst_", "thread_", "run_", "msg_"
+                            is_id = (
+                                len(segment) > 20 or
+                                (len(segment) > 8 and '-' in segment) or
+                                (len(segment) > 8 and '_' in segment and 
+                                 any(segment.startswith(prefix) for prefix in ['asst', 'thread', 'run', 'msg', 'agent']))
+                            )
+                            
+                            if is_id:
+                                normalized_segments.append('{id}')
+                            else:
+                                normalized_segments.append(segment)
+                        
+                        return '/' + '/'.join(normalized_segments)
+            
+            return 'unknown'
+        except Exception:
+            return 'unknown'
     
     def emit(self, record: logging.LogRecord):
         """Capture HTTP request/response logs."""
@@ -58,35 +114,45 @@ class HttpLogHandler(logging.Handler):
         
         message = record.getMessage()
         
-        # Capture request method and URL
+        # Capture request method
         if "Request method:" in message:
-            self.current_request_method = message.split("'")[1] if "'" in message else None
+            # Extract method from message like "Request method: 'POST'"
+            try:
+                self.current_request_method = message.split("'")[1]
+            except (IndexError, AttributeError):
+                self.current_request_method = None
+                
+        # Capture request URL
         elif "Request URL:" in message and self.current_request_method:
-            # Extract the endpoint path from the URL
-            if "/assistants?" in message:
-                endpoint = "/assistants"
-            elif "/threads?" in message:
-                endpoint = "/threads"
-            elif "/messages?" in message:
-                endpoint = "/messages"
-            elif "/runs?" in message:
-                endpoint = "/runs"
-            elif "/assistants/" in message and "?" in message:
-                endpoint = "/assistants/{id}"
-            else:
-                endpoint = message.split('/api/projects/')[1].split('?')[0] if '/api/projects/' in message else "unknown"
-            
-            self.current_request_url = f"{self.current_request_method} {endpoint}"
+            # Extract URL from message like "Request URL: 'https://...'"
+            try:
+                url = message.split("'")[1]
+                self.current_endpoint = self._parse_endpoint(url)
+                self.current_request_url = f"{self.current_request_method} {self.current_endpoint}"
+            except (IndexError, AttributeError):
+                self.current_request_url = None
+                self.current_endpoint = None
+                
+        # Capture response status
         elif "Response status:" in message and self.current_request_url:
-            # Extract status code
-            status = message.split("Response status:")[1].strip()
-            
-            # Add to HTTP events
-            self.mermaid_logger.log_http_request(self.current_request_url, status)
-            
-            # Reset for next request
-            self.current_request_method = None
-            self.current_request_url = None
+            # Extract status from message like "Response status: 201"
+            try:
+                status = message.split("Response status:")[1].strip()
+                
+                # Add to HTTP events with full details
+                self.mermaid_logger.log_http_request(
+                    request=self.current_request_url,
+                    status=status,
+                    endpoint=self.current_endpoint
+                )
+                
+            except (IndexError, AttributeError):
+                pass
+            finally:
+                # Always reset for next request
+                self.current_request_method = None
+                self.current_request_url = None
+                self.current_endpoint = None
 
 
 class LogUtil:

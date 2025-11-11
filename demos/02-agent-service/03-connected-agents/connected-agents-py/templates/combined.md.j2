@@ -61,9 +61,31 @@ Flowchart showing agent creation, tool registration, and execution flow.
 {% if 'http' in diagrams %}
 ### HTTP Level - API Communication Layer
 
-Detailed sequence diagram showing the complete HTTP request/response conversation between the client application and Azure AI Agent Service API, including all message exchanges and internal processing notes.
+This section provides a detailed view of all HTTP requests and responses exchanged between the client application and the Azure AI Agent Service API. Each API call is numbered sequentially and includes the HTTP method, endpoint, operation description, and response status code.
+
+**What you'll see:**
+- 📤 **Outbound requests** from the client to the Azure AI service
+- 📥 **Response status codes** with success/error indicators (✓ = success, ⚠ = client error, ✗ = server error)
+- 📝 **Operation descriptions** explaining what each API call does
+- 🔢 **Sequential numbering** to track the order of operations
 
 ```mermaid
 {{ diagrams['http'] }}
 ```
+
+#### HTTP Events Timeline
+
+The following table shows all HTTP requests in chronological order:
+
+| # | Method | Endpoint | Status | Operation |
+|---|--------|----------|--------|-----------|
+{% for event in http_events %}
+{%- if event.type == 'http_request' %}
+{%- set parts = event.request.split(' ', 1) %}
+{%- set method = parts[0] if parts|length > 0 else 'N/A' %}
+{%- set endpoint = parts[1] if parts|length > 1 else 'N/A' %}
+| {{ loop.index }} | {{ method }} | {{ endpoint }} | {{ event.status }} | {{ event.get('description', 'API call') }} |
+{% endif %}
+{%- endfor %}
+
 {% endif %}

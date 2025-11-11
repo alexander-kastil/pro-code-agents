@@ -179,23 +179,29 @@ class MermaidLogger:
             self._verbose_events.append(event)
             logging.debug(f"[Mermaid] Run started: {agent_name} on thread {thread_id}")
     
-    def log_http_request(self, request: str, status: str):
+    def log_http_request(self, request: str, status: str, endpoint: Optional[str] = None):
         """
         Log an HTTP request/response for the HTTP level diagram.
         
         Args:
             request: The HTTP request (e.g., "POST /assistants")
             status: The HTTP response status code
+            endpoint: The endpoint path (e.g., "/assistants")
         """
         if not self._enabled or not self._http_log:
             return
         
-        self._http_events.append({
+        event = {
             'type': 'http_request',
             'timestamp': datetime.now().isoformat(),
             'request': request,
             'status': status
-        })
+        }
+        
+        if endpoint:
+            event['endpoint'] = endpoint
+        
+        self._http_events.append(event)
         
         logging.debug(f"[Mermaid] HTTP: {request} -> {status}")
     
@@ -381,23 +387,172 @@ class MermaidLogger:
         lines.append("    participant Client as Client App")
         lines.append("    participant API as Azure AI Agent Service")
         
+        # Track sequential request numbers for better visualization
+        request_num = 1
+        
         for event in events:
             if event['type'] == 'http_request':
                 request = event.get('request', '')
                 status = event.get('status', '')
+                endpoint = event.get('endpoint', '')
                 
                 # Parse request to get method and endpoint
                 if ' ' in request:
-                    method, endpoint = request.split(' ', 1)
+                    method, endpoint_path = request.split(' ', 1)
+                    
+                    # Create descriptive labels based on endpoint
+                    operation = self._get_operation_description(method, endpoint_path)
                     
                     # Determine if it's a request or response based on method
                     if method in ['POST', 'GET', 'DELETE', 'PUT', 'PATCH']:
-                        # Request arrow
-                        lines.append(f"    Client->>API: {method} {endpoint}")
-                        # Response arrow
-                        lines.append(f"    API-->>Client: {status}")
+                        # Add activation box for POST/DELETE operations that create/modify resources
+                        if method in ['POST', 'DELETE']:
+                            lines.append(f"    activate API")
+                        
+                        # Request arrow with numbered label
+                        lines.append(f"    Client->>+API: [{request_num}] {method} {endpoint_path}")
+                        
+                        # Add note with operation description if available
+                        if operation:
+                            lines.append(f"    Note right of API: {operation}")
+                        
+                        # Response arrow with status code
+                        status_emoji = self._get_status_emoji(status)
+                        lines.append(f"    API-->>-Client: {status} {status_emoji}")
+                        
+                        # Deactivate if we activated earlier
+                        if method in ['POST', 'DELETE']:
+                            lines.append(f"    deactivate API")
+                        
+                        request_num += 1
         
         return "\n".join(lines)
+    
+    def _get_operation_description(self, method: str, endpoint: str) -> str:
+        """
+        Get a human-readable description of the API operation.
+        
+        Args:
+            method: HTTP method (GET, POST, etc.)
+            endpoint: API endpoint path
+            
+        Returns:
+            Description of the operation
+        """
+        # Normalize endpoint by removing trailing segments that are IDs
+        normalized = endpoint
+        
+        # Map common endpoint patterns to descriptions
+        # Order matters - more specific patterns first
+        patterns = [
+            # Assistants (agents)
+            (r'/assistants/{id}', {
+                'GET': 'Get agent details',
+                'DELETE': 'Delete agent',
+                'PATCH': 'Update agent'
+            }),
+            (r'/assistants', {
+                'POST': 'Create agent',
+                'GET': 'List agents'
+            }),
+            # Threads with nested resources
+            (r'/threads/{id}/runs/{id}', {
+                'GET': 'Get run status',
+                'DELETE': 'Cancel run'
+            }),
+            (r'/threads/{id}/runs', {
+                'POST': 'Start run',
+                'GET': 'List runs'
+            }),
+            (r'/threads/{id}/messages', {
+                'POST': 'Add message',
+                'GET': 'List messages'
+            }),
+            (r'/threads/{id}', {
+                'GET': 'Get thread',
+                'DELETE': 'Delete thread'
+            }),
+            (r'/threads', {
+                'POST': 'Create thread',
+                'GET': 'List threads'
+            }),
+            # Standalone resources
+            (r'/messages', {
+                'POST': 'Create message',
+                'GET': 'List messages'
+            }),
+            (r'/runs/{id}', {
+                'GET': 'Get run status',
+                'DELETE': 'Cancel run'
+            }),
+            (r'/runs', {
+                'POST': 'Create run',
+                'GET': 'List runs'
+            })
+        ]
+        
+        # Try to match the endpoint pattern
+        for pattern, methods in patterns:
+            # Simple pattern matching - check if the normalized endpoint matches
+            if pattern == normalized or ('{id}' in pattern and self._matches_pattern(endpoint, pattern)):
+                return methods.get(method, '')
+        
+        return ''
+    
+    def _matches_pattern(self, endpoint: str, pattern: str) -> bool:
+        """
+        Check if an endpoint matches a pattern with {id} placeholders.
+        
+        Args:
+            endpoint: Actual endpoint path
+            pattern: Pattern with {id} placeholders
+            
+        Returns:
+            True if the endpoint matches the pattern
+        """
+        # Split both into parts
+        endpoint_parts = endpoint.split('/')
+        pattern_parts = pattern.split('/')
+        
+        # Must have same number of parts
+        if len(endpoint_parts) != len(pattern_parts):
+            return False
+        
+        # Check each part
+        for ep, pp in zip(endpoint_parts, pattern_parts):
+            if pp == '{id}':
+                # This part should be an ID-like string
+                continue
+            elif ep != pp:
+                return False
+        
+        return True
+    
+    def _get_status_emoji(self, status: str) -> str:
+        """
+        Get an emoji/symbol for HTTP status codes.
+        
+        Args:
+            status: HTTP status code as string
+            
+        Returns:
+            Emoji or symbol representing the status
+        """
+        try:
+            status_code = int(status.split()[0])  # Handle "201 Created" format
+            
+            if 200 <= status_code < 300:
+                return '✓'
+            elif 300 <= status_code < 400:
+                return '↪'
+            elif 400 <= status_code < 500:
+                return '⚠'
+            elif 500 <= status_code < 600:
+                return '✗'
+        except (ValueError, IndexError):
+            pass
+        
+        return ''
     
     def _render_template(self, timestamp: str) -> str:
         """
@@ -430,7 +585,8 @@ class MermaidLogger:
             'tokens_in': self._total_tokens_in,
             'tokens_out': self._total_tokens_out,
             'tokens_total': self._total_tokens_in + self._total_tokens_out,
-            'triage_result': self._triage_result
+            'triage_result': self._triage_result,
+            'http_events': self._http_events
         }
         
         return template.render(**context)
