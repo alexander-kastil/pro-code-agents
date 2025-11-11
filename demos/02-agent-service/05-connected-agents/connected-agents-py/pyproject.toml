@@ -8,4 +8,5 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "azure-identity>=1.16.0",
     "azure-ai-projects>=1.0.0b4",
+    "colorama>=0.4.6",
 ]

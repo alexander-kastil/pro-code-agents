@@ -58,7 +58,18 @@ You can also set it in your `.env` file:
 VERBOSE_OUTPUT=true
 ```
 
-When `VERBOSE_OUTPUT` is not `true`, the script doesn't emit any logs. The console may still clear at startup for a clean screen.
+When `VERBOSE_OUTPUT` is not `true`, only application INFO logs are shown. Azure SDK HTTP request/response logs are suppressed by default.
+
+Colors:
+
+- INFO logs are yellow
+- DEBUG (verbose) logs are white
+
+To show Azure SDK HTTP logs without full verbose mode, set:
+
+```properties
+AZURE_HTTP_LOG=true
+```
 
 ## How it works
 

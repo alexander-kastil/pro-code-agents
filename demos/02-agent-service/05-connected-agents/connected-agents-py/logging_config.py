@@ -3,20 +3,12 @@ Logging configuration module for connected agents.
 
 This module provides centralized logging setup with:
 - Color-coded output (yellow for INFO, white for DEBUG)
-- Verbose mode control via VERBOSE_OUTPUT environment variable
+- Verbose mode control via parameters
 - ANSI color support for Windows via colorama
 """
 
 import os
 import logging
-from dotenv import load_dotenv
-
-# Load environment variables early
-load_dotenv()
-
-# Determine verbosity: only VERBOSE_OUTPUT=="true" enables verbose (DEBUG) output
-_verbose_value = os.getenv("VERBOSE_OUTPUT", "false")
-VERBOSE = _verbose_value == "true"
 
 # Optional ANSI color support on Windows
 try:
@@ -47,50 +39,87 @@ class ColoredFormatter(logging.Formatter):
         return base
 
 
-def setup_logging():
+class LoggingConfig:
     """
-    Configure the root logger with appropriate settings.
+    Centralized logging configuration for the application.
     
-    If VERBOSE_OUTPUT is "true":
-        - Sets level to DEBUG
-        - Shows both INFO (yellow) and DEBUG (white) messages
-    
-    If VERBOSE_OUTPUT is "false" or any other value:
-        - Sets level to INFO
-        - Shows only INFO (yellow) messages, DEBUG messages are hidden
+    Handles:
+    - Root logger setup with color formatting
+    - Azure SDK logger configuration
+    - Console clearing behavior
     """
-    logger = logging.getLogger()
-    logger.handlers.clear()
     
-    # Set log level based on verbosity
-    log_level = logging.DEBUG if VERBOSE else logging.INFO
-    logger.setLevel(log_level)
+    def __init__(self):
+        self._verbose = False
+        self._azure_http_log = False
     
-    # Create console handler
-    handler = logging.StreamHandler()
-    handler.setLevel(log_level)
-    
-    # Set colored formatter
-    formatter = ColoredFormatter("%(asctime)s [%(levelname)s] %(message)s")
-    handler.setFormatter(formatter)
-    
-    logger.addHandler(handler)
-    
-    # Clear console unless verbose mode is enabled
-    if not VERBOSE:
-        os.system('cls' if os.name == 'nt' else 'clear')
-    
-    return logger
+    def setup_logging(self, verbose: bool = False, azure_http_log: bool = False) -> logging.Logger:
+        """
+        Configure the root logger and Azure SDK loggers.
+        
+        Args:
+            verbose: If True, sets level to DEBUG and shows both INFO (yellow) and DEBUG (white) messages.
+                    If False, sets level to INFO and shows only INFO (yellow) messages.
+            azure_http_log: If True, enables Azure SDK HTTP request/response logging.
+                           If False, suppresses HTTP logs unless verbose is True.
+        
+        Returns:
+            The configured root logger.
+        """
+        self._verbose = verbose
+        self._azure_http_log = azure_http_log
+        
+        logger = logging.getLogger()
+        logger.handlers.clear()
+        
+        # Set log level based on verbosity
+        log_level = logging.DEBUG if verbose else logging.INFO
+        logger.setLevel(log_level)
+        
+        # Create console handler
+        handler = logging.StreamHandler()
+        handler.setLevel(log_level)
+        
+        # Set colored formatter
+        formatter = ColoredFormatter("%(asctime)s [%(levelname)s] %(message)s")
+        handler.setFormatter(formatter)
+        
+        logger.addHandler(handler)
 
+        # Azure SDK logging configuration
+        http_logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
+        identity_logger = logging.getLogger("azure.identity")
+        azure_logger = logging.getLogger("azure")
 
-def get_verbose_status():
-    """Return whether verbose mode is enabled."""
-    return VERBOSE
+        # Suppress noisy HTTP logs unless explicitly enabled or in verbose mode
+        if verbose or azure_http_log:
+            http_logger.setLevel(logging.INFO)
+        else:
+            http_logger.setLevel(logging.WARNING)
+
+        # Reduce general Azure SDK noise when not verbose
+        if verbose:
+            identity_logger.setLevel(logging.INFO)
+            azure_logger.setLevel(logging.INFO)
+        else:
+            identity_logger.setLevel(logging.WARNING)
+            azure_logger.setLevel(logging.WARNING)
+        
+        # Clear console unless verbose mode is enabled
+        if not verbose:
+            os.system('cls' if os.name == 'nt' else 'clear')
+        
+        return logger
+    
+    @property
+    def is_verbose(self) -> bool:
+        """Return whether verbose mode is enabled."""
+        return self._verbose
 
 
 def vdebug(msg: str):
     """
     Convenience function for verbose debug logging.
-    Always calls logging.debug(); visibility is controlled by VERBOSE_OUTPUT setting.
+    Always calls logging.debug(); visibility is controlled by logging level.
     """
     logging.debug(msg)

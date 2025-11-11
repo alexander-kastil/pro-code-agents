@@ -1,5 +1,6 @@
 import os
 import logging
+from dotenv import load_dotenv
 
 # Add references
 from azure.ai.agents import AgentsClient
@@ -7,10 +8,18 @@ from azure.ai.agents.models import ConnectedAgentTool, MessageRole, ListSortOrde
 from azure.identity import DefaultAzureCredential
 
 # Import logging configuration
-from logging_config import setup_logging, vdebug
+from logging_config import LoggingConfig, vdebug
 
-# Setup logging (this also loads environment variables)
-setup_logging()
+# Load environment variables early
+load_dotenv()
+
+# Read logging configuration from environment
+verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
+azure_http_log = os.getenv("AZURE_HTTP_LOG", "false") == "true"
+
+# Setup logging with explicit parameters
+logging_config = LoggingConfig()
+logging_config.setup_logging(verbose=verbose_output, azure_http_log=azure_http_log)
 
 # Read required settings
 project_endpoint = os.getenv("PROJECT_ENDPOINT")
