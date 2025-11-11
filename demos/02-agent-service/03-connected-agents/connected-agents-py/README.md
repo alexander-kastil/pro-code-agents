@@ -12,3 +12,4 @@ This example demonstrates the **ConnectedAgentTool** pattern in Azure AI Agent S
 2. Install dependencies: `uv sync` (or `pip install -r requirements.txt`)
 3. Run the agent: `uv run python agent_triage.py` (or `python agent_triage.py`)
 4. Optional: Set `VERBOSE_OUTPUT=true` for detailed logging
+5. Optional: Set `CREATE_MERMAID_DIAGRAM=true` to generate a Mermaid sequence diagram of agent interactions (see [MERMAID_DIAGRAMS.md](MERMAID_DIAGRAMS.md))

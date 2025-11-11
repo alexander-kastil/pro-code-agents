@@ -1,6 +1,9 @@
 **/.venv/
 **/node_modules
 
+# Mermaid diagram files
+*.mmd
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
