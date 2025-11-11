@@ -64,8 +64,6 @@ class MermaidLogger:
         levels = ['default']  # Always active
         if self._verbose:
             levels.append('verbose')
-        if self._http_log:
-            levels.append('http')
         return levels
         
     def log_agent_creation(self, agent_name: str, agent_id: str):
@@ -146,15 +144,6 @@ class MermaidLogger:
         if self._verbose:
             self._verbose_events.append(event)
         
-        # HTTP log: capture API-level communication if enabled
-        if self._http_log and message_type in ['tool_call', 'tool_response', 'user_prompt', 'result']:
-            self._http_events.append({
-                'type': 'http_event',
-                'timestamp': datetime.now().isoformat(),
-                'description': f"API call: {from_entity} → {to_entity}",
-                'details': f"{message_type}" + (f": {content_summary}" if content_summary else "")
-            })
-            
         if self._verbose:
             content_part = f": {content_summary}" if content_summary else ""
             logging.debug(f"[Mermaid] Message: {from_entity} -> {to_entity} ({message_type}){content_part}")
@@ -591,8 +580,7 @@ class MermaidLogger:
             'tokens_in': self._total_tokens_in,
             'tokens_out': self._total_tokens_out,
             'tokens_total': self._total_tokens_in + self._total_tokens_out,
-            'triage_result': self._triage_result,
-            'http_events': self._http_events
+            'triage_result': self._triage_result
         }
         
         return template.render(**context)

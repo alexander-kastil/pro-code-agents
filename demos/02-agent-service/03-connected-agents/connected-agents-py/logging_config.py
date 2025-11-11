@@ -13,22 +13,9 @@ from typing import Optional
 
 from mermaid_logger import MermaidLogger
 
-# Optional ANSI color support on Windows
-try:
-    from colorama import init as _colorama_init  # type: ignore
-    _colorama_init()
-except Exception:
-    pass
-
 
 class ColoredFormatter(logging.Formatter):
-    """
-    Custom formatter that adds colors to log messages.
-    - INFO messages: Yellow
-    - DEBUG messages: White (default terminal color)
-    - WARNING messages: Default
-    - ERROR messages: Default
-    """
+    """Simple colored formatter for INFO (yellow) and DEBUG (white)."""
     YELLOW = "\033[33m"
     WHITE = "\033[37m"
     RESET = "\033[0m"
@@ -40,119 +27,6 @@ class ColoredFormatter(logging.Formatter):
         elif record.levelno == logging.DEBUG:
             return f"{self.WHITE}{base}{self.RESET}"
         return base
-
-
-class HttpLogHandler(logging.Handler):
-    """Custom handler to capture HTTP logs and add them to Mermaid logger."""
-    
-    def __init__(self, mermaid_logger: Optional[MermaidLogger] = None):
-        super().__init__()
-        self.mermaid_logger = mermaid_logger
-        self.current_request_method = None
-        self.current_request_url = None
-        self.current_endpoint = None
-    
-    def _parse_endpoint(self, url: str) -> str:
-        """
-        Parse and normalize the endpoint from a full URL.
-        
-        Args:
-            url: Full URL string
-            
-        Returns:
-            Normalized endpoint path
-        """
-        try:
-            # Extract the path after /api/projects/{project_id}/
-            if '/api/projects/' in url:
-                # Split on /api/projects/ and get the part after
-                parts = url.split('/api/projects/')
-                if len(parts) > 1:
-                    # Get everything after the project ID, before query parameters
-                    path_with_params = parts[1]
-                    # Remove query parameters
-                    path = path_with_params.split('?')[0]
-                    
-                    # Split into segments
-                    segments = path.split('/')
-                    
-                    # Skip the project ID (first segment)
-                    if len(segments) > 1:
-                        resource_path = '/'.join(segments[1:])
-                        
-                        # Normalize common patterns
-                        # Replace UUIDs and IDs with placeholders
-                        normalized_segments = []
-                        for i, segment in enumerate(resource_path.split('/')):
-                            # Check if segment looks like an ID
-                            # IDs are typically:
-                            # - Very long (>20 chars) like UUIDs
-                            # - Or contain hyphens and are reasonably long (>8 chars) like "thread-abc123"
-                            # - Or start with common prefixes like "asst_", "thread_", "run_", "msg_"
-                            is_id = (
-                                len(segment) > 20 or
-                                (len(segment) > 8 and '-' in segment) or
-                                (len(segment) > 8 and '_' in segment and 
-                                 any(segment.startswith(prefix) for prefix in ['asst', 'thread', 'run', 'msg', 'agent']))
-                            )
-                            
-                            if is_id:
-                                normalized_segments.append('{id}')
-                            else:
-                                normalized_segments.append(segment)
-                        
-                        return '/' + '/'.join(normalized_segments)
-            
-            return 'unknown'
-        except Exception:
-            return 'unknown'
-    
-    def emit(self, record: logging.LogRecord):
-        """Capture HTTP request/response logs."""
-        if not self.mermaid_logger or not self.mermaid_logger._http_log:
-            return
-        
-        message = record.getMessage()
-        
-        # Capture request method
-        if "Request method:" in message:
-            # Extract method from message like "Request method: 'POST'"
-            try:
-                self.current_request_method = message.split("'")[1]
-            except (IndexError, AttributeError):
-                self.current_request_method = None
-                
-        # Capture request URL
-        elif "Request URL:" in message and self.current_request_method:
-            # Extract URL from message like "Request URL: 'https://...'"
-            try:
-                url = message.split("'")[1]
-                self.current_endpoint = self._parse_endpoint(url)
-                self.current_request_url = f"{self.current_request_method} {self.current_endpoint}"
-            except (IndexError, AttributeError):
-                self.current_request_url = None
-                self.current_endpoint = None
-                
-        # Capture response status
-        elif "Response status:" in message and self.current_request_url:
-            # Extract status from message like "Response status: 201"
-            try:
-                status = message.split("Response status:")[1].strip()
-                
-                # Add to HTTP events with full details
-                self.mermaid_logger.log_http_request(
-                    request=self.current_request_url,
-                    status=status,
-                    endpoint=self.current_endpoint
-                )
-                
-            except (IndexError, AttributeError):
-                pass
-            finally:
-                # Always reset for next request
-                self.current_request_method = None
-                self.current_request_url = None
-                self.current_endpoint = None
 
 
 class LogUtil:
@@ -213,17 +87,15 @@ class LogUtil:
         identity_logger = logging.getLogger("azure.identity")
         azure_logger = logging.getLogger("azure")
 
-        # Add HTTP log handler for Mermaid diagram capture
-        if create_mermaid and azure_http_log:
-            http_capture_handler = HttpLogHandler(self._mermaid_logger)
-            http_capture_handler.setLevel(logging.INFO)
-            http_logger.addHandler(http_capture_handler)
-
-        # Suppress noisy HTTP logs unless explicitly enabled or in verbose mode
-        if verbose or azure_http_log:
-            http_logger.setLevel(logging.INFO)
-        else:
-            http_logger.setLevel(logging.WARNING)
+        # Completely suppress Azure HTTP request/response logging in console
+        try:
+            http_logger.handlers.clear()
+        except Exception:
+            pass
+        http_logger.propagate = False
+        # Set to a level higher than CRITICAL and disable the logger
+        http_logger.setLevel(logging.CRITICAL + 10)
+        http_logger.disabled = True
 
         # Reduce general Azure SDK noise when not verbose
         if verbose:
@@ -232,6 +104,14 @@ class LogUtil:
         else:
             identity_logger.setLevel(logging.WARNING)
             azure_logger.setLevel(logging.WARNING)
+
+        # Suppress HTTP chatter from common HTTP clients (urllib3, httpx)
+        urllib3_logger = logging.getLogger("urllib3")
+        urllib3_conn_logger = logging.getLogger("urllib3.connectionpool")
+        httpx_logger = logging.getLogger("httpx")
+        urllib3_logger.setLevel(logging.WARNING)
+        urllib3_conn_logger.setLevel(logging.WARNING)
+        httpx_logger.setLevel(logging.WARNING)
         
         # Clear console unless verbose mode is enabled
         if not verbose:
