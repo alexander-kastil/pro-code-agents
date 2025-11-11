@@ -1,53 +1,16 @@
 import os
 import logging
-from dotenv import load_dotenv
 
 # Add references
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import ConnectedAgentTool, MessageRole, ListSortOrder, ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
 
-# Load environment variables from .env file early so they control behavior
-load_dotenv()
+# Import logging configuration
+from logging_config import setup_logging, vdebug
 
-# Determine verbosity strictly: only VERBOSE_OUTPUT=="true" enables verbose
-_verbose_value = os.getenv("VERBOSE_OUTPUT")
-VERBOSE = _verbose_value == "true"
-
-# Optional ANSI color support on Windows
-try:
-    from colorama import init as _colorama_init  # type: ignore
-    _colorama_init()
-except Exception:
-    pass
-
-# Color formatter: make DEBUG (verbose) messages red
-class _RedDebugFormatter(logging.Formatter):
-    _RED = "\033[31m"
-    _RESET = "\033[0m"
-
-    def format(self, record: logging.LogRecord) -> str:
-        base = super().format(record)
-        if record.levelno == logging.DEBUG:
-            return f"{self._RED}{base}{self._RESET}"
-        return base
-
-# Configure logging: INFO by default; DEBUG when verbose
-_logger = logging.getLogger()
-_logger.handlers.clear()
-_logger.setLevel(logging.DEBUG if VERBOSE else logging.INFO)
-_handler = logging.StreamHandler()
-_handler.setLevel(logging.DEBUG if VERBOSE else logging.INFO)
-_handler.setFormatter(_RedDebugFormatter("%(asctime)s [%(levelname)s] %(message)s"))
-_logger.addHandler(_handler)
-
-# Clear the console unless verbose mode is enabled (keep scrollback when verbose)
-if not VERBOSE:
-    os.system('cls' if os.name=='nt' else 'clear')
-
-def vdebug(msg: str):
-    """Deprecated shim: always call logging.debug; visibility controlled by VERBOSE_OUTPUT."""
-    logging.debug(msg)
+# Setup logging (this also loads environment variables)
+setup_logging()
 
 # Read required settings
 project_endpoint = os.getenv("PROJECT_ENDPOINT")
