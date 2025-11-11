@@ -510,6 +510,9 @@ class MermaidLogger:
         Returns:
             True if the endpoint matches the pattern
         """
+        # Known resource names that should NOT be treated as IDs
+        resource_names = {'messages', 'runs', 'threads', 'assistants', 'files', 'steps'}
+        
         # Split both into parts
         endpoint_parts = endpoint.split('/')
         pattern_parts = pattern.split('/')
@@ -521,7 +524,10 @@ class MermaidLogger:
         # Check each part
         for ep, pp in zip(endpoint_parts, pattern_parts):
             if pp == '{id}':
-                # This part should be an ID-like string
+                # This part should be an ID-like string, not a known resource name
+                if ep in resource_names:
+                    return False
+                # Continue - we accept this as a potential ID
                 continue
             elif ep != pp:
                 return False
