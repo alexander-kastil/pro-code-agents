@@ -199,6 +199,51 @@ class MermaidLogger:
         
         return "\n".join(lines)
     
+    def _compose_markdown(self, diagram: str, timestamp: str) -> str:
+        """
+        Compose the markdown report content for a ticket, placing the
+        non-technical description first, followed by the technical details
+        and the Mermaid diagram.
+
+        Args:
+            diagram: Mermaid sequence diagram content (no code fences)
+            timestamp: Timestamp string used for the ticket and header
+
+        Returns:
+            A markdown string
+        """
+        # Create markdown content with task description and diagram
+        content_lines: List[str] = []
+
+        # Generate virtual ticket number based on timestamp
+        ticket_number = f"TICKET-{timestamp}"
+
+        if self._user_prompt:
+            content_lines.append(f"# {ticket_number}\n")
+            content_lines.append(f"**Description:** {self._user_prompt}\n")
+            content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        else:
+            content_lines.append(f"# {ticket_number}\n")
+            content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+
+        # Outcome (non-technical summary) first
+        content_lines.append("## Outcome\n")
+        content_lines.append("The ticket was processed through a multi-agent triage system where specialized agents analyzed different aspects:\n")
+        content_lines.append("- **Priority Agent**: Assessed urgency based on impact and user-facing issues\n")
+        content_lines.append("- **Team Agent**: Determined optimal team assignment based on ticket content\n")
+        content_lines.append("- **Effort Agent**: Estimated required work and complexity\n")
+        content_lines.append("\nThe main orchestrator agent coordinated these assessments to provide comprehensive triage results.\n")
+
+        # Technical section after the outcome
+        content_lines.append("## Technical Process\n")
+        content_lines.append("The triage agent used connected agents as tools. Each specialized agent operates independently with its own instructions, while the main agent delegates tasks and aggregates responses.\n")
+        content_lines.append("### Agent Interaction Diagram\n")
+        content_lines.append("```mermaid")
+        content_lines.append(diagram)
+        content_lines.append("```\n")
+
+        return "\n".join(content_lines)
+
     def save_diagram(self, output_dir: Optional[str] = None):
         """
         Save the Mermaid diagram to a markdown file with timestamp and case description.
@@ -235,29 +280,11 @@ class MermaidLogger:
         else:
             filepath = filename
         
-        # Create markdown content with task description and diagram
-        content_lines = []
-        
-        # Generate virtual ticket number based on timestamp
-        ticket_number = f"TICKET-{timestamp}"
-        
-        if self._user_prompt:
-            content_lines.append(f"# {ticket_number}\n")
-            content_lines.append(f"**Description:** {self._user_prompt}\n")
-            content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        else:
-            content_lines.append(f"# {ticket_number}\n")
-            content_lines.append(f"**Timestamp:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        
-        content_lines.append("## Outcome\n")
-        content_lines.append("The ticket was processed through a multi-agent triage system. The main orchestrator agent delegated analysis to specialized agents for priority assessment, team assignment, and effort estimation. The results were combined to provide a comprehensive triage outcome.\n")
-        content_lines.append("### Agent Interaction Diagram\n")
-        content_lines.append("```mermaid")
-        content_lines.append(diagram)
-        content_lines.append("```\n")
-        
+        # Compose markdown in a dedicated helper to keep save_diagram lean
+        markdown_output = self._compose_markdown(diagram=diagram, timestamp=timestamp)
+
         with open(filepath, 'w', encoding='utf-8') as f:
-            f.write("\n".join(content_lines))
+            f.write(markdown_output)
         
         logging.info(f"Mermaid diagram saved to: {filepath}")
     
