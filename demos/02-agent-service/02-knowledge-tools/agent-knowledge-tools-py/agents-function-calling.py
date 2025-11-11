@@ -4,10 +4,8 @@ from typing import Any
 from pathlib import Path
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FunctionTool, ToolSet
-from user_functions import user_functions
-
-# Add references
+from azure.ai.agents.models import FunctionTool, ToolSet
+from function_calling_functions import user_functions
 
 def main(): 
 
@@ -16,16 +14,16 @@ def main():
 
     # Load environment variables from .env file
     load_dotenv()
-    PROJECT_CONNECTION_STRING= os.getenv("AZURE_AI_AGENT_PROJECT_CONNECTION_STRING")
-    MODEL_DEPLOYMENT = os.getenv("AZURE_AI_AGENT_MODEL_DEPLOYMENT_NAME")
+    endpoint = os.getenv("PROJECT_ENDPOINT")
+    model = os.getenv("MODEL_DEPLOYMENT")
 
+    print(f"Using endpoint: {endpoint}")
+    print(f"Using model: {model}")
 
     # Connect to the Azure AI Foundry project
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential
-            (exclude_environment_credential=True,
-            exclude_managed_identity_credential=True),
-        conn_str=PROJECT_CONNECTION_STRING
+    project_client = AIProjectClient(
+        endpoint=endpoint,
+        credential=DefaultAzureCredential()
     )
 
 
@@ -37,7 +35,7 @@ def main():
         toolset.add(functions)
                 
         agent = project_client.agents.create_agent(
-            model=MODEL_DEPLOYMENT,
+            model=model,
             name="support-agent",
             instructions="""You are a technical support agent.
                             When a user has a technical issue, you get their email address and a description of the issue.
