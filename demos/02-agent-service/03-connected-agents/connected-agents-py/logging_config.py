@@ -42,7 +42,7 @@ class ColoredFormatter(logging.Formatter):
         return base
 
 
-class LoggingConfig:
+class LogUtil:
     """
     Centralized logging configuration for the application.
     

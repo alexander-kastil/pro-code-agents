@@ -8,7 +8,7 @@ from azure.ai.agents.models import ConnectedAgentTool, MessageRole, ListSortOrde
 from azure.identity import DefaultAzureCredential
 
 # Import logging configuration
-from logging_config import LoggingConfig, vdebug
+from logging_config import LogUtil, vdebug
 
 # Load environment variables early
 load_dotenv()
@@ -20,7 +20,7 @@ create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
 mermaid_dir = os.getenv("MERMAID_DIR", "diagrams")
 
 # Setup logging with explicit parameters
-logging_config = LoggingConfig()
+logging_config = LogUtil()
 logging_config.setup_logging(verbose=verbose_output, azure_http_log=azure_http_log, create_mermaid=create_mermaid_diagram)
 
 # Get mermaid logger reference for easy access
