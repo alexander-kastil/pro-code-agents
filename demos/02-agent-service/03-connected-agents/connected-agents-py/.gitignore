@@ -27,6 +27,11 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Virtual environments
+venv/
+.venv/
+ENV/
+
 # PyInstaller
 *.manifest
 *.spec
@@ -49,8 +54,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
-env/
-.venv/
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -73,3 +77,10 @@ cython_debug/
 
 # VS Code settings
 .vscode/
+
+# Environment variables
+.env
+.env.local
+
+# uv lock file
+uv.lock
