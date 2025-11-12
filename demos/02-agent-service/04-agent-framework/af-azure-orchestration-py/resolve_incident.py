@@ -1,5 +1,6 @@
 import asyncio
 import os
+import logging
 from dotenv import load_dotenv
 from datetime import datetime
 from pathlib import Path
@@ -11,6 +12,19 @@ from azure.ai.projects.models import FunctionTool, ToolSet, ConnectedAgentTool
 from log_plugin import log_functions
 from devops_plugin import devops_functions
 
+# Import logging configuration
+from log_util import LogUtil, vdebug
+
+# Load environment variables early
+load_dotenv()
+
+# Read logging configuration from environment
+verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
+
+# Setup logging with explicit parameters
+logging_config = LogUtil()
+logging_config.setup_logging(verbose=verbose_output)
+
 INCIDENT_MANAGER = "INCIDENT_MANAGER"
 INCIDENT_MANAGER_INSTRUCTIONS = """
 Analyze the given log file or the response from the devops assistant.
@@ -21,7 +35,7 @@ Rollback transaction
 Redeploy resource {resource_name}
 Increase quota
 
-If there are no issues or if the issue has already been resolved, respond with "INCIDENT_MANAGER > No action needed."
+If there are no issues or if the issue has already been resolved, respond with "No action needed."
 If none of the options resolve the issue, respond with "Escalate issue."
 
 RULES:
@@ -45,21 +59,27 @@ RULES:
 """
 
 async def main():
-    # Clear the console
-    os.system('cls' if os.name=='nt' else 'clear')
+    logging.info("Starting incident resolution process...")
 
     # Get the log files
-    print("Getting log files...\n")
-    script_dir = Path(__file__).parent  # Get the directory of the script
+    logging.info("Getting log files...")
+    script_dir = Path(__file__).parent
     src_path = script_dir / "sample_logs"
     file_path = script_dir / "logs"
     shutil.copytree(src_path, file_path, dirs_exist_ok=True)
+    logging.info(f"Log files copied to: {file_path}")
 
     # Read the model deployment name from the environment variable
-    load_dotenv()
     project_endpoint = os.getenv("PROJECT_ENDPOINT")
     model_deployment = os.getenv("MODEL_DEPLOYMENT_NAME")
+    
+    if not project_endpoint or not model_deployment:
+        logging.warning("Environment variables PROJECT_ENDPOINT or MODEL_DEPLOYMENT_NAME are missing.")
+    else:
+        logging.info(f"Using project endpoint: {project_endpoint}")
+        logging.info(f"Using model deployment: {model_deployment}")
 
+    logging.info("Initializing AIProjectClient...")
     async with (
         DefaultAzureCredential(
             exclude_environment_credential=True,
@@ -69,31 +89,41 @@ async def main():
             credential=creds
         ) as client,
     ):
+        logging.info("AIProjectClient initialized.")
+        
         # Create function tools for log reading
+        logging.info("Creating function tools for log reading...")
         log_tool = FunctionTool(log_functions)
         log_toolset = ToolSet()
         log_toolset.add(log_tool)
+        logging.debug(f"Log function tools created: {len(log_functions)} functions")
         
         # Create the incident manager agent on the Azure AI agent service
+        logging.info("Creating incident manager agent...")
         incident_agent = await client.agents.create_agent(
             model=model_deployment,
             name=INCIDENT_MANAGER,
             instructions=INCIDENT_MANAGER_INSTRUCTIONS,
             toolset=log_toolset
         )
+        logging.info(f"Incident manager agent created: id={incident_agent.id}")
 
         # Create function tools for devops operations
+        logging.info("Creating function tools for devops operations...")
         devops_tool = FunctionTool(devops_functions)
         devops_toolset = ToolSet()
         devops_toolset.add(devops_tool)
+        logging.debug(f"DevOps function tools created: {len(devops_functions)} functions")
         
         # Create the devops agent on the Azure AI agent service
+        logging.info("Creating devops assistant agent...")
         devops_agent = await client.agents.create_agent(
             model=model_deployment,
             name=DEVOPS_ASSISTANT,
             instructions=DEVOPS_ASSISTANT_INSTRUCTIONS,
             toolset=devops_toolset
         )
+        logging.info(f"DevOps assistant agent created: id={devops_agent.id}")
 
         # Create a connected agent tool for the devops assistant
         devops_connected_tool = ConnectedAgentTool(
@@ -103,6 +133,7 @@ async def main():
         )
         
         # Create orchestrator agent that coordinates the two agents
+        logging.info("Creating orchestrator agent...")
         orchestrator_agent = await client.agents.create_agent(
             model=model_deployment,
             name="orchestrator",
@@ -118,6 +149,7 @@ Keep iterating until the issue is resolved or no further action is needed.
 Maximum 5 iterations per log file.""",
             tools=devops_connected_tool.definitions + log_toolset.definitions,
         )
+        logging.info(f"Orchestrator agent created: id={orchestrator_agent.id}")
 
         delay = 15
         max_iterations = 5
@@ -126,10 +158,13 @@ Maximum 5 iterations per log file.""",
         for filename in os.listdir(file_path):
             logfile_path = f"{file_path}/{filename}"
             
+            logging.info(f"\nProcessing log file: {filename}")
             print(f"\nProcessing log file: {filename}\n")
             
             # Create a new thread for each log file
+            logging.info("Creating a new thread for this log file...")
             thread = await client.agents.create_thread()
+            logging.info(f"Thread created: id={thread.id}")
             
             try:
                 iteration = 0
@@ -137,6 +172,7 @@ Maximum 5 iterations per log file.""",
                 
                 while iteration < max_iterations and not resolved:
                     iteration += 1
+                    logging.info(f"Iteration {iteration}/{max_iterations}")
                     
                     # Create the prompt for this iteration
                     if iteration == 1:
@@ -144,22 +180,30 @@ Maximum 5 iterations per log file.""",
                     else:
                         prompt = f"Check if the issue in {logfile_path} has been resolved. If not, take further action."
                     
+                    logging.debug(f"Prompt: {prompt}")
+                    
                     # Create message
                     await client.agents.create_message(
                         thread_id=thread.id,
                         role="user",
                         content=prompt
                     )
+                    logging.debug("User message created.")
                     
                     # Run the orchestrator
+                    logging.info("Starting orchestrator run...")
                     run = await client.agents.create_and_process_run(
                         thread_id=thread.id,
                         agent_id=orchestrator_agent.id
                     )
+                    logging.info(f"Run finished: id={run.id}, status={run.status}")
                     
                     if run.status == "failed":
-                        print(f"Run failed: {run.last_error}")
+                        error_msg = f"Run failed: {run.last_error}"
+                        logging.error(error_msg)
+                        print(error_msg)
                         if "Rate limit is exceeded" in str(run.last_error):
+                            logging.warning("Waiting for rate limit...")
                             print("Waiting for rate limit...")
                             await asyncio.sleep(60)
                             continue
@@ -172,29 +216,41 @@ Maximum 5 iterations per log file.""",
                     
                     if last_msg:
                         response_content = last_msg.text.value
+                        logging.info(f"Iteration {iteration}: {response_content}")
                         print(f"Iteration {iteration}: {response_content}\n")
                         
                         # Check if resolved
                         if "no action needed" in response_content.lower():
                             resolved = True
-                            print(f"Issue in {filename} resolved.\n")
+                            outcome_msg = f"Issue in {filename} resolved."
+                            logging.info(outcome_msg)
+                            print(outcome_msg + "\n")
                     
                     await asyncio.sleep(delay)  # Wait to reduce TPM
                 
                 # Clean up thread
+                logging.info("Deleting thread...")
                 await client.agents.delete_thread(thread.id)
+                logging.info("Thread deleted.")
                 
             except Exception as e:
-                print(f"Error processing {filename}: {e}")
+                error_msg = f"Error processing {filename}: {e}"
+                logging.error(error_msg)
+                print(error_msg)
                 if "Rate limit is exceeded" in str(e):
+                    logging.warning("Waiting...")
                     print("Waiting...")
                     await asyncio.sleep(60)
                 continue
 
         # Clean up agents
+        logging.info("Cleaning up agents...")
         await client.agents.delete_agent(orchestrator_agent.id)
+        logging.info("Orchestrator agent deleted.")
         await client.agents.delete_agent(incident_agent.id)
+        logging.info("Incident manager agent deleted.")
         await client.agents.delete_agent(devops_agent.id)
+        logging.info("DevOps assistant agent deleted.")
 
 # Start the app
 if __name__ == "__main__":
