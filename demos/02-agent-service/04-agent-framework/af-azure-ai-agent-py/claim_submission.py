@@ -24,7 +24,7 @@ async def create_expense_claim(expenses_data):
     # Get configuration settings
     load_dotenv()
     project_endpoint = os.getenv("PROJECT_ENDPOINT")
-    model_deployment = os.getenv("MODEL_DEPLOYMENT_NAME")
+    model_deployment = os.getenv("MODEL_DEPLOYMENT")
 
     # Connect to the Azure AI Foundry project
     async with (

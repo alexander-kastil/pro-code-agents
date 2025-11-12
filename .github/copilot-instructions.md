@@ -47,11 +47,6 @@ The repository is organized into 5 main modules:
   - **IMPORTANT**: Always maintain synchronized `requirements.txt` and `pyproject.toml` files
   - Install dependencies: `uv pip install -r requirements.txt` or `uv sync`
   - Main dependencies: azure-ai-projects, azure-ai-inference, azure-ai-evaluation, agent-framework
-- **Node.js Projects**:
-
-  - Install dependencies: `npm install`
-  - Available script: `npm run release` (for versioning)
-
 - **C# / .NET Projects**:
   - Restore dependencies: `dotnet restore`
   - Build: `dotnet build`
@@ -59,6 +54,7 @@ The repository is organized into 5 main modules:
   - **IMPORTANT**: Always use `appsettings.json` for configuration management
   - Do NOT use environment variables or user secrets
   - Configuration should be in `appsettings.json` and optionally `appsettings.Development.json`
+  - Use the dotnet cli for managing dependencies and running projects
 
 ### Repository Setup
 
