@@ -1,6 +1,7 @@
 ﻿using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
+using System.Text;
 
 // Load configuration
 var builder = new ConfigurationBuilder()
@@ -10,11 +11,13 @@ var builder = new ConfigurationBuilder()
 IConfiguration configuration = builder.Build();
 
 // Read configuration settings
-var projectConnectionString = configuration["ProjectConnectionString"] 
+var projectConnectionString = configuration["ProjectConnectionString"]
     ?? throw new InvalidOperationException("ProjectConnectionString is required in appsettings.json");
-var model = configuration["Model"] 
+var model = configuration["Model"]
     ?? throw new InvalidOperationException("Model is required in appsettings.json");
 var verboseOutput = configuration.GetValue<bool>("VerboseOutput", false);
+var createMermaidDiagram = configuration.GetValue<bool>("CreateMermaidDiagram", false);
+var ticketFolderPath = configuration["TicketFolderPath"] ?? "./tickets";
 
 // Clear console unless verbose
 if (!verboseOutput)
@@ -110,6 +113,9 @@ try
             order: ListSortOrder.Ascending
         );
 
+        // Capture the assistant's final response as resolution
+        var resolutionBuilder = new StringBuilder();
+
         await foreach (var msg in messages)
         {
             if (msg.ContentItems.Count > 0)
@@ -119,8 +125,37 @@ try
                     if (content is MessageTextContent textContent)
                     {
                         Console.WriteLine($"Message ({msg.Role}): {textContent.Text.Trim()}\n");
+                        // Capture resolution from the last non-User message (agent response)
+                        if (msg.Role != MessageRole.User)
+                        {
+                            resolutionBuilder.Clear();
+                            resolutionBuilder.Append(textContent.Text.Trim());
+                        }
                     }
                 }
+            }
+        }
+
+        var resolution = resolutionBuilder.ToString();
+
+        // Optionally generate Mermaid diagram file similar to Python demo
+        if (createMermaidDiagram)
+        {
+            try
+            {
+                Console.WriteLine("Generating Mermaid diagram file...");
+                var filePath = DiagramHelper.SaveDiagramFile(
+                    ticketFolderPath: ticketFolderPath,
+                    ticketPrompt: prompt,
+                    resolution: string.IsNullOrWhiteSpace(resolution) ? "Pending" : resolution,
+                    tokenUsageIn: 0,
+                    tokenUsageOut: 0
+                );
+                Console.WriteLine($"Diagram file saved: {filePath}\n");
+            }
+            catch (Exception genEx)
+            {
+                Console.WriteLine($"Failed to generate diagram file: {genEx.Message}");
             }
         }
     }
@@ -138,5 +173,92 @@ catch (Exception ex)
     if (verboseOutput)
     {
         Console.WriteLine($"Stack trace: {ex.StackTrace}");
+    }
+}
+
+// Helper class for Mermaid diagram generation and saving
+internal static class DiagramHelper
+{
+    internal static string GenerateDiagram(bool verbose)
+    {
+        if (verbose)
+        {
+            return @"sequenceDiagram
+    participant User
+    participant TriageAgent as Triage Agent<br/>(Main Orchestrator)
+    participant PriorityAgent as Priority Agent<br/>(Urgency Assessment)
+    participant TeamAgent as Team Agent<br/>(Team Assignment)
+    participant EffortAgent as Effort Agent<br/>(Complexity Estimation)
+
+    User->>TriageAgent: Submit ticket description
+    Note over TriageAgent: Parse ticket content<br/>Identify key requirements<br/>Plan assessment strategy
+
+    TriageAgent->>PriorityAgent: Request priority assessment
+    Note over PriorityAgent: Analyze ticket urgency:<br/>• User-facing/blocking → High<br/>• Time-sensitive → Medium<br/>• Cosmetic/non-urgent → Low
+    PriorityAgent-->>TriageAgent: Return: Priority level + rationale
+
+    TriageAgent->>TeamAgent: Request team assignment
+    Note over TeamAgent: Match ticket to team:<br/>• Frontend (UI/UX issues)<br/>• Backend (API/server logic)<br/>• Infrastructure (deployment/ops)<br/>• Marketing (content/campaigns)
+    TeamAgent-->>TriageAgent: Return: Team name + rationale
+
+    TriageAgent->>EffortAgent: Request effort estimation
+    Note over EffortAgent: Estimate work complexity:<br/>• Small: <1 day<br/>• Medium: 2-3 days<br/>• Large: Multi-day/cross-team
+    EffortAgent-->>TriageAgent: Return: Effort level + justification
+
+    Note over TriageAgent: Synthesize all assessments<br/>Generate comprehensive triage report
+    TriageAgent-->>User: Complete triage analysis<br/>(Priority + Team + Effort)";
+        }
+        else
+        {
+            return @"sequenceDiagram
+    participant User
+    participant TriageAgent
+    participant PriorityAgent
+    participant TeamAgent
+    participant EffortAgent
+
+    User->>TriageAgent: Submit ticket
+    TriageAgent->>PriorityAgent: Assess priority
+    PriorityAgent-->>TriageAgent: Return priority level
+    TriageAgent->>TeamAgent: Determine team
+    TeamAgent-->>TriageAgent: Return team assignment
+    TriageAgent->>EffortAgent: Estimate effort
+    EffortAgent-->>TriageAgent: Return effort estimate
+    TriageAgent-->>User: Complete triage analysis";
+        }
+    }
+
+    internal static string SaveDiagramFile(string ticketFolderPath, string ticketPrompt, string resolution, int tokenUsageIn, int tokenUsageOut)
+    {
+        var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        var ticketId = timestamp;
+
+        var simpleDiagram = GenerateDiagram(verbose: false);
+        var verboseDiagram = GenerateDiagram(verbose: true);
+
+        var tokenUsageTotal = tokenUsageIn + tokenUsageOut;
+
+        var sb = new StringBuilder();
+        sb.AppendLine($"# Ticket {ticketId}");
+        sb.AppendLine();
+        sb.AppendLine("## Ticket Description");
+        sb.AppendLine($"- **Description**: {ticketPrompt}");
+        sb.AppendLine($"- **Resolution**: {resolution}");
+        sb.AppendLine($"- **Token Usage**: In: {tokenUsageIn}, Out: {tokenUsageOut}, Total: {tokenUsageTotal}");
+        sb.AppendLine();
+        sb.AppendLine("## Diagram");
+        sb.AppendLine("```mermaid");
+        sb.AppendLine(simpleDiagram);
+        sb.AppendLine("```");
+        sb.AppendLine();
+        sb.AppendLine("## Verbose Diagram");
+        sb.AppendLine("```mermaid");
+        sb.AppendLine(verboseDiagram);
+        sb.AppendLine("```");
+
+        Directory.CreateDirectory(ticketFolderPath);
+        var filePath = Path.Combine(ticketFolderPath, $"ticket-{ticketId}.md");
+        File.WriteAllText(filePath, sb.ToString());
+        return Path.GetFullPath(filePath);
     }
 }
