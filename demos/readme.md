@@ -1,4 +1,4 @@
-# Building Pro-Code Copilots and Agents with Azure AI Foundry & Microsoft Agent Framework
+# Building Pro-Code Copilots and Agentic Apps with Azure AI Foundry & Microsoft Agent Framework
 
 This five-day class is designed for Software Architects & Engineers for Agentic AI Solutions who want to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agents using Microsoft’s latest frameworks and services.
 
