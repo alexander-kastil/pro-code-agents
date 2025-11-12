@@ -28,7 +28,7 @@
 - Human-in-the-loop branching
 - Use Agents inside workflows
 
-### Orchestrating Agents with Microsoft Agent Framework
+### Microsoft Agent Framework Orchestration
 
 - Orchestration Patterns (Sequential, Concurrent, ...)
 - Multi-Agent coordination
