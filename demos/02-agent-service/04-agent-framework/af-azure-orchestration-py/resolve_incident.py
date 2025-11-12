@@ -1,13 +1,12 @@
-import asyncio
 import os
 from dotenv import load_dotenv
 from datetime import datetime
 from pathlib import Path
 import shutil
 
-from azure.identity.aio import DefaultAzureCredential
-from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FunctionTool, ToolSet, ConnectedAgentTool
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.agents.models import FunctionTool, ToolSet
 from log_plugin import log_functions
 from devops_plugin import devops_functions
 
@@ -44,7 +43,7 @@ RULES:
 - Prepend your response with this text: "DEVOPS_ASSISTANT > "
 """
 
-async def main():
+def main():
     # Clear the console
     os.system('cls' if os.name=='nt' else 'clear')
 
@@ -58,24 +57,22 @@ async def main():
     # Read the model deployment name from the environment variable
     load_dotenv()
     project_endpoint = os.getenv("PROJECT_ENDPOINT")
-    model_deployment = os.getenv("MODEL_DEPLOYMENT_NAME")
+    model_deployment = os.getenv("MODEL_DEPLOYMENT")
 
-    async with (
-        DefaultAzureCredential(
-            exclude_environment_credential=True,
-            exclude_managed_identity_credential=True) as creds,
-        AIProjectClient(
-            endpoint=project_endpoint,
-            credential=creds
-        ) as client,
-    ):
+    # Connect to the Azure AI Foundry project
+    project_client = AIProjectClient(
+        endpoint=project_endpoint,
+        credential=DefaultAzureCredential()
+    )
+    
+    with project_client:
         # Create function tools for log reading
         log_tool = FunctionTool(log_functions)
         log_toolset = ToolSet()
         log_toolset.add(log_tool)
         
         # Create the incident manager agent on the Azure AI agent service
-        incident_agent = await client.agents.create_agent(
+        incident_agent = project_client.agents.create_agent(
             model=model_deployment,
             name=INCIDENT_MANAGER,
             instructions=INCIDENT_MANAGER_INSTRUCTIONS,
@@ -88,35 +85,11 @@ async def main():
         devops_toolset.add(devops_tool)
         
         # Create the devops agent on the Azure AI agent service
-        devops_agent = await client.agents.create_agent(
+        devops_agent = project_client.agents.create_agent(
             model=model_deployment,
             name=DEVOPS_ASSISTANT,
             instructions=DEVOPS_ASSISTANT_INSTRUCTIONS,
             toolset=devops_toolset
-        )
-
-        # Create a connected agent tool for the devops assistant
-        devops_connected_tool = ConnectedAgentTool(
-            id=devops_agent.id,
-            name=DEVOPS_ASSISTANT,
-            description="Performs devops operations like restart service, rollback transaction, redeploy resource, increase quota, or escalate issue"
-        )
-        
-        # Create orchestrator agent that coordinates the two agents
-        orchestrator_agent = await client.agents.create_agent(
-            model=model_deployment,
-            name="orchestrator",
-            instructions=f"""You are an orchestrator that coordinates incident management.
-            
-When given a log file path:
-1. First, analyze the log file yourself to understand the issue
-2. Then call the {DEVOPS_ASSISTANT} tool with the recommendation for what action to take
-3. Report the outcome
-
-If the issue is resolved, respond with "No action needed."
-Keep iterating until the issue is resolved or no further action is needed.
-Maximum 5 iterations per log file.""",
-            tools=devops_connected_tool.definitions + log_toolset.definitions,
         )
 
         delay = 15
@@ -129,7 +102,7 @@ Maximum 5 iterations per log file.""",
             print(f"\nProcessing log file: {filename}\n")
             
             # Create a new thread for each log file
-            thread = await client.agents.create_thread()
+            thread = project_client.agents.threads.create()
             
             try:
                 iteration = 0
@@ -140,62 +113,94 @@ Maximum 5 iterations per log file.""",
                     
                     # Create the prompt for this iteration
                     if iteration == 1:
-                        prompt = f"Analyze this log file and take appropriate corrective action: {logfile_path}"
+                        prompt = f"Analyze this log file and recommend corrective action: {logfile_path}"
                     else:
-                        prompt = f"Check if the issue in {logfile_path} has been resolved. If not, take further action."
+                        prompt = f"Re-read the log file {logfile_path} to verify if the previous issue has been resolved. If the error is gone, respond with 'No action needed'. If the error still exists or a new error appeared, recommend the appropriate corrective action."
                     
                     # Create message
-                    await client.agents.create_message(
+                    project_client.agents.create_message(
                         thread_id=thread.id,
                         role="user",
                         content=prompt
                     )
                     
-                    # Run the orchestrator
-                    run = await client.agents.create_and_process_run(
+                    # Run the incident manager
+                    incident_run = project_client.agents.create_and_process_run(
                         thread_id=thread.id,
-                        agent_id=orchestrator_agent.id
+                        agent_id=incident_agent.id
                     )
                     
-                    if run.status == "failed":
-                        print(f"Run failed: {run.last_error}")
-                        if "Rate limit is exceeded" in str(run.last_error):
+                    if incident_run.status == "failed":
+                        print(f"Incident manager run failed: {incident_run.last_error}")
+                        if incident_run.last_error and "rate_limit_exceeded" in str(incident_run.last_error):
                             print("Waiting for rate limit...")
-                            await asyncio.sleep(60)
+                            import time
+                            time.sleep(60)
                             continue
                         else:
                             break
                     
-                    # Get the latest message
-                    messages = await client.agents.list_messages(thread_id=thread.id)
+                    # Get the incident manager recommendation
+                    messages = project_client.agents.list_messages(thread_id=thread.id)
                     last_msg = messages.get_last_text_message_by_role("assistant")
                     
                     if last_msg:
-                        response_content = last_msg.text.value
-                        print(f"Iteration {iteration}: {response_content}\n")
+                        recommendation = last_msg.text.value
+                        print(f"Iteration {iteration} - Incident Manager: {recommendation}\n")
                         
-                        # Check if resolved
-                        if "no action needed" in response_content.lower():
+                        # Check if resolved or escalated
+                        if "no action needed" in recommendation.lower():
                             resolved = True
                             print(f"Issue in {filename} resolved.\n")
+                            break
+                        
+                        if "escalate issue" in recommendation.lower():
+                            resolved = True
+                            print(f"Issue in {filename} escalated to higher support tier.\n")
+                            # Still execute the escalation action
+                        
+                        # Create a message for the devops agent
+                        project_client.agents.create_message(
+                            thread_id=thread.id,
+                            role="user",
+                            content=recommendation
+                        )
+                        
+                        # Run the devops agent
+                        devops_run = project_client.agents.create_and_process_run(
+                            thread_id=thread.id,
+                            agent_id=devops_agent.id
+                        )
+                        
+                        if devops_run.status == "failed":
+                            print(f"DevOps agent run failed: {devops_run.last_error}")
+                            break
+                        
+                        # Get the devops agent response
+                        devops_messages = project_client.agents.list_messages(thread_id=thread.id)
+                        devops_msg = devops_messages.get_last_text_message_by_role("assistant")
+                        
+                        if devops_msg:
+                            print(f"Iteration {iteration} - DevOps Assistant: {devops_msg.text.value}\n")
                     
-                    await asyncio.sleep(delay)  # Wait to reduce TPM
+                    import time
+                    time.sleep(delay)  # Wait to reduce TPM
                 
                 # Clean up thread
-                await client.agents.delete_thread(thread.id)
+                project_client.agents.delete_thread(thread.id)
                 
             except Exception as e:
                 print(f"Error processing {filename}: {e}")
                 if "Rate limit is exceeded" in str(e):
                     print("Waiting...")
-                    await asyncio.sleep(60)
+                    import time
+                    time.sleep(60)
                 continue
 
         # Clean up agents
-        await client.agents.delete_agent(orchestrator_agent.id)
-        await client.agents.delete_agent(incident_agent.id)
-        await client.agents.delete_agent(devops_agent.id)
+        project_client.agents.delete_agent(incident_agent.id)
+        project_client.agents.delete_agent(devops_agent.id)
 
 # Start the app
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

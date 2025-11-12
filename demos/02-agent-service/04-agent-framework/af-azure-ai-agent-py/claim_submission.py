@@ -1,12 +1,11 @@
 import os
-import asyncio
 from dotenv import load_dotenv
-from azure.identity.aio import DefaultAzureCredential
-from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FunctionTool, ToolSet
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.agents.models import FunctionTool, ToolSet
 from email_plugin import user_functions
 
-async def main():
+def main():
     # Clear the console
     os.system('cls' if os.name=='nt' else 'clear')
 
@@ -16,10 +15,10 @@ async def main():
               07-Mar-2025,dinner,65.50
               07-Mar-2025,hotel,125.90"""
 
-    # Run the async agent code
-    await create_expense_claim(data)
+    # Run the agent code
+    create_expense_claim(data)
 
-async def create_expense_claim(expenses_data):
+def create_expense_claim(expenses_data):
 
     # Get configuration settings
     load_dotenv()
@@ -27,15 +26,12 @@ async def create_expense_claim(expenses_data):
     model_deployment = os.getenv("MODEL_DEPLOYMENT")
 
     # Connect to the Azure AI Foundry project
-    async with (
-        DefaultAzureCredential(
-            exclude_environment_credential=True,
-            exclude_managed_identity_credential=True) as creds,
-        AIProjectClient(
-            endpoint=project_endpoint,
-            credential=creds
-        ) as project_client,
-    ):
+    project_client = AIProjectClient(
+        endpoint=project_endpoint,
+        credential=DefaultAzureCredential()
+    )
+    
+    with project_client:
         
         # Create function tools from user functions
         functions = FunctionTool(user_functions)
@@ -43,7 +39,7 @@ async def create_expense_claim(expenses_data):
         toolset.add(functions)
         
         # Define an Azure AI agent that sends an expense claim email
-        expenses_agent = await project_client.agents.create_agent(
+        expenses_agent = project_client.agents.create_agent(
             model=model_deployment,
             name="expenses_agent",
             instructions="""You are an AI assistant for expense claim submission.
@@ -53,19 +49,19 @@ async def create_expense_claim(expenses_data):
         )
 
         # Create a thread for the conversation
-        thread = await project_client.agents.create_thread()
+        thread = project_client.agents.threads.create()
         
         try:
             # Add the input prompt as a message
             prompt = f"Create an expense claim for the following expenses: {expenses_data}"
-            await project_client.agents.create_message(
+            project_client.agents.create_message(
                 thread_id=thread.id,
                 role="user",
                 content=prompt
             )
             
             # Create and process the run
-            run = await project_client.agents.create_and_process_run(
+            run = project_client.agents.create_and_process_run(
                 thread_id=thread.id,
                 agent_id=expenses_agent.id
             )
@@ -75,7 +71,7 @@ async def create_expense_claim(expenses_data):
                 print(f"Run failed: {run.last_error}")
             else:
                 # Get the messages
-                messages = await project_client.agents.list_messages(thread_id=thread.id)
+                messages = project_client.agents.list_messages(thread_id=thread.id)
                 
                 # Display the response
                 last_msg = messages.get_last_text_message_by_role("assistant")
@@ -88,9 +84,9 @@ async def create_expense_claim(expenses_data):
         finally:
             # Cleanup: Delete the thread and agent
             if thread:
-                await project_client.agents.delete_thread(thread.id)
-            await project_client.agents.delete_agent(expenses_agent.id)
+                project_client.agents.delete_thread(thread.id)
+            project_client.agents.delete_agent(expenses_agent.id)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
