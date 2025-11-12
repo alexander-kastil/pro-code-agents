@@ -4,7 +4,7 @@
 
 ## Demos
 
-| Demo                     | Description                                                                         |
-| ------------------------ | ----------------------------------------------------------------------------------- |
-| **copilotstudio-client** | Calling a Copilot Studio Agent using the Microsoft Agents SDK in a .NET Console app |
-| **weather-agent**        | Weather agent using the Microsoft Agents SDK and Azure AI Foundry Models            |
+| Demo                      | Description                                                                         |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| **copilot-studio-client** | Calling a Copilot Studio Agent using the Microsoft Agents SDK in a .NET Console app |
+| **weather-agent**         | Weather agent using the Microsoft Agents SDK and Azure AI Foundry Models            |
