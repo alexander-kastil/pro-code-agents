@@ -1,4 +1,4 @@
-# Module 3: Develop AI Agents using Microsoft Agent Framework
+# Module 3: Orchestrate Agents using Microsoft Agent Framework
 
 ### Microsoft Agent Framework Basics & Concepts
 
