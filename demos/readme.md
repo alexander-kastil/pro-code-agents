@@ -50,7 +50,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Multi-Agent Solutions & Orchestration Patterns
 - Governance & Guardrails for Responsible Agents
 
-### Implementing Model Context Protocol Servers (MCP)
+### Model Context Protocol Servers (MCP)
 
 - MCP Core Concepts & Architecture
 - Transports: STDIO vs HTTP Streaming
@@ -58,7 +58,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Authentication & Security Best Practices
 - Hosting MCP in Azure & API Management Integration
 
-## Module 2: Implementing Agents using Azure AI Foundry Agent Service
+## Module 2: Azure AI Foundry Agent Service
 
 - Introduction to Azure AI Foundry Agent Service
 - Threads, Runs, Messages: Managing Inputs & Outputs
@@ -69,7 +69,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Implementing Autonomous Agents
 - Agent-to-Agent Protocol (A2A) & Connected Agents
 
-## Module 3: Develop AI Agents using Microsoft Agent Framework
+## Module 3: Orchestrate Agents using Microsoft Agent Framework
 
 ### Microsoft Agent Framework Basics & Concepts
 
