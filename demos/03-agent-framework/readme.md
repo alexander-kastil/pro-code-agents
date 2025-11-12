@@ -7,7 +7,7 @@
 - Agent types and configuration essentials
 - Integrating Azure AI Foundry agents
 - Threads, conversation persistence, and memory
-- ChatReducer and prompt rendering middleware
+- Gouvernance & Middleware
 - Multi-modal capabilities and structured outputs
 
 ### Mastering Tools & Knowledge
