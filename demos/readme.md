@@ -1,4 +1,4 @@
-# Pro Code Copilots- and Agents using Azure AI Agent Service & Microsoft Agent Framework
+# Building Pro-Code Copilots and Agents with Azure AI Foundry & Microsoft Agent Framework
 
 This five-day class is designed for Software Architects & Engineers for Agentic AI Solutions who want to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agents using Microsoft’s latest frameworks and services.
 
@@ -32,104 +32,107 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ### Azure AI Foundry Essentials
 
-- Overview Copilots and Agent Frameworks in the Microsoft Ecosystem
-- Hub based projects vs Foundry based Projects
-- Deploy Large Language Models (LLM) in Azure AI Foundry
-- Azure AI Foundry Model Router
+- Copilots & Agent Frameworks in the Microsoft Ecosystem
+- Hub-Based vs Foundry-Based Projects
+- Deploying LLMs in Azure AI Foundry
+- Model Router: Smart Model Selection
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
-- Retrieval Augmented Generation (RAG)
-- Prototyping with Jupyter Notebooks
-- Agentic IaC using Azure Developer CLI
+- Retrieval-Augmented Generation (RAG) Basics
+- Rapid Prototyping with Jupyter Notebooks
+- Agentic Infrastructure as Code (IaC) using Azure Developer CLI
 
 ### Agentic AI Fundamentals
 
-- Overview Agents & Agentic AI
+- What Are Agents & Agentic AI?
 - Prompt Engineering vs Context Engineering
-- Knowledge & Agentic Retrieval Augmented Generation
-- Function Calling, REST & Model Context Protocol Servers (MCP)
-- Evaluate generative AI Performance
-- Multi Agent Solutions & Orchestration
-- Agents Governance & Guardrails
+- Knowledge Integration & Agentic RAG
+- Function Calling, REST APIs & MCP Servers
+- Evaluating Generative AI Performance
+- Multi-Agent Solutions & Orchestration Patterns
+- Governance & Guardrails for Responsible Agents
 
 ### Implementing Model Context Protocol Servers (MCP)
 
-- Model Context Protocol (MCP) Core Concepts
-- Transports STDIO vs Http Streaming
-- Testing & Debugging using MCP Inspector
-- MCP Authentication & Security
-- Azure Hosting Options & API Management Integration
+- MCP Core Concepts & Architecture
+- Transports: STDIO vs HTTP Streaming
+- Debugging with MCP Inspector
+- Authentication & Security Best Practices
+- Hosting MCP in Azure & API Management Integration
 
 ## Module 2: Implementing Agents using Azure AI Foundry Agent Service
 
 - Introduction to Azure AI Foundry Agent Service
-- Threads, Runs, Messages, Inputs & Outputs
-- Managing Knowledge: File Search, Azure AI Search & Bing Grounding
-- Invoking Action Tools: Code Interpreter, Azure Function, OpenAPI & MCP
-- Completing UI Tasks With Browser Automation
-- Tracing, Observability & Evaluations
-- Agent Triggers using Logic Apps
-- Multi-Agent-, Connected Agents and Agent-2-Agent Protocol (A2A)
+- Threads, Runs, Messages: Managing Inputs & Outputs
+- Knowledge Integration: File Search, Azure AI Search & Bing Grounding
+- Executing Actions with Tools: Code Interpreter, Azure Functions, OpenAPI & MCP
+- Automating UI Tasks using Browser Automation and Computer Use
+- Tracing, Observability & Performance Evaluation
+- Implementing Autonomous Agents
+- Agent-to-Agent Protocol (A2A) & Connected Agents
 
 ## Module 3: Develop AI Agents using Microsoft Agent Framework
 
 ### Microsoft Agent Framework Basics & Concepts
 
-- Introduction to Microsoft Agent Framework
-- Chat Clients vs Agents
-- Agent Types & Configuration
-- Images & Multi-modal Capabilities
-- Structured Output for Chats
-- Threads, Conversations Persistence & Memory
-- Middleware & Dependency Injection
-- ChatReducer & Prompt Rendering Middleware
+- Introduction to the Agent Framework
+- Chat Clients vs Agents: Key differences
+- Agent types and configuration essentials
+- Multi-modal capabilities and structured outputs
+- Threads, conversation persistence, and memory
+- Middleware and dependency injection fundamentals
+- ChatReducer and prompt rendering middleware
+- Integrating Azure AI Foundry agents
 
 ### Mastering Tools & Knowledge
 
-- Understand Tool Call
-- Builtin Tools (Code Interpreter, File Search, Web Search)
-- Integrate OpenApi & MCP Tools
-- Use Human in the loop with Tool Call
-- Using Function Calling Middleware
-- Embeddings & using Vector Stores
+- Built-in tools: Code Interpreter, File Search, Web Search
+- Using vector stores for memory and retrieval
+- Adding custom tools and calling them from agents
+- Integrating OpenAPI and MCP tools
+- Human-in-the-loop strategies for tool calls
+- Function-calling middleware for advanced workflows
 
 ### Microsoft Agent Framework Workflows
 
-- Workflow Types & Overview
-- Executor & Edges
+- Workflow types and visualization
+- Executor, edges, checkpoints
+- Human-in-the-loop branching
+- Use Agents inside workflows
+
+### Orchestrating Agents
+
 - Orchestration Patterns (Sequential, Concurrent, ...)
-- Sharing States & Checkpoints
-- Branching in Workflows & Human in the loop
-- Observability & Workflow Visualization
-- Agents in Workflows / Workflow as Agents
+- Multi-Agent coordination
+- Orchestrate Azure AI Foundry Agents
 
 ## Module 4: Microsoft Copilot Pro-Code Extensibility
 
-### Pro-Code Agentic Extensibility Options & Fundamentals
+### Pro-Code Extensibility Fundamentals
 
-- Pro Code Declarative Agents vs Custom Engine Agents
--  Teams Developer Portal, Microsoft 365 Agent Toolkit & DevTunnel
-- App Registrations & Single Sign-On (SSO)
+- Declarative Agents vs Custom Engine Agents
+- Teams Developer Portal, Microsoft 365 Agent Toolkit & DevTunnel
+- Identity & Access Setup: App Registrations and Single Sign-On (SSO)
 
-### Copilot Connectors & Copilot API Capabilities
+### Copilot Connectors & APIs
 
-- Designing & Implementing Copilot Connectors
-- Overview Copilot API Capabilities
+- Designing and Implementing Copilot Connectors
+- Copilot API Capabilities Overview
 - Microsoft 365 Copilot Retrieval API
 
 ### Declarative Agents for Microsoft 365
 
 - Instructions & Conversation Starters
-- Knowledge Sources: WebSearch, SharePoint, Teams & Copilot Connectors
-- Built-in Skills: Image Generation, Code Interpreter
-- Extend Agents Actions with API Plugins
-- Enhance Presentation using Adaptive Cards
+- Knowledge Sources: Web Search, SharePoint, Teams & Copilot Connectors
+- Built-in Skills: Image Generation & Code Interpreter
+- Extending Agent Actions with API Plugins
+- Enhancing UI with Adaptive Cards
 
-### Pro Code Custom Engine Agents 
+### Custom Engine Agents
 
-- Custom Engine Agents Use Cases
+- Use Cases for Custom Engine Agents
 - Microsoft Agent SDK & Teams AI Library
-- Microsoft Agents Playground
-- Tools, Knowledge and Azure AI Search (RAG)
+- Exploring Microsoft Agents Playground
+- Tools, Knowledge Integration & Azure AI Search (RAG)
 
 ## Module 5: Integrating Agents & Copilots using the Microsoft Agents SDK
 
@@ -139,26 +142,3 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Connecting Azure AI Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,28 +1,28 @@
 # Module 4: Microsoft Copilot Pro-Code Extensibility
 
-### Pro-Code Agentic Extensibility Options & Fundamentals
+### Pro-Code Extensibility Fundamentals
 
-- Pro Code Declarative Agents vs Custom Engine Agents
+- Declarative Agents vs Custom Engine Agents
 - Teams Developer Portal, Microsoft 365 Agent Toolkit & DevTunnel
-- App Registrations & Single Sign-On (SSO)
+- Identity & Access Setup: App Registrations and Single Sign-On (SSO)
 
-### Copilot Connectors & Copilot API Capabilities
+### Copilot Connectors & APIs
 
-- Designing & Implementing Copilot Connectors
-- Overview Copilot API Capabilities
+- Designing and Implementing Copilot Connectors
+- Copilot API Capabilities Overview
 - Microsoft 365 Copilot Retrieval API
 
 ### Declarative Agents for Microsoft 365
 
 - Instructions & Conversation Starters
-- Knowledge Sources: WebSearch, SharePoint, Teams & Copilot Connectors
-- Built-in Skills: Image Generation, Code Interpreter
-- Extend Agents Actions with API Plugins
-- Enhance Presentation using Adaptive Cards
+- Knowledge Sources: Web Search, SharePoint, Teams & Copilot Connectors
+- Built-in Skills: Image Generation & Code Interpreter
+- Extending Agent Actions with API Plugins
+- Enhancing UI with Adaptive Cards
 
-### Pro Code Custom Engine Agents
+### Custom Engine Agents
 
-- Custom Engine Agents Use Cases
+- Use Cases for Custom Engine Agents
 - Microsoft Agent SDK & Teams AI Library
-- Microsoft Agents Playground
-- Tools, Knowledge and Azure AI Search (RAG)
+- Exploring Microsoft Agents Playground
+- Tools, Knowledge Integration & Azure AI Search (RAG)

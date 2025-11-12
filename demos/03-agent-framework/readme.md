@@ -2,30 +2,33 @@
 
 ### Microsoft Agent Framework Basics & Concepts
 
-- Introduction to Microsoft Agent Framework
-- Chat Clients vs Agents
-- Agent Types & Configuration
-- Images & Multi-modal Capabilities
-- Structured Output for Chats
-- Threads, Conversations Persistence & Memory
-- Middleware & Dependency Injection
-- ChatReducer & Prompt Rendering Middleware
+- Introduction to the Agent Framework
+- Chat Clients vs Agents: Key differences
+- Agent types and configuration essentials
+- Multi-modal capabilities and structured outputs
+- Threads, conversation persistence, and memory
+- Middleware and dependency injection fundamentals
+- ChatReducer and prompt rendering middleware
+- Integrating Azure AI Foundry agents
 
 ### Mastering Tools & Knowledge
 
-- Understand Tool Call
-- Builtin Tools (Code Interpreter, File Search, Web Search)
-- Integrate OpenApi & MCP Tools
-- Use Human in the loop with Tool Call
-- Using Function Calling Middleware
-- Embeddings & using Vector Stores
+- Built-in tools: Code Interpreter, File Search, Web Search
+- Using vector stores for memory and retrieval
+- Adding custom tools and calling them from agents
+- Integrating OpenAPI and MCP tools
+- Human-in-the-loop strategies for tool calls
+- Function-calling middleware for advanced workflows
 
 ### Microsoft Agent Framework Workflows
 
-- Workflow Types & Overview
-- Executor & Edges
+- Workflow types and visualization
+- Executor, edges, checkpoints
+- Human-in-the-loop branching
+- Use Agents inside workflows
+
+### Orchestrating Agents
+
 - Orchestration Patterns (Sequential, Concurrent, ...)
-- Sharing States & Checkpoints
-- Branching in Workflows & Human in the loop
-- Observability & Workflow Visualization
-- Agents in Workflows / Workflow as Agents
+- Multi-Agent coordination
+- Orchestrate Azure AI Foundry Agents

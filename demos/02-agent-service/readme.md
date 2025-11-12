@@ -1,12 +1,12 @@
 # Module 2: Implementing Agents using Azure AI Foundry Agent Service
 
 - Introduction to Azure AI Foundry Agent Service
-- Threads, Runs, Messages, Inputs & Outputs
-- Managing Knowledge: File Search, Azure AI Search & Bing Grounding
-- Invoking Action Tools: Code Interpreter, Azure Function, OpenAPI & MCP
-- Completing UI Tasks With Browser Automation
-- Tracing, Observability & Evaluations
-- Agent Triggers using Logic Apps
-- Multi-Agent-, Connected Agents and Agent-2-Agent Protocol (A2A)
+- Threads, Runs, Messages: Managing Inputs & Outputs
+- Knowledge Integration: File Search, Azure AI Search & Bing Grounding
+- Executing Actions with Tools: Code Interpreter, Azure Functions, OpenAPI & MCP
+- Automating UI Tasks using Browser Automation and Computer Use
+- Tracing, Observability & Performance Evaluation
+- Implementing Autonomous Agents
+- Agent-to-Agent Protocol (A2A) & Connected Agents
 
 ## Links & Resources
