@@ -36,3 +36,9 @@ ENV/
 # Operating System
 .DS_Store
 Thumbs.db
+
+# Data directories (runtime generated)
+data/logs/
+data/outcome/
+logs/
+tickets/

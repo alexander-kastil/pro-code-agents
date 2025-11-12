@@ -2,255 +2,215 @@ import asyncio
 import os
 import logging
 from dotenv import load_dotenv
-from datetime import datetime
 from pathlib import Path
-import shutil
 
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FunctionTool, ToolSet, ConnectedAgentTool
-from log_plugin import log_functions
-from devops_plugin import devops_functions
+from agent_framework import ChatAgent
+from agent_framework.azure import AzureAIAgentClient
+import plugins.log_plugin as log_plugin
+from plugins.log_plugin import log_functions
+import plugins.devops_plugin as devops_plugin
+from plugins.devops_plugin import devops_functions
 
 # Import logging configuration
 from log_util import LogUtil, vdebug
+
+# Import diagram generator
+from diagram_generator import MermaidDiagramGenerator
 
 # Load environment variables early
 load_dotenv()
 
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
+create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
+log_directory = os.getenv("LOG_DIRECTORY", "data/logs")
+outcome_directory = os.getenv("OUTCOME_DIRECTORY", "data/outcome")
+ticket_folder = outcome_directory  # Write tickets to outcome directory
+
+# Set outcome directory for plugins
+log_plugin.OUTCOME_DIRECTORY = outcome_directory
+devops_plugin.OUTCOME_DIRECTORY = outcome_directory
 
 # Setup logging with explicit parameters
 logging_config = LogUtil()
 logging_config.setup_logging(verbose=verbose_output)
 
-INCIDENT_MANAGER = "INCIDENT_MANAGER"
-INCIDENT_MANAGER_INSTRUCTIONS = """
-Analyze the given log file or the response from the devops assistant.
-Recommend which one of the following actions should be taken:
-
-Restart service {service_name}
-Rollback transaction
-Redeploy resource {resource_name}
-Increase quota
-
-If there are no issues or if the issue has already been resolved, respond with "No action needed."
-If none of the options resolve the issue, respond with "Escalate issue."
-
-RULES:
-- Do not perform any corrective actions yourself.
-- Read the log file on every turn.
-- Prepend your response with this text: "INCIDENT_MANAGER > {logfilepath} | "
-- Only respond with the corrective action instructions.
-"""
-
-DEVOPS_ASSISTANT = "DEVOPS_ASSISTANT"
-DEVOPS_ASSISTANT_INSTRUCTIONS = """
-Read the instructions from the INCIDENT_MANAGER and apply the appropriate resolution function. 
-Return the response as "{function_response}"
-If the instructions indicate there are no issues or actions needed, 
-take no action and respond with "No action needed."
-
-RULES:
-- Use the instructions provided.
-- Do not read any log files yourself.
-- Prepend your response with this text: "DEVOPS_ASSISTANT > "
-"""
-
 async def main():
     logging.info("Starting incident resolution process...")
 
-    # Get the log files
-    logging.info("Getting log files...")
+    # Setup directories
     script_dir = Path(__file__).parent
-    src_path = script_dir / "sample_logs"
-    file_path = script_dir / "logs"
-    shutil.copytree(src_path, file_path, dirs_exist_ok=True)
-    logging.info(f"Log files copied to: {file_path}")
+    log_path = script_dir / log_directory
+    outcome_path = script_dir / outcome_directory
+    
+    # Create directories if they don't exist
+    log_path.mkdir(parents=True, exist_ok=True)
+    outcome_path.mkdir(parents=True, exist_ok=True)
+    
+    logging.info(f"Log directory: {log_path}")
+    logging.info(f"Outcome directory: {outcome_path}")
 
-    # Read the model deployment name from the environment variable
+    # Get configuration settings
     project_endpoint = os.getenv("PROJECT_ENDPOINT")
-    model_deployment = os.getenv("MODEL_DEPLOYMENT_NAME")
+    model_deployment = os.getenv("MODEL_DEPLOYMENT")
     
     if not project_endpoint or not model_deployment:
-        logging.warning("Environment variables PROJECT_ENDPOINT or MODEL_DEPLOYMENT_NAME are missing.")
-    else:
-        logging.info(f"Using project endpoint: {project_endpoint}")
-        logging.info(f"Using model deployment: {model_deployment}")
+        logging.error(
+            "Missing required environment variables PROJECT_ENDPOINT or MODEL_DEPLOYMENT. "
+            "Set them in your .env file before running."
+        )
+        return
 
-    logging.info("Initializing AIProjectClient...")
+    logging.info(f"Using project endpoint: {project_endpoint}")
+    logging.info(f"Using model deployment: {model_deployment}")
+
+    # Create the orchestrator agent using Microsoft Agent Framework
+    logging.info("Initializing Orchestrator Agent with Agent Framework...")
     async with (
         DefaultAzureCredential(
             exclude_environment_credential=True,
-            exclude_managed_identity_credential=True) as creds,
-        AIProjectClient(
-            endpoint=project_endpoint,
-            credential=creds
-        ) as client,
+            exclude_managed_identity_credential=True) as credential,
+        ChatAgent(
+            chat_client=AzureAIAgentClient(
+                project_endpoint=project_endpoint,
+                model_deployment_name=model_deployment,
+                async_credential=credential
+            ),
+            instructions="""You are an orchestrator that coordinates incident resolution.
+
+CRITICAL: You have access to these functions that you MUST use:
+- read_log_file(filepath) - reads the log file and shows current state including any actions taken
+- restart_service(service_name, logfile) - restarts a failing service
+- rollback_transaction(logfile) - rollbacks a failed transaction  
+- redeploy_resource(resource_name, logfile) - redeploys a resource
+- increase_quota(logfile) - increases resource quota
+- escalate_issue(logfile) - escalates when unable to resolve
+
+Your workflow on EVERY iteration:
+1. ALWAYS call read_log_file(filepath) FIRST to see the current state
+2. Look for ERROR or CRITICAL entries in the log
+3. Check the "ACTIONS IN PROGRESS" section to see what was already attempted
+4. If NO errors exist OR errors have been resolved by previous actions, respond with "No action needed"
+5. If errors still exist, call ONE devops function to fix the issue (avoid repeating actions that failed)
+6. If same action tried multiple times without success, call escalate_issue()
+
+RULES:
+- MUST call read_log_file() at the start of every turn
+- Only take ONE action per iteration
+- Check what actions were already attempted before taking new action
+- Be concise in your responses
+- Focus on resolving the issue efficiently""",
+            name="incident_orchestrator",
+            tools=list(log_functions) + list(devops_functions)
+        ) as agent,
     ):
-        logging.info("AIProjectClient initialized.")
+        logging.info("Orchestrator agent created successfully.")
         
-        # Create function tools for log reading
-        logging.info("Creating function tools for log reading...")
-        log_tool = FunctionTool(log_functions)
-        log_toolset = ToolSet()
-        log_toolset.add(log_tool)
-        logging.debug(f"Log function tools created: {len(log_functions)} functions")
-        
-        # Create the incident manager agent on the Azure AI agent service
-        logging.info("Creating incident manager agent...")
-        incident_agent = await client.agents.create_agent(
-            model=model_deployment,
-            name=INCIDENT_MANAGER,
-            instructions=INCIDENT_MANAGER_INSTRUCTIONS,
-            toolset=log_toolset
-        )
-        logging.info(f"Incident manager agent created: id={incident_agent.id}")
-
-        # Create function tools for devops operations
-        logging.info("Creating function tools for devops operations...")
-        devops_tool = FunctionTool(devops_functions)
-        devops_toolset = ToolSet()
-        devops_toolset.add(devops_tool)
-        logging.debug(f"DevOps function tools created: {len(devops_functions)} functions")
-        
-        # Create the devops agent on the Azure AI agent service
-        logging.info("Creating devops assistant agent...")
-        devops_agent = await client.agents.create_agent(
-            model=model_deployment,
-            name=DEVOPS_ASSISTANT,
-            instructions=DEVOPS_ASSISTANT_INSTRUCTIONS,
-            toolset=devops_toolset
-        )
-        logging.info(f"DevOps assistant agent created: id={devops_agent.id}")
-
-        # Create a connected agent tool for the devops assistant
-        devops_connected_tool = ConnectedAgentTool(
-            id=devops_agent.id,
-            name=DEVOPS_ASSISTANT,
-            description="Performs devops operations like restart service, rollback transaction, redeploy resource, increase quota, or escalate issue"
-        )
-        
-        # Create orchestrator agent that coordinates the two agents
-        logging.info("Creating orchestrator agent...")
-        orchestrator_agent = await client.agents.create_agent(
-            model=model_deployment,
-            name="orchestrator",
-            instructions=f"""You are an orchestrator that coordinates incident management.
+        # Process each log file
+        for log_file in log_path.glob("*.log"):
+            filename = log_file.name
+            logfile_path = str(log_file)
             
-When given a log file path:
-1. First, analyze the log file yourself to understand the issue
-2. Then call the {DEVOPS_ASSISTANT} tool with the recommendation for what action to take
-3. Report the outcome
-
-If the issue is resolved, respond with "No action needed."
-Keep iterating until the issue is resolved or no further action is needed.
-Maximum 5 iterations per log file.""",
-            tools=devops_connected_tool.definitions + log_toolset.definitions,
-        )
-        logging.info(f"Orchestrator agent created: id={orchestrator_agent.id}")
-
-        delay = 15
-        max_iterations = 5
-
-        # Process log files
-        for filename in os.listdir(file_path):
-            logfile_path = f"{file_path}/{filename}"
+            logging.info(f"\n{'='*60}")
+            logging.info(f"Processing log file: {filename}")
+            logging.info(f"{'='*60}")
+            print(f"\n{'='*60}")
+            print(f"Processing log file: {filename}")
+            print(f"{'='*60}\n")
             
-            logging.info(f"\nProcessing log file: {filename}")
-            print(f"\nProcessing log file: {filename}\n")
+            # Print log summary before analysis
+            log_plugin.print_log_summary(logfile_path)
             
-            # Create a new thread for each log file
-            logging.info("Creating a new thread for this log file...")
-            thread = await client.agents.create_thread()
-            logging.info(f"Thread created: id={thread.id}")
+            max_iterations = 5
+            iteration = 0
+            resolved = False
+            total_tokens_in = 0
+            total_tokens_out = 0
             
-            try:
-                iteration = 0
-                resolved = False
+            while iteration < max_iterations and not resolved:
+                iteration += 1
+                logging.info(f"Iteration {iteration}/{max_iterations}")
                 
-                while iteration < max_iterations and not resolved:
-                    iteration += 1
-                    logging.info(f"Iteration {iteration}/{max_iterations}")
-                    
-                    # Create the prompt for this iteration
-                    if iteration == 1:
-                        prompt = f"Analyze this log file and take appropriate corrective action: {logfile_path}"
-                    else:
-                        prompt = f"Check if the issue in {logfile_path} has been resolved. If not, take further action."
-                    
-                    logging.debug(f"Prompt: {prompt}")
-                    
-                    # Create message
-                    await client.agents.create_message(
-                        thread_id=thread.id,
-                        role="user",
-                        content=prompt
-                    )
-                    logging.debug("User message created.")
-                    
-                    # Run the orchestrator
-                    logging.info("Starting orchestrator run...")
-                    run = await client.agents.create_and_process_run(
-                        thread_id=thread.id,
-                        agent_id=orchestrator_agent.id
-                    )
-                    logging.info(f"Run finished: id={run.id}, status={run.status}")
-                    
-                    if run.status == "failed":
-                        error_msg = f"Run failed: {run.last_error}"
-                        logging.error(error_msg)
-                        print(error_msg)
-                        if "Rate limit is exceeded" in str(run.last_error):
-                            logging.warning("Waiting for rate limit...")
-                            print("Waiting for rate limit...")
-                            await asyncio.sleep(60)
-                            continue
-                        else:
-                            break
-                    
-                    # Get the latest message
-                    messages = await client.agents.list_messages(thread_id=thread.id)
-                    last_msg = messages.get_last_text_message_by_role("assistant")
-                    
-                    if last_msg:
-                        response_content = last_msg.text.value
-                        logging.info(f"Iteration {iteration}: {response_content}")
-                        print(f"Iteration {iteration}: {response_content}\n")
-                        
-                        # Check if resolved
-                        if "no action needed" in response_content.lower():
-                            resolved = True
-                            outcome_msg = f"Issue in {filename} resolved."
-                            logging.info(outcome_msg)
-                            print(outcome_msg + "\n")
-                    
-                    await asyncio.sleep(delay)  # Wait to reduce TPM
+                # Create the prompt for this iteration
+                if iteration == 1:
+                    prompt = f"Read the log file '{logfile_path}' using read_log_file() and analyze it. Then take appropriate corrective action if needed."
+                else:
+                    prompt = f"Read the log file '{logfile_path}' using read_log_file() to check if the previous issue has been resolved. If resolved, respond with 'No action needed'. If not, take further action."
                 
-                # Clean up thread
-                logging.info("Deleting thread...")
-                await client.agents.delete_thread(thread.id)
-                logging.info("Thread deleted.")
+                logging.debug(f"Prompt: {prompt}")
                 
-            except Exception as e:
-                error_msg = f"Error processing {filename}: {e}"
-                logging.error(error_msg)
-                print(error_msg)
-                if "Rate limit is exceeded" in str(e):
-                    logging.warning("Waiting...")
-                    print("Waiting...")
-                    await asyncio.sleep(60)
-                continue
+                try:
+                    # Run the agent
+                    logging.info("Running orchestrator agent...")
+                    result = await agent.run(prompt)
+                    
+                    response_content = result.text
+                    logging.info(f"Agent response: {response_content}")
+                    print(f"Iteration {iteration}: {response_content}\n")
+                    
+                    # Track token usage
+                    if hasattr(result, 'usage') and result.usage:
+                        token_usage_in = getattr(result.usage, 'input_tokens', 0)
+                        token_usage_out = getattr(result.usage, 'output_tokens', 0)
+                        total_tokens_in += token_usage_in
+                        total_tokens_out += token_usage_out
+                        logging.debug(f"Token usage - Input: {token_usage_in}, Output: {token_usage_out}")
+                    
+                    # Check if resolved
+                    if "no action needed" in response_content.lower():
+                        resolved = True
+                        outcome_msg = f"Issue in {filename} resolved after {iteration} iteration(s)."
+                        logging.info(outcome_msg)
+                        print(f"\n{outcome_msg}\n")
+                    elif "escalate" in response_content.lower():
+                        outcome_msg = f"Issue in {filename} escalated after {iteration} iteration(s)."
+                        logging.warning(outcome_msg)
+                        print(f"\n{outcome_msg}\n")
+                        break
+                    
+                except Exception as e:
+                    error_msg = f"Error during iteration {iteration}: {e}"
+                    logging.error(error_msg)
+                    print(f"{error_msg}\n")
+                    # Don't break, try next iteration unless it's the last one
+                    if iteration >= max_iterations:
+                        break
+                
+                # Small delay between iterations to avoid rate limits
+                if iteration < max_iterations and not resolved:
+                    await asyncio.sleep(2)
+            
+            # Write outcome file
+            final_resolution = "Resolved" if resolved else "Escalated" if "escalate" in response_content.lower() else "Max iterations reached"
+            outcome_text = f"""Incident Resolution Summary
+Log File: {filename}
+Status: {final_resolution}
+Iterations: {iteration}
+Total Token Usage: Input={total_tokens_in}, Output={total_tokens_out}, Total={total_tokens_in + total_tokens_out}
 
-        # Clean up agents
-        logging.info("Cleaning up agents...")
-        await client.agents.delete_agent(orchestrator_agent.id)
-        logging.info("Orchestrator agent deleted.")
-        await client.agents.delete_agent(incident_agent.id)
-        logging.info("Incident manager agent deleted.")
-        await client.agents.delete_agent(devops_agent.id)
-        logging.info("DevOps assistant agent deleted.")
+Final Response:
+{response_content}
+"""
+            log_plugin.write_outcome(logfile_path, outcome_text)
+            logging.info(f"Outcome written to {outcome_directory}/{filename.replace('.log', '-outcome.log')}")
+            
+            # Generate diagram if enabled
+            if create_mermaid_diagram:
+                logging.info("Generating Mermaid diagram...")
+                diagram_generator = MermaidDiagramGenerator(ticket_folder_path=ticket_folder)
+                diagram_generator.save_diagram_file(
+                    log_filename=filename,
+                    resolution=final_resolution,
+                    iterations=iteration,
+                    token_usage_in=total_tokens_in,
+                    token_usage_out=total_tokens_out
+                )
+
+    logging.info("\n" + "="*60)
+    logging.info("Incident resolution process completed.")
+    logging.info("="*60)
+
 
 # Start the app
 if __name__ == "__main__":

@@ -3,10 +3,10 @@ name = "af-azure-orchestration-py"
 version = "0.1.0"
 description = "Azure AI Agent Framework orchestration demo with incident resolution"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = [
     "python-dotenv>=1.0.0",
     "azure-identity>=1.16.0",
-    "azure-ai-projects>=1.0.0b4",
+    "agent-framework-azure-ai",
     "colorama>=0.4.6",
 ]
