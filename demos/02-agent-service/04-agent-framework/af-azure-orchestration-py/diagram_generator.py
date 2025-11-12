@@ -92,9 +92,17 @@ class MermaidDiagramGenerator:
 """
         return diagram
     
-    def save_diagram_file(self, log_filename: str, resolution: str = "", 
-                         iterations: int = 0, token_usage_in: int = 0, 
-                         token_usage_out: int = 0) -> str:
+    def save_diagram_file(
+        self,
+        log_filename: str,
+        resolution: str = "",
+        iterations: int = 0,
+        token_usage_in: int = 0,
+        token_usage_out: int = 0,
+        original_issue: str | None = None,
+        resolution_summary: str | None = None,
+        final_response: str | None = None,
+    ) -> str:
         """
         Save a Mermaid diagram file for the given incident resolution.
         
@@ -119,23 +127,25 @@ class MermaidDiagramGenerator:
         # Calculate total tokens
         token_usage_total = token_usage_in + token_usage_out
         
-        # Create the file content with both diagrams
-        file_content = f"""# Incident {incident_id}
+        # Prepare additional details
+        original_issue_text = original_issue or "(not available)"
+        resolution_summary_text = resolution_summary or "(not available)"
+        final_response_text = final_response or "(not available)"
 
-## Incident Details
-- **Log File**: {log_filename}
-- **Resolution**: {resolution if resolution else "In Progress"}
-- **Iterations**: {iterations}
-- **Token Usage**: In: {token_usage_in}, Out: {token_usage_out}, Total: {token_usage_total}
-
-## Diagram
-```mermaid
-{simple_diagram}```
-
-## Verbose Diagram
-```mermaid
-{verbose_diagram}```
-"""
+        # Create the file content with both diagrams and extra incident details
+        file_content = (
+            f"# Incident {incident_id}\n\n"
+            f"## Incident Details\n"
+            f"- **Log File**: {log_filename}\n"
+            f"- **Original Issue**: {original_issue_text}\n"
+            f"- **Incident Resolution Summary**: {resolution_summary_text}\n"
+            f"- **Final Response**: {final_response_text}\n"
+            f"- **Resolution**: {resolution if resolution else 'In Progress'}\n"
+            f"- **Iterations**: {iterations}\n"
+            f"- **Token Usage**: In: {token_usage_in}, Out: {token_usage_out}, Total: {token_usage_total}\n\n"
+            f"## Diagram\n````mermaid\n{simple_diagram}````\n\n"
+            f"## Verbose Diagram\n````mermaid\n{verbose_diagram}````\n"
+        )
         
         # Ensure the ticket folder exists
         os.makedirs(self.ticket_folder_path, exist_ok=True)

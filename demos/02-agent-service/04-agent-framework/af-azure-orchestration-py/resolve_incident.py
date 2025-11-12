@@ -198,13 +198,29 @@ Final Response:
             # Generate diagram if enabled
             if create_mermaid_diagram:
                 logging.info("Generating Mermaid diagram...")
+                # Compose original issue summary from the log (first ERROR/CRITICAL lines)
+                try:
+                    with open(logfile_path, 'r', encoding='utf-8') as lf:
+                        log_lines = lf.readlines()
+                    error_lines = [l.strip() for l in log_lines if (' ERROR ' in l) or (' CRITICAL ' in l) or ('Error' in l) or ('CRITICAL' in l)]
+                    # Take up to first 5 error lines and join into a single summary
+                    original_issue = ' | '.join(error_lines[:5]) if error_lines else '(no error lines found)'
+                except Exception:
+                    original_issue = '(unable to read original log)'
+
+                # resolution_summary: include the outcome_text we just wrote
+                resolution_summary = outcome_text
+
                 diagram_generator = MermaidDiagramGenerator(ticket_folder_path=ticket_folder)
                 diagram_generator.save_diagram_file(
                     log_filename=filename,
                     resolution=final_resolution,
                     iterations=iteration,
                     token_usage_in=total_tokens_in,
-                    token_usage_out=total_tokens_out
+                    token_usage_out=total_tokens_out,
+                    original_issue=original_issue,
+                    resolution_summary=resolution_summary,
+                    final_response=response_content,
                 )
 
     logging.info("\n" + "="*60)
