@@ -7,12 +7,29 @@ The agent is not persistent - it exists only for this session.
 
 import asyncio
 import os
+import logging
 from dotenv import load_dotenv
 
 from agent_framework.azure import AzureOpenAIChatClient
 
-# Load environment variables
+# Import logging configuration
+from log_util import LogUtil, vdebug
+
+# Import diagram generator
+from diagram_generator import MermaidDiagramGenerator
+
+# Load environment variables early
 load_dotenv('.env03')
+
+# Read logging configuration from environment
+verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
+create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
+output_folder = os.getenv("OUTPUT_PATH", "./output")
+data_folder = os.getenv("DATA_PATH", "./data")
+
+# Setup logging with explicit parameters
+logging_config = LogUtil()
+logging_config.setup_logging(verbose=verbose_output)
 
 ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 DEPLOYMENT = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME")
