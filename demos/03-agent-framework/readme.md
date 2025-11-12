@@ -24,10 +24,12 @@
 
 - Workflow types and visualization
 - Executor, edges, checkpoints
+- Branching in Workflows
+- Observability & Workflow Visualization
 - Human-in-the-loop branching
 - Use Agents inside workflows
 
-### Orchestrating Agents
+### Orchestrating Agents with Microsoft Agent Framework
 
 - Orchestration Patterns (Sequential, Concurrent, ...)
 - Multi-Agent coordination

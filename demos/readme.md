@@ -96,6 +96,8 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 - Workflow types and visualization
 - Executor, edges, checkpoints
+- Branching in Workflows
+- Observability & Workflow Visualization
 - Human-in-the-loop branching
 - Use Agents inside workflows
 
