@@ -12,3 +12,14 @@ This example demonstrates the **ConnectedAgentTool** pattern in Azure AI Agent S
 2. Install dependencies: `uv sync` (or `pip install -r requirements.txt`)
 3. Run the agent: `uv run python agent_triage.py` (or `python agent_triage.py`)
 4. Optional: Set `VERBOSE_OUTPUT=true` for detailed logging
+5. Optional: Set `CREATE_MERMAID_DIAGRAM=true` to generate a Mermaid sequence diagram showing the agent interaction flow
+
+## Diagram Generation
+
+When `CREATE_MERMAID_DIAGRAM=true` is set, the script generates a single Markdown file containing:
+- The ticket number as a heading
+- The ticket description
+- A **default diagram** showing the basic agent interaction flow
+- A **verbose diagram** with detailed notes about each step, including the decision criteria for each agent (priority levels, team options, effort estimates)
+
+The diagram file is saved as `TICKET-{timestamp}_triage_flow.md` and can be viewed in any Markdown viewer that supports Mermaid diagrams (like GitHub, VS Code, etc.).
