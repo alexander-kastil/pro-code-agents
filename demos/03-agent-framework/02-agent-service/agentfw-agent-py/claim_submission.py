@@ -20,6 +20,7 @@ load_dotenv()
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
 create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
 output_folder = os.getenv("OUTPUT_PATH", "./output")
+data_folder = os.getenv("DATA_PATH", "./data")
 
 # Setup logging with explicit parameters
 logging_config = LogUtil()
