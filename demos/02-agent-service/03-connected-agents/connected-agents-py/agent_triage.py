@@ -1,6 +1,7 @@
 ﻿import os
 import logging
 from dotenv import load_dotenv
+from datetime import datetime
 
 # Add references
 from azure.ai.agents import AgentsClient
@@ -15,11 +16,11 @@ load_dotenv()
 
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
-azure_http_log = os.getenv("AZURE_HTTP_LOG", "false") == "true"
+create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
 
 # Setup logging with explicit parameters
 logging_config = LoggingConfig()
-logging_config.setup_logging(verbose=verbose_output, azure_http_log=azure_http_log)
+logging_config.setup_logging(verbose=verbose_output)
 
 # Read required settings
 project_endpoint = os.getenv("PROJECT_ENDPOINT")
@@ -76,6 +77,104 @@ triage_agent_instructions = """
 Triage the given ticket. Use the connected tools to determine the ticket's priority, 
 which team it should be assigned to, and how much effort it may take.
 """
+
+def generate_mermaid_diagram(ticket_prompt: str, verbose: bool = False) -> str:
+    """
+    Generate a Mermaid sequence diagram showing the flow of connected agents.
+    
+    Args:
+        ticket_prompt: The ticket description being processed
+        verbose: If True, include detailed steps and interactions
+        
+    Returns:
+        Mermaid diagram as a string
+    """
+    if verbose:
+        # Verbose diagram with detailed steps
+        diagram = """sequenceDiagram
+    participant User
+    participant TriageAgent
+    participant PriorityAgent
+    participant TeamAgent
+    participant EffortAgent
+    
+    User->>TriageAgent: Submit ticket
+    Note over TriageAgent: Analyze ticket content
+    TriageAgent->>PriorityAgent: Assess priority
+    Note over PriorityAgent: Evaluate urgency<br/>(High/Medium/Low)
+    PriorityAgent-->>TriageAgent: Priority assessment
+    
+    TriageAgent->>TeamAgent: Determine team
+    Note over TeamAgent: Match to team<br/>(Frontend/Backend/Infrastructure/Marketing)
+    TeamAgent-->>TriageAgent: Team assignment
+    
+    TriageAgent->>EffortAgent: Estimate effort
+    Note over EffortAgent: Calculate complexity<br/>(Small/Medium/Large)
+    EffortAgent-->>TriageAgent: Effort estimate
+    
+    Note over TriageAgent: Compile triage results
+    TriageAgent-->>User: Complete triage analysis
+"""
+    else:
+        # Default diagram with basic flow
+        diagram = """sequenceDiagram
+    participant User
+    participant TriageAgent
+    participant PriorityAgent
+    participant TeamAgent
+    participant EffortAgent
+    
+    User->>TriageAgent: Submit ticket
+    TriageAgent->>PriorityAgent: Assess priority
+    PriorityAgent-->>TriageAgent: Priority result
+    TriageAgent->>TeamAgent: Determine team
+    TeamAgent-->>TriageAgent: Team result
+    TriageAgent->>EffortAgent: Estimate effort
+    EffortAgent-->>TriageAgent: Effort result
+    TriageAgent-->>User: Triage complete
+"""
+    
+    return diagram
+
+def save_diagram_file(ticket_prompt: str, output_dir: str = ".") -> None:
+    """
+    Save a single Mermaid diagram file with both default and verbose diagrams.
+    
+    Args:
+        ticket_prompt: The ticket description
+        output_dir: Directory to save the diagram file
+    """
+    # Generate a simple ticket number based on timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    ticket_number = f"TICKET-{timestamp}"
+    
+    # Generate both diagrams
+    default_diagram = generate_mermaid_diagram(ticket_prompt, verbose=False)
+    verbose_diagram = generate_mermaid_diagram(ticket_prompt, verbose=True)
+    
+    # Create the combined file content
+    file_content = f"""# {ticket_number}
+
+## Ticket Description
+{ticket_prompt}
+
+## Default Diagram
+```mermaid
+{default_diagram}```
+
+## Verbose Diagram
+```mermaid
+{verbose_diagram}```
+"""
+    
+    # Save to file
+    filename = os.path.join(output_dir, f"{ticket_number}_triage_flow.md")
+    with open(filename, "w") as f:
+        f.write(file_content)
+    
+    logging.info(f"Diagram file saved: {filename}")
+    return filename
+
 
 # Connect to the agents client
 logging.info("Initializing AgentsClient ...")
@@ -188,6 +287,11 @@ with agents_client:
             # Show role and content succinctly
             logging.info(f"Message ({message.role}): {last_msg.text.value.strip()}")
             logging.debug(f"Full message object: {message}")
+    
+    # Generate diagram if enabled
+    if create_mermaid_diagram:
+        logging.info("Generating Mermaid diagram ...")
+        save_diagram_file(prompt)
     
     # Delete the agent when done
     logging.info("Cleaning up agents ...")

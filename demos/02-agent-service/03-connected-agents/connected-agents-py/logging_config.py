@@ -51,23 +51,19 @@ class LoggingConfig:
     
     def __init__(self):
         self._verbose = False
-        self._azure_http_log = False
     
-    def setup_logging(self, verbose: bool = False, azure_http_log: bool = False) -> logging.Logger:
+    def setup_logging(self, verbose: bool = False) -> logging.Logger:
         """
         Configure the root logger and Azure SDK loggers.
         
         Args:
             verbose: If True, sets level to DEBUG and shows both INFO (yellow) and DEBUG (white) messages.
                     If False, sets level to INFO and shows only INFO (yellow) messages.
-            azure_http_log: If True, enables Azure SDK HTTP request/response logging.
-                           If False, suppresses HTTP logs unless verbose is True.
         
         Returns:
             The configured root logger.
         """
         self._verbose = verbose
-        self._azure_http_log = azure_http_log
         
         logger = logging.getLogger()
         logger.handlers.clear()
@@ -91,8 +87,8 @@ class LoggingConfig:
         identity_logger = logging.getLogger("azure.identity")
         azure_logger = logging.getLogger("azure")
 
-        # Suppress noisy HTTP logs unless explicitly enabled or in verbose mode
-        if verbose or azure_http_log:
+        # Suppress noisy HTTP logs unless in verbose mode
+        if verbose:
             http_logger.setLevel(logging.INFO)
         else:
             http_logger.setLevel(logging.WARNING)

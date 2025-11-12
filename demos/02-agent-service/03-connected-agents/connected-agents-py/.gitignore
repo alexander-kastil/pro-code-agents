@@ -1,0 +1,17 @@
+# Environment files
+.env
+
+# Generated diagram files
+TICKET-*_triage_flow.md
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
