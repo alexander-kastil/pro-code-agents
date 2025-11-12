@@ -38,8 +38,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Model Router: Smart Model Selection
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
 - Retrieval-Augmented Generation (RAG) Basics
-- Rapid Prototyping with Jupyter Notebooks
-- Agentic Infrastructure as Code (IaC) using Azure Developer CLI
+- Infrastructure as Code (IaC) using Azure Developer CLI
 
 ### Agentic AI Fundamentals
 
