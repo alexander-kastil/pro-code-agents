@@ -20,8 +20,8 @@ from log_util import LogUtil, vdebug
 # Import diagram generator
 from diagram_generator import MermaidDiagramGenerator
 
-# Load environment variables early
-load_dotenv('.env02')
+# Load environment variables early (from shared .env)
+load_dotenv('.env')
 
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
@@ -33,8 +33,8 @@ data_folder = os.getenv("DATA_PATH", "./data")
 logging_config = LogUtil()
 logging_config.setup_logging(verbose=verbose_output)
 
-PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
-AGENT_ID = os.getenv("AZURE_AI_AGENT_ID")
+PROJECT_ENDPOINT = os.getenv("PROJECT_ENDPOINT")
+AGENT_ID = os.getenv("AGENT_ID")
 
 
 async def main():

@@ -16,6 +16,7 @@ from agent_framework import ChatAgent
 from agent_framework.azure import AzureAIAgentClient
 from azure.identity.aio import AzureCliCredential
 from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import AgentDefinition
 
 # Import logging configuration
 from log_util import LogUtil, vdebug
@@ -23,8 +24,8 @@ from log_util import LogUtil, vdebug
 # Import diagram generator
 from diagram_generator import MermaidDiagramGenerator
 
-# Load environment variables early
-load_dotenv('.env01')
+# Load environment variables early (from shared .env)
+load_dotenv('.env')
 
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
@@ -36,8 +37,8 @@ data_folder = os.getenv("DATA_PATH", "./data")
 logging_config = LogUtil()
 logging_config.setup_logging(verbose=verbose_output)
 
-PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
-MODEL_DEPLOYMENT = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+PROJECT_ENDPOINT = os.getenv("PROJECT_ENDPOINT")
+MODEL_DEPLOYMENT = os.getenv("MODEL_DEPLOYMENT")
 
 
 async def main():
@@ -56,10 +57,12 @@ async def main():
             
             print("\n📋 Creating new agent in Azure AI Foundry...")
             
-            created_agent = await project_client.agents.create_agent(
-                model=MODEL_DEPLOYMENT,
-                name="DemoAssistant",
-                instructions="You are a helpful AI assistant. Be concise and friendly."
+            created_agent = await project_client.agents.create(
+                definition=AgentDefinition(
+                    name="DemoAssistant",
+                    model=MODEL_DEPLOYMENT,
+                    instructions="You are a helpful AI assistant. Be concise and friendly.",
+                )
             )
             
             print(f"✅ Agent created successfully!")
