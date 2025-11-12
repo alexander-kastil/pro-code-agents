@@ -1,6 +1,7 @@
 ﻿import os
 import logging
 from dotenv import load_dotenv
+from datetime import datetime
 
 # Add references
 from azure.ai.agents import AgentsClient
@@ -8,18 +9,24 @@ from azure.ai.agents.models import ConnectedAgentTool, MessageRole, ListSortOrde
 from azure.identity import DefaultAzureCredential
 
 # Import logging configuration
-from logging_config import LoggingConfig, vdebug
+from log_util import LogUtil, vdebug
+
+# Import diagram generator
+from diagram_generator import MermaidDiagramGenerator
 
 # Load environment variables early
 load_dotenv()
 
+# Configuration constants
+
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
-azure_http_log = os.getenv("AZURE_HTTP_LOG", "false") == "true"
+create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
+ticket_folder = os.getenv("TICKET_FOLDER_PATH", "./tickets")
 
 # Setup logging with explicit parameters
-logging_config = LoggingConfig()
-logging_config.setup_logging(verbose=verbose_output, azure_http_log=azure_http_log)
+logging_config = LogUtil()
+logging_config.setup_logging(verbose=verbose_output)
 
 # Read required settings
 project_endpoint = os.getenv("PROJECT_ENDPOINT")
@@ -182,12 +189,31 @@ with agents_client:
 
     # Fetch and log all messages
     messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    resolution = ""
     for message in messages:
         if message.text_messages:
             last_msg = message.text_messages[-1]
             # Show role and content succinctly
             logging.info(f"Message ({message.role}): {last_msg.text.value.strip()}")
             logging.debug(f"Full message object: {message}")
+            # Capture the assistant's final response as resolution
+            if message.role == MessageRole.AGENT:
+                resolution = last_msg.text.value.strip()
+    
+    # Extract token usage from run
+    token_usage_in = getattr(run.usage, 'prompt_tokens', 0) if hasattr(run, 'usage') else 0
+    token_usage_out = getattr(run.usage, 'completion_tokens', 0) if hasattr(run, 'usage') else 0
+    
+    # Generate diagram if enabled
+    if create_mermaid_diagram:
+        logging.info("Generating Mermaid diagram ...")
+        diagram_generator = MermaidDiagramGenerator(ticket_folder_path=ticket_folder)
+        diagram_generator.save_diagram_file(
+            ticket_prompt=prompt,
+            resolution=resolution,
+            token_usage_in=token_usage_in,
+            token_usage_out=token_usage_out
+        )
     
     # Delete the agent when done
     logging.info("Cleaning up agents ...")
