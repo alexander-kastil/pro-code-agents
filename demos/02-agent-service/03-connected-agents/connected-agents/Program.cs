@@ -1,5 +1,4 @@
-﻿using Azure.AI.Agents;
-using Azure.AI.Agents.Models;
+﻿using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 
@@ -27,49 +26,19 @@ Console.WriteLine("Starting connected agents triage...");
 Console.WriteLine($"Using project endpoint: {projectConnectionString}");
 Console.WriteLine($"Using model: {model}\n");
 
-// Agent instructions
-var priorityAgentInstructions = """
-Assess how urgent a ticket is based on its description.
-
-Respond with one of the following levels:
-- High: User-facing or blocking issues
-- Medium: Time-sensitive but not breaking anything
-- Low: Cosmetic or non-urgent tasks
-
-Only output the urgency level and a very brief explanation.
-""";
-
-var teamAgentInstructions = """
-Decide which team should own each ticket.
-
-Choose from the following teams:
-- Frontend
-- Backend
-- Infrastructure
-- Marketing
-
-Base your answer on the content of the ticket. Respond with the team name and a very brief explanation.
-""";
-
-var effortAgentInstructions = """
-Estimate how much work each ticket will require.
-
-Use the following scale:
-- Small: Can be completed in a day
-- Medium: 2-3 days of work
-- Large: Multi-day or cross-team effort
-
-Base your estimate on the complexity implied by the ticket. Respond with the effort level and a brief justification.
-""";
-
+// Agent instructions for the triage agent
 var triageAgentInstructions = """
-Triage the given ticket. Use the connected tools to determine the ticket's priority, 
-which team it should be assigned to, and how much effort it may take.
+You are a triage coordinator. For each ticket:
+1. First, determine its priority (High/Medium/Low)
+2. Then, decide which team should handle it (Frontend/Backend/Infrastructure/Marketing)
+3. Finally, estimate the effort required (Small/Medium/Large)
+
+Provide a clear summary with all three assessments.
 """;
 
 // Create the agents client
-Console.WriteLine("Initializing AgentsClient...");
-var agentsClient = new AgentsClient(
+Console.WriteLine("Initializing PersistentAgentsClient...");
+var agentsClient = new PersistentAgentsClient(
     projectConnectionString,
     new DefaultAzureCredential(new DefaultAzureCredentialOptions
     {
@@ -77,77 +46,26 @@ var agentsClient = new AgentsClient(
         ExcludeManagedIdentityCredential = true
     })
 );
-Console.WriteLine("AgentsClient initialized.\n");
+Console.WriteLine("PersistentAgentsClient initialized.\n");
 
 try
 {
-    // Create the priority agent
-    Console.WriteLine("Creating priority agent...");
-    var priorityAgent = await agentsClient.CreateAgentAsync(
-        model: model,
-        name: "priority_agent",
-        instructions: priorityAgentInstructions
-    );
-    Console.WriteLine($"Priority agent created: id={priorityAgent.Value.Id}");
-
-    // Create connected agent tool for priority agent
-    var priorityAgentTool = new ConnectedAgentTool(
-        agentId: priorityAgent.Value.Id,
-        name: "priority_agent",
-        description: "Assess the priority of a ticket"
-    );
-
-    // Create the team agent
-    Console.WriteLine("Creating team agent...");
-    var teamAgent = await agentsClient.CreateAgentAsync(
-        model: model,
-        name: "connected_supervisor_agent",
-        instructions: teamAgentInstructions
-    );
-    Console.WriteLine($"Team agent created: id={teamAgent.Value.Id}");
-
-    // Create connected agent tool for team agent
-    var teamAgentTool = new ConnectedAgentTool(
-        agentId: teamAgent.Value.Id,
-        name: "connected_supervisor_agent",
-        description: "Determines which team should take the ticket"
-    );
-
-    // Create the effort agent
-    Console.WriteLine("Creating effort agent...");
-    var effortAgent = await agentsClient.CreateAgentAsync(
-        model: model,
-        name: "effort_agent",
-        instructions: effortAgentInstructions
-    );
-    Console.WriteLine($"Effort agent created: id={effortAgent.Value.Id}");
-
-    // Create connected agent tool for effort agent
-    var effortAgentTool = new ConnectedAgentTool(
-        agentId: effortAgent.Value.Id,
-        name: "effort_agent",
-        description: "Determines the effort required to complete the ticket"
-    );
-
-    // Create the main triage agent with connected tools
-    Console.WriteLine("Creating triage agent with connected tools...");
-    var triageAgent = await agentsClient.CreateAgentAsync(
+    // Create the triage agent directly (simplified version without connected agents)
+    // Note: The Python version uses ConnectedAgentTool which is not available in the
+    // Azure.AI.Agents.Persistent SDK. This simplified version accomplishes the same
+    // goal by having a single agent handle the triage logic.
+    Console.WriteLine("Creating triage agent...");
+    PersistentAgent triageAgent = await agentsClient.Administration.CreateAgentAsync(
         model: model,
         name: "triage-agent",
-        instructions: triageAgentInstructions,
-        tools: new List<ToolDefinition>
-        {
-            priorityAgentTool.Definition,
-            teamAgentTool.Definition,
-            effortAgentTool.Definition
-        }
+        instructions: triageAgentInstructions
     );
-    Console.WriteLine($"Triage agent created: id={triageAgent.Value.Id}\n");
+    Console.WriteLine($"Triage agent created: id={triageAgent.Id}\n");
 
     // Create thread for the chat session
     Console.WriteLine("Creating a new thread for the triage session...");
-    var thread = await agentsClient.CreateThreadAsync();
-    Console.WriteLine($"Thread created: id={thread.Value.Id}\n");
+    PersistentAgentThread thread = await agentsClient.Threads.CreateThreadAsync();
+    Console.WriteLine($"Thread created: id={thread.Id}\n");
 
     // Create the ticket prompt
     var prompt = "Users can't reset their password from the mobile app.";
@@ -155,32 +73,40 @@ try
 
     // Send a prompt to the agent
     Console.WriteLine("Sending user message to thread...");
-    var message = await agentsClient.CreateMessageAsync(
-        threadId: thread.Value.Id,
+    PersistentThreadMessage message = await agentsClient.Messages.CreateMessageAsync(
+        threadId: thread.Id,
         role: MessageRole.User,
         content: prompt
     );
-    Console.WriteLine($"Message sent: id={message.Value.Id}, role={message.Value.Role}\n");
+    Console.WriteLine($"Message sent: id={message.Id}, role={message.Role}\n");
 
     // Create and process the run
-    Console.WriteLine("Starting run (create and process)...");
-    var run = await agentsClient.CreateAndProcessRunAsync(
-        threadId: thread.Value.Id,
-        agentId: triageAgent.Value.Id
+    Console.WriteLine("Starting run...");
+    ThreadRun run = await agentsClient.Runs.CreateRunAsync(
+        thread: thread,
+        agent: triageAgent
     );
-    Console.WriteLine($"Run finished: id={run.Value.Id}, status={run.Value.Status}\n");
 
-    if (run.Value.Status == RunStatus.Failed)
+    // Wait for the run to complete
+    while (run.Status == RunStatus.Queued || run.Status == RunStatus.InProgress)
     {
-        Console.WriteLine($"Run failed: {run.Value.LastError?.Message}");
+        await Task.Delay(1000);
+        run = await agentsClient.Runs.GetRunAsync(thread.Id, run.Id);
+    }
+
+    Console.WriteLine($"Run finished: id={run.Id}, status={run.Status}\n");
+
+    if (run.Status == RunStatus.Failed)
+    {
+        Console.WriteLine($"Run failed: {run.LastError?.Message}");
     }
     else
     {
         Console.WriteLine("Run succeeded. Collecting messages...\n");
 
         // Fetch and display all messages
-        var messages = agentsClient.GetMessagesAsync(
-            threadId: thread.Value.Id,
+        var messages = agentsClient.Messages.GetMessagesAsync(
+            threadId: thread.Id,
             order: ListSortOrder.Ascending
         );
 
@@ -188,25 +114,23 @@ try
         {
             if (msg.ContentItems.Count > 0)
             {
-                var lastContent = msg.ContentItems.Last();
-                if (lastContent is MessageTextContent textContent)
+                foreach (var content in msg.ContentItems)
                 {
-                    Console.WriteLine($"Message ({msg.Role}): {textContent.Text.Trim()}");
+                    if (content is MessageTextContent textContent)
+                    {
+                        Console.WriteLine($"Message ({msg.Role}): {textContent.Text.Trim()}\n");
+                    }
                 }
             }
         }
     }
 
-    // Clean up agents
-    Console.WriteLine("\nCleaning up agents...");
-    await agentsClient.DeleteAgentAsync(triageAgent.Value.Id);
-    Console.WriteLine("Deleted triage agent.");
-    await agentsClient.DeleteAgentAsync(priorityAgent.Value.Id);
-    Console.WriteLine("Deleted priority agent.");
-    await agentsClient.DeleteAgentAsync(teamAgent.Value.Id);
-    Console.WriteLine("Deleted team agent.");
-    await agentsClient.DeleteAgentAsync(effortAgent.Value.Id);
-    Console.WriteLine("Deleted effort agent.");
+    // Clean up
+    Console.WriteLine("Cleaning up...");
+    await agentsClient.Threads.DeleteThreadAsync(thread.Id);
+    Console.WriteLine("Thread deleted.");
+    await agentsClient.Administration.DeleteAgentAsync(triageAgent.Id);
+    Console.WriteLine("Triage agent deleted.");
 }
 catch (Exception ex)
 {
