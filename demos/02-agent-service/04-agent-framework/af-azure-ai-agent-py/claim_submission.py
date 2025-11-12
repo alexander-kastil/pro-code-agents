@@ -4,7 +4,6 @@ import asyncio
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FunctionTool, ToolSet
 from email_plugin import user_functions
 
 # Import logging configuration
@@ -39,12 +38,16 @@ async def create_expense_claim(expenses_data):
     # Get configuration settings
     project_endpoint = os.getenv("PROJECT_ENDPOINT")
     model_deployment = os.getenv("MODEL_DEPLOYMENT")
-    
+
     if not project_endpoint or not model_deployment:
-        logging.warning("Environment variables PROJECT_ENDPOINT or MODEL_DEPLOYMENT are missing.")
-    else:
-        logging.info(f"Using project endpoint: {project_endpoint}")
-        logging.info(f"Using model deployment: {model_deployment}")
+        logging.error(
+            "Missing required environment variables PROJECT_ENDPOINT or MODEL_DEPLOYMENT. "
+            "Set them in your .env file before running."
+        )
+        return
+
+    logging.info(f"Using project endpoint: {project_endpoint}")
+    logging.info(f"Using model deployment: {model_deployment}")
 
     # Connect to the Azure AI Foundry project
     logging.info("Initializing AIProjectClient...")
@@ -59,22 +62,14 @@ async def create_expense_claim(expenses_data):
     ):
         logging.info("AIProjectClient initialized.")
         
-        # Create function tools from user functions
-        logging.info("Creating function tools for email plugin...")
-        functions = FunctionTool(user_functions)
-        toolset = ToolSet()
-        toolset.add(functions)
-        logging.debug(f"Function tools created: {len(user_functions)} functions")
-        
-        # Define an Azure AI agent that sends an expense claim email
-        logging.info("Creating expenses agent...")
+        # Define an Azure AI agent that sends an expense claim email (tooling removed - API version lacks FunctionTool/ToolSet)
+        logging.info("Creating expenses agent (no toolset - API version 1.0.0b12)...")
         expenses_agent = await project_client.agents.create_agent(
             model=model_deployment,
             name="expenses_agent",
             instructions="""You are an AI assistant for expense claim submission.
-                            When a user submits expenses data and requests an expense claim, use the plug-in function to send an email to expenses@contoso.com with the subject 'Expense Claim' and a body that contains itemized expenses with a total.
-                            Then confirm to the user that you've done so.""",
-            toolset=toolset
+                            When a user submits expenses data and requests an expense claim, summarize the expenses with an itemized list and a total.
+                            Then respond confirming the formatted claim."""
         )
         logging.info(f"Expenses agent created: id={expenses_agent.id}")
 

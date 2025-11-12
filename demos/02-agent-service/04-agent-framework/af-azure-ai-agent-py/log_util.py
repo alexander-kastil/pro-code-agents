@@ -1,14 +1,6 @@
-"""
-Logging configuration module for connected agents.
-
-This module provides centralized logging setup with:
-- Color-coded output (yellow for INFO, white for DEBUG)
-- Verbose mode control via parameters
-- ANSI color support for Windows via colorama
-"""
-
 import os
 import logging
+from colored_formatter import ColoredFormatter
 
 # Optional ANSI color support on Windows
 try:
@@ -16,27 +8,6 @@ try:
     _colorama_init()
 except Exception:
     pass
-
-
-class ColoredFormatter(logging.Formatter):
-    """
-    Custom formatter that adds colors to log messages.
-    - INFO messages: Yellow
-    - DEBUG messages: White (default terminal color)
-    - WARNING messages: Default
-    - ERROR messages: Default
-    """
-    YELLOW = "\033[33m"
-    WHITE = "\033[37m"
-    RESET = "\033[0m"
-
-    def format(self, record: logging.LogRecord) -> str:
-        base = super().format(record)
-        if record.levelno == logging.INFO:
-            return f"{self.YELLOW}{base}{self.RESET}"
-        elif record.levelno == logging.DEBUG:
-            return f"{self.WHITE}{base}{self.RESET}"
-        return base
 
 
 class LogUtil:
