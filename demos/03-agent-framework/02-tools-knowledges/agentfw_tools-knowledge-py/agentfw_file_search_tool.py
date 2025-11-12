@@ -23,7 +23,7 @@ from log_util import LogUtil, vdebug
 from diagram_generator import MermaidDiagramGenerator
 
 # Load environment variables early
-load_dotenv('.env01')
+load_dotenv('.env')
 
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
@@ -35,8 +35,8 @@ data_folder = os.getenv("DATA_PATH", "./data")
 logging_config = LogUtil()
 logging_config.setup_logging(verbose=verbose_output)
 
-PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
-MODEL_DEPLOYMENT = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+PROJECT_ENDPOINT = os.getenv("PROJECT_ENDPOINT")
+MODEL_DEPLOYMENT = os.getenv("MODEL_DEPLOYMENT")
 
 # IMPORTANT: Replace with your actual vector store ID from Azure AI Foundry
 # You can create a vector store in the Azure AI Foundry portal and upload files

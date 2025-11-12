@@ -27,7 +27,7 @@ from invoice_utils import (
 )
 
 # Load environment variables early
-load_dotenv('.env03')
+load_dotenv('.env')
 
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
