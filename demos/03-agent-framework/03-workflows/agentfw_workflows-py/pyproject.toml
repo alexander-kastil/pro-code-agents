@@ -1,0 +1,12 @@
+[project]
+name = "agentfw-workflows-py"
+version = "0.1.0"
+description = "Agent Framework workflows demo"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv>=1.0.0",
+    "azure-identity>=1.16.0",
+    "agent-framework-azure-ai",
+    "colorama>=0.4.6",
+]

@@ -1,5 +1,6 @@
 import asyncio
 import os
+import logging
 from pathlib import Path
 from dotenv import load_dotenv
 from typing_extensions import Never
@@ -10,6 +11,12 @@ from agent_framework import (
     Executor, handler, Case, Default
 )
 
+# Import logging configuration
+from log_util import LogUtil, vdebug
+
+# Import diagram generator
+from diagram_generator import MermaidDiagramGenerator
+
 # Import our utilities
 import sys
 sys.path.append(str(Path(__file__).parent))
@@ -19,8 +26,18 @@ from invoice_utils import (
     ensure_directories, print_step
 )
 
-# Load environment
+# Load environment variables early
 load_dotenv('.env03')
+
+# Read logging configuration from environment
+verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
+create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
+output_folder = os.getenv("OUTPUT_PATH", "./output")
+data_folder = os.getenv("DATA_PATH", "./data")
+
+# Setup logging with explicit parameters
+logging_config = LogUtil()
+logging_config.setup_logging(verbose=verbose_output)
 
 # Directories
 BASE_DIR = Path(__file__).parent
