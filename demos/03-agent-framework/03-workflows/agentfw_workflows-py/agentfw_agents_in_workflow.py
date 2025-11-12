@@ -636,8 +636,8 @@ async def main():
 
     # Check Azure AI configuration
     if not PROJECT_ENDPOINT or not MODEL_DEPLOYMENT:
-        print("❌ Azure AI configuration missing. Please check your .env01 file.")
-        print("   Required: AZURE_AI_PROJECT_ENDPOINT, AZURE_AI_MODEL_DEPLOYMENT_NAME")
+        print("❌ Azure AI configuration missing. Please check your .env file.")
+        print("   Required: PROJECT_ENDPOINT, MODEL_DEPLOYMENT")
         return
 
     await run_agent_workflow()
