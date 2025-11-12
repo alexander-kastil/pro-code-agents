@@ -6,8 +6,8 @@
 - Chat Clients vs Agents: Key differences
 - Agent types and configuration essentials
 - Integrating Azure AI Foundry agents
-- Threads, conversation persistence, and memory
 - Middleware and dependency injection fundamentals
+- Threads, conversation persistence, and memory
 - ChatReducer and prompt rendering middleware
 - Multi-modal capabilities and structured outputs
 
