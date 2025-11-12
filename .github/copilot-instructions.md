@@ -23,7 +23,7 @@ This repository contains training materials for a 5-day class on "Implementing P
 
 - **Python**: Primary language for Azure AI implementations (azure-ai-projects, azure-ai-inference, azure-ai-evaluation, agent-framework)
 - **TypeScript/JavaScript**: Used for web applications and Node.js examples
-- **C#/.NET**: Used for some Azure AI Foundry examples
+- **C# / .NET**: Used for some Azure AI Foundry examples
 - **Azure AI Services**: Azure AI Foundry, Azure AI Agent Service, Azure OpenAI
 - **Microsoft Agent Framework**: For building and orchestrating agents
 - **Model Context Protocol (MCP)**: For implementing custom servers
@@ -42,32 +42,37 @@ The repository is organized into 5 main modules:
 
 ### Building and Testing
 
-- **Python Projects**: 
-  - Create virtual environments: `python -m venv .venv`
-  - Install dependencies: `pip install -r requirements.txt`
+- **Python Projects**:
+  - This repository uses `uv` for Python dependency management
+  - **IMPORTANT**: Always maintain synchronized `requirements.txt` and `pyproject.toml` files
+  - Install dependencies: `uv pip install -r requirements.txt` or `uv sync`
   - Main dependencies: azure-ai-projects, azure-ai-inference, azure-ai-evaluation, agent-framework
-  
 - **Node.js Projects**:
+
   - Install dependencies: `npm install`
   - Available script: `npm run release` (for versioning)
+
+- **C# / .NET Projects**:
+  - Restore dependencies: `dotnet restore`
+  - Build: `dotnet build`
+  - Run: `dotnet run`
+  - **IMPORTANT**: Always use `appsettings.json` for configuration management
+  - Do NOT use environment variables or user secrets
+  - Configuration should be in `appsettings.json` and optionally `appsettings.Development.json`
 
 ### Repository Setup
 
 This repository uses Git submodules. When cloning:
+
 ```bash
 git clone --recursive https://github.com/alexander-kastil/pro-code-agents.git
 ```
 
 If already cloned without recursive flag:
+
 ```bash
 git submodule update --init --recursive
 ```
-
-### Environment Configuration
-
-- Use `create-env.sh` (Linux/Mac) or `create-env.ps1` (Windows) for environment setup
-- Store credentials in `.env` files (already gitignored)
-- Keep Azure keys and sensitive data in environment variables, never commit them
 
 ## Coding Standards
 
@@ -75,8 +80,9 @@ git submodule update --init --recursive
 
 1. **Educational Focus**: Code should be clear and well-documented for learning purposes
 2. **Minimal Changes**: When making updates, preserve existing structure and patterns
-3. **Documentation**: Update related README.md files when changing demos or examples
+3. **Documentation**: Update related readme.md files when changing demos or examples (always use lowercase `readme.md`, never `README.md`)
 4. **Consistency**: Match the coding style of existing files in the same module
+5. **Minimal Error Handling**: Use only absolutely necessary error handling - these are demos and excessive try-catch blocks make code hard to read and understand
 
 ### Python Style
 
@@ -85,15 +91,18 @@ git submodule update --init --recursive
 - Keep Jupyter notebooks clean with clear markdown explanations
 - Organize imports: standard library, third-party, local imports
 
-### TypeScript/JavaScript Style
+### C# / .NET Style
 
-- Use modern ES6+ syntax
-- Follow existing formatting conventions in the project
-- Add JSDoc comments for complex functions
+- Follow standard C# naming conventions (PascalCase for classes/methods, camelCase for parameters)
+- Use `appsettings.json` for all configuration - never use environment variables or user secrets
+- Keep code simple and focused for educational purposes
+- Use async/await patterns for Azure SDK calls
+- Add XML documentation comments for public APIs
 
 ### Documentation Style
 
 When creating or updating documentation (see `.github/prompts/create-docs.prompt.md`):
+
 - Use clear, concise language
 - Include configuration tables for all settings
 - Add architecture diagrams for complex components
@@ -103,52 +112,9 @@ When creating or updating documentation (see `.github/prompts/create-docs.prompt
 ## Custom Prompts
 
 The repository includes custom prompts in `.github/prompts/`:
+
 - `guard.prompt.md`: Basic rules for controlled task execution
 - `create-docs.prompt.md`: Template for generating comprehensive documentation
 - `playwright.prompt.md`: Guidelines for browser automation tasks
 
 Refer to these when working on specific types of tasks.
-
-## Contributing
-
-When contributing to this repository:
-
-1. **Fork and Branch**: Create a feature branch in your fork
-2. **Clear Commits**: Use descriptive commit messages
-3. **Pull Requests**: Submit PRs with clear descriptions of changes
-4. **Code of Conduct**: Follow the project's Code of Conduct
-5. **Licensing**: All work is under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License
-6. **Attribution**: Give appropriate credit and maintain license terms
-
-## Important Notes for Copilot
-
-- **Do not modify** existing working demos unless explicitly requested
-- **Preserve** the educational structure of examples
-- **Keep** code examples simple and clear for learning purposes
-- **Test** changes in isolation to avoid breaking other modules
-- **Document** all configuration keys and environment variables
-- **Respect** the non-commercial nature of the project
-- **Follow** existing patterns in each module's subdirectories
-
-## Prerequisites for Running Code
-
-- Python 3.x (with packages from requirements.txt)
-- Node.js (for JavaScript/TypeScript examples)
-- .NET SDK (for C# examples)
-- Azure subscription (for cloud resources)
-- Microsoft 365 developer account (for Module 4-5)
-- Git with submodules support
-
-## Security Considerations
-
-- Never commit API keys, connection strings, or credentials
-- Use `.env` files for local development (already in .gitignore)
-- Keep virtual environments (.venv) and node_modules out of version control
-- Verify that sensitive data is properly excluded before committing
-
-## Getting Help
-
-- Review module-specific README files for detailed guidance
-- Check demo code for working examples
-- Refer to custom prompts for task-specific instructions
-- Contact the maintainer via LinkedIn or email (see main README.md)
