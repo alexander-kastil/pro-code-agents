@@ -2,7 +2,7 @@
 .env
 
 # Generated diagram files
-TICKET-*_triage_flow.md
+tickets/
 
 # Python cache
 __pycache__/
