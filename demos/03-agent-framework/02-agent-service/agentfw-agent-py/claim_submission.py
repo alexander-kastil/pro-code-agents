@@ -19,7 +19,7 @@ load_dotenv()
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
 create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
-ticket_folder = os.getenv("TICKET_FOLDER_PATH", "./tickets")
+output_folder = os.getenv("OUTPUT_PATH", "./output")
 
 # Setup logging with explicit parameters
 logging_config = LogUtil()
@@ -99,7 +99,7 @@ async def create_expense_claim(expenses_data):
             # Generate diagram if enabled
             if create_mermaid_diagram:
                 logging.info("Generating Mermaid diagram ...")
-                diagram_generator = MermaidDiagramGenerator(ticket_folder_path=ticket_folder)
+                diagram_generator = MermaidDiagramGenerator(ticket_folder_path=output_folder)
                 diagram_generator.save_diagram_file(
                     ticket_prompt=prompt,
                     resolution=resolution,
