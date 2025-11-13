@@ -53,7 +53,13 @@ async def main():
         api_key=API_KEY,
         api_version=API_VERSION
     ).create_agent(
-        instructions="You are a math assistant. Use the calculate tool for math problems.",
+        instructions=(
+            "You are a math assistant. Always use the calculate tool for all math problems. "
+            "Respond in plain text only (no Markdown or LaTeX). "
+            "Return exactly one line in this format: 'The result of [expression] is [result].' "
+            "Echo the user's literal expression, but replace '*' with '×' and '/' with '÷'. "
+            "Do not add extra words, emojis, code blocks, or explanations."
+        ),
         name="CalculatorBot",
         tools=[calculate]
     )

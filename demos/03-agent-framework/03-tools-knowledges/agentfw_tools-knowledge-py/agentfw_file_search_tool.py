@@ -33,15 +33,18 @@ async def main():
     print("🔍 DEMO: File Search Tool")
     print("="*70)
     
-    if VECTOR_STORE_ID == "YOUR_VECTOR_STORE_ID_HERE":
-        print("\n⚠️  WARNING: Please set VECTOR_STORE_ID in .env01 file")
+    # Check if vector store ID is valid (should start with 'vs')
+    if not VECTOR_STORE_ID or VECTOR_STORE_ID == "YOUR_VECTOR_STORE_ID_HERE" or not VECTOR_STORE_ID.startswith("vs"):
+        print("\n❌ ERROR: Invalid or missing VECTOR_STORE_ID")
+        print("\n⚠️  Please set a valid VECTOR_STORE_ID in .env file")
         print("   1. Go to Azure AI Foundry portal")
         print("   2. Create a Vector Store")
         print("   3. Upload documents (PDF, TXT, DOCX)")
-        print("   4. Copy the Vector Store ID")
-        print("   5. Add VECTOR_STORE_ID=your_id to .env01")
-        print("\n   For demo purposes, we'll create an agent anyway,")
-        print("   but file search won't work without a vector store.\n")
+        print("   4. Copy the Vector Store ID (starts with 'vs')")
+        print("   5. Add VECTOR_STORE_ID=vs_xxx to .env file")
+        print(f"\n   Current value: '{VECTOR_STORE_ID}'")
+        print("   Expected format: ID starting with 'vs' (e.g., 'vs_abc123')\n")
+        return
     
     async with (
         AzureCliCredential() as credential,
@@ -52,7 +55,7 @@ async def main():
                 model_deployment_name=MODEL_DEPLOYMENT,
             ),
             instructions="You are a document search assistant. Use the file search tool to find information in uploaded documents.",
-            name="FileSearchBot",
+            name="File Search Agent",
             tools=[
                 HostedFileSearchTool(
                     inputs=[
@@ -70,32 +73,37 @@ async def main():
         print("💬 Interactive Chat (Type 'quit' to exit)")
         print("="*70 + "\n")
         
-        while True:
-            try:
-                user_input = input("You: ")
-            except EOFError:
-                print("\n👋 Received EOF - exiting.")
-                break
-            except KeyboardInterrupt:
-                print("\n👋 Interrupted - exiting.")
-                break
-            
-            if user_input.lower() in ['quit', 'exit', 'q']:
-                print("\n👋 Goodbye!")
-                break
-            
-            if not user_input.strip():
-                continue
-            
-            print("Agent: ", end="", flush=True)
-            async for chunk in agent.run_stream(user_input):
-                if chunk.text:
-                    print(chunk.text, end="", flush=True)
-            print("\n")
+        try:
+            while True:
+                try:
+                    user_input = input("You: ")
+                except EOFError:
+                    print("\n👋 Received EOF - exiting.")
+                    break
+                except KeyboardInterrupt:
+                    print("\n👋 Interrupted - exiting.")
+                    break
+                
+                if user_input.lower() in ['quit', 'exit', 'q']:
+                    print("\n👋 Goodbye!")
+                    break
+                
+                if not user_input.strip():
+                    continue
+                
+                print("Agent: ", end="", flush=True)
+                async for chunk in agent.run_stream(user_input):
+                    if chunk.text:
+                        print(chunk.text, end="", flush=True)
+                print("\n")
+        finally:
+            # Ensure proper cleanup by giving time for async context managers to close
+            print("👋 See you again soon.")
+            await asyncio.sleep(0.1)
 
 
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 See you again soon.")
+        print("\n👋 Interrupted - exiting gracefully.")
