@@ -43,3 +43,5 @@ Thumbs.db
 # Project specific
 demo_files/
 *.pdf
+!data/invoice.pdf
+output/*.json

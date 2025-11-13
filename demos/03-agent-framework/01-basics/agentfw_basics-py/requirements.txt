@@ -6,3 +6,7 @@ python-dotenv==1.2.1  # For .env file support
 # Azure AI Foundry Agents SDKs used directly in code
 azure-ai-projects==2.0.0b1
 azure-ai-agents==1.2.0b5
+
+# Multimodal support (for PDF processing)
+pdf2image==1.17.0
+pillow==12.0.0
