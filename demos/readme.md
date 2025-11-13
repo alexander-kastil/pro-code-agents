@@ -84,7 +84,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ### Mastering Tools & Knowledge
 
-- Built-in tools: Code Interpreter, File Search, Web Search
+- Built-in tools: Code Interpreter, File Search, Bing Grounding
 - Using vector stores for memory and retrieval
 - Adding custom tools and calling them from agents
 - Integrating OpenAPI and MCP tools
