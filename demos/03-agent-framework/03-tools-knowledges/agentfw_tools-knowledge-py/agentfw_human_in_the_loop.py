@@ -18,7 +18,7 @@ from pathlib import Path
 from agent_framework.azure import AzureOpenAIChatClient
 
 # Load environment variables
-load_dotenv('.env03')
+load_dotenv()
 
 # Configuration
 ENDPOINT = os.getenv('AZURE_OPENAI_ENDPOINT')
@@ -207,7 +207,14 @@ def ask_user_approval(approval_info: dict) -> bool:
     print("-" * 70)
     
     while True:
-        response = input("⚠️ Do you want to APPROVE this action? (yes/no): ").strip().lower()
+        try:
+            response = input("⚠️ Do you want to APPROVE this action? (yes/no): ").strip().lower()
+        except EOFError:
+            print("\n👋 Received EOF - treating as 'no'.")
+            return False
+        except KeyboardInterrupt:
+            print("\n👋 Interrupted - treating as 'no'.")
+            return False
         if response in ['yes', 'y']:
             return True
         elif response in ['no', 'n']:
@@ -269,7 +276,14 @@ Rules:
     
     # Chat loop
     while True:
-        user_input = input("\nYou: ").strip()
+        try:
+            user_input = input("\nYou: ").strip()
+        except EOFError:
+            print("\n👋 Received EOF - exiting.")
+            break
+        except KeyboardInterrupt:
+            print("\n👋 Interrupted - exiting.")
+            break
         
         if user_input.lower() in ['quit', 'exit', 'bye']:
             print("\n👋 Goodbye!")
@@ -288,4 +302,7 @@ Rules:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")

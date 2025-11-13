@@ -16,7 +16,7 @@ from agent_framework.azure import AzureAIAgentClient
 from azure.identity.aio import AzureCliCredential
 
 # Load environment variables
-load_dotenv('.env01')
+load_dotenv()
 
 PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
 MODEL_DEPLOYMENT = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME")
@@ -71,7 +71,14 @@ async def main():
         print("="*70 + "\n")
         
         while True:
-            user_input = input("You: ")
+            try:
+                user_input = input("You: ")
+            except EOFError:
+                print("\n👋 Received EOF - exiting.")
+                break
+            except KeyboardInterrupt:
+                print("\n👋 Interrupted - exiting.")
+                break
             
             if user_input.lower() in ['quit', 'exit', 'q']:
                 print("\n👋 Goodbye!")
@@ -88,4 +95,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")

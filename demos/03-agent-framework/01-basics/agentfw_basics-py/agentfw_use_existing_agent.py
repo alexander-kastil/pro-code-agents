@@ -1,10 +1,3 @@
-"""
-NEW 02: Use Existing Azure AI Foundry Agent (Interactive Demo)
-
-This demo connects to an EXISTING agent in Azure AI Foundry.
-You'll need to update the .env02 file with your agent ID.
-"""
-
 import asyncio
 import os
 from dotenv import load_dotenv
@@ -14,7 +7,7 @@ from agent_framework.azure import AzureAIAgentClient
 from azure.identity.aio import AzureCliCredential
 
 # Load environment variables
-load_dotenv('.env02')
+load_dotenv()
 
 PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
 AGENT_ID = os.getenv("AZURE_AI_AGENT_ID")
@@ -47,7 +40,14 @@ async def main():
         
         while True:
             # Get user input
-            user_input = input("You: ")
+            try:
+                user_input = input("You: ")
+            except EOFError:
+                print("\n👋 Received EOF - exiting.")
+                break
+            except KeyboardInterrupt:
+                print("\n👋 Interrupted - exiting.")
+                break
             
             if user_input.lower() in ['quit', 'exit', 'q']:
                 print("\n👋 Goodbye!")
@@ -65,4 +65,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")

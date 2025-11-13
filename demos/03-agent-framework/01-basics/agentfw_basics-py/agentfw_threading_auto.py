@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from agent_framework.azure import AzureOpenAIChatClient
 
 # Load environment variables
-load_dotenv('.env03')
+load_dotenv('.env')
 
 # File to save thread history
 THREAD_FILE = "thread_history.json"

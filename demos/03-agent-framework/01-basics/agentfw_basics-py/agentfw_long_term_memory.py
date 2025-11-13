@@ -8,7 +8,7 @@ from agent_framework import ContextProvider, Context, ChatMessage
 from openai import AsyncAzureOpenAI
 
 # Load environment
-load_dotenv('.env03')
+load_dotenv('.env')
 
 # File for persisting memory profile only
 MEMORY_FILE = "ai_memory_profile.json"

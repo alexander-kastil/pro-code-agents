@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from agent_framework.azure import AzureOpenAIChatClient
 
 # Load environment variables
-load_dotenv('.env03')
+load_dotenv()
 
 ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 DEPLOYMENT = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME")
@@ -57,7 +57,14 @@ async def main():
     print("\n💡 TIP: Describe a person and see structured extraction\n")
     
     while True:
-        user_input = input("You: ")
+        try:
+            user_input = input("You: ")
+        except EOFError:
+            print("\n👋 Received EOF - exiting.")
+            break
+        except KeyboardInterrupt:
+            print("\n👋 Interrupted - exiting.")
+            break
         
         if user_input.lower() in ['quit', 'exit', 'q']:
             print("\n👋 Goodbye!")
@@ -84,4 +91,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")
