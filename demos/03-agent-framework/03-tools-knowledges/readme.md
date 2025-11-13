@@ -6,3 +6,13 @@
 - Integrating OpenAPI and MCP tools
 - Human-in-the-loop strategies for tool calls
 - Function-calling middleware for advanced workflows
+
+## Demo Files
+
+| Filename                              | Description                                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------------- |
+| `agentfw_file_search_tool.py`         | Use the built-in File Search Tool to query documents in a vector store          |
+| `agentfw_function_tool_calculator.py` | Create and use a custom calculator function tool with Agent Framework           |
+| `agentfw_multiple_tools.py`           | Demonstrate multiple tools (weather, time, currency) working together           |
+| `agentfw_mcp_interactive.py`          | Connect to a Model Context Protocol (MCP) calculator server for math operations |
+| `agentfw_human_in_the_loop.py`        | Human-in-the-loop approval system for dangerous operations like file deletion   |
