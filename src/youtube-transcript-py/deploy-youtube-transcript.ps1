@@ -1,10 +1,9 @@
 param(
     [string]$ResourceGroup = "rg-pro-code-agents",
-    [string]$Location = "westeurope",
-    [string]$AppName = "",
-    [string]$StorageName = "",
-    [string]$StorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=procodestorageacct;AccountKey=V2Zp9uwbdT14k8mtcspa9Zmk9Rl3JIvI/XaDvuFfs52n3bmzuP/MF5OLWlBX1hy1++IVMmuX65Pq+AStcjNF0g==;EndpointSuffix=core.windows.net",
-    [string]$SubscriptionId = ""
+    [string]$Location = "swedencentral",
+    [string]$AppName = "ProCodeAgents-YoutubeTranscript",
+    [string]$StorageName = "procodestorageacct",
+    [string]$StorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=procodestorageacct;AccountKey=V2Zp9uwbdT14k8mtcspa9Zmk9Rl3JIvI/XaDvuFfs52n3bmzuP/MF5OLWlBX1hy1++IVMmuX65Pq+AStcjNF0g==;EndpointSuffix=core.windows.net"
 )
 
 Set-StrictMode -Version Latest
@@ -28,9 +27,6 @@ function Ensure-Login() {
     } catch {
         Write-Host "Not logged in. Opening browser..." -ForegroundColor Yellow
         az login | Out-Null
-    }
-    if ($SubscriptionId) {
-        az account set --subscription $SubscriptionId | Out-Null
     }
 }
 
@@ -92,8 +88,17 @@ if ($nameAvailable -eq "true") {
 }
 
 # Create function app (Linux Consumption, Python 3.11)
-$faExists = az functionapp show --name $AppName --resource-group $ResourceGroup --only-show-errors 2>$null
-if (-not $faExists) {
+$faExists = ""
+try {
+    $faExists = az functionapp show `
+        --name $AppName `
+        --resource-group $ResourceGroup `
+        --query "name" -o tsv `
+        --only-show-errors 2>$null
+} catch {
+    $faExists = ""
+}
+if ([string]::IsNullOrWhiteSpace($faExists)) {
     az functionapp create `
         --name $AppName `
         --resource-group $ResourceGroup `
@@ -104,6 +109,8 @@ if (-not $faExists) {
         --functions-version 4 `
         --os-type linux `
         --only-show-errors | Out-Null
+} else {
+    Write-Host "Using existing function app: $AppName" -ForegroundColor DarkCyan
 }
 
 # Optional app settings
