@@ -23,9 +23,7 @@ az functionapp create \
 
 # Configure function app settings
 az functionapp config appsettings set -n $app -g $grp --settings \
-    FUNCTIONS_EXTENSION_VERSION=~4 \
-    MODEL_ENDPOINT="<MODEL_ENDPOINT>" \
-    API_KEY="YOUR_API_KEY_HERE" # Replace with a secure reference to your API key
+    FUNCTIONS_EXTENSION_VERSION=~4
 
 # Build and publish using Azure Functions Core Tools
 echo "Building and publishing function app..."
