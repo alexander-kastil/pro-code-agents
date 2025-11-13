@@ -10,7 +10,6 @@ This uses a custom ApprovalRequiredTool wrapper (same pattern as file 11)
 
 import asyncio
 import os
-import logging
 from typing import Annotated, Callable
 from pydantic import Field
 from dotenv import load_dotenv
@@ -18,24 +17,8 @@ from pathlib import Path
 
 from agent_framework.azure import AzureOpenAIChatClient
 
-# Import logging configuration
-from log_util import LogUtil, vdebug
-
-# Import diagram generator
-from diagram_generator import MermaidDiagramGenerator
-
-# Load environment variables early
-load_dotenv('.env03')
-
-# Read logging configuration from environment
-verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
-create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
-output_folder = os.getenv("OUTPUT_PATH", "./output")
-data_folder = os.getenv("DATA_PATH", "./data")
-
-# Setup logging with explicit parameters
-logging_config = LogUtil()
-logging_config.setup_logging(verbose=verbose_output)
+# Load environment variables
+load_dotenv()
 
 # Configuration
 ENDPOINT = os.getenv('AZURE_OPENAI_ENDPOINT')
@@ -224,7 +207,14 @@ def ask_user_approval(approval_info: dict) -> bool:
     print("-" * 70)
     
     while True:
-        response = input("⚠️ Do you want to APPROVE this action? (yes/no): ").strip().lower()
+        try:
+            response = input("⚠️ Do you want to APPROVE this action? (yes/no): ").strip().lower()
+        except EOFError:
+            print("\n👋 Received EOF - treating as 'no'.")
+            return False
+        except KeyboardInterrupt:
+            print("\n👋 Interrupted - treating as 'no'.")
+            return False
         if response in ['yes', 'y']:
             return True
         elif response in ['no', 'n']:
@@ -286,7 +276,14 @@ Rules:
     
     # Chat loop
     while True:
-        user_input = input("\nYou: ").strip()
+        try:
+            user_input = input("\nYou: ").strip()
+        except EOFError:
+            print("\n👋 Received EOF - exiting.")
+            break
+        except KeyboardInterrupt:
+            print("\n👋 Interrupted - exiting.")
+            break
         
         if user_input.lower() in ['quit', 'exit', 'bye']:
             print("\n👋 Goodbye!")
@@ -305,4 +302,7 @@ Rules:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")

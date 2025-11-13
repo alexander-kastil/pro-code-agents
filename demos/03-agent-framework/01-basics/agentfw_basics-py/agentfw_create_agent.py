@@ -1,44 +1,18 @@
-"""
-NEW 01: Create Azure AI Foundry Agent (Interactive Demo)
-
-This is an INTERACTIVE demo where you can create a new agent in Azure AI Foundry
-and chat with it in real-time.
-
-The agent is persistent and will be saved to Azure AI Foundry service.
-"""
-
 import asyncio
 import os
-import logging
 from dotenv import load_dotenv
 
 from agent_framework import ChatAgent
 from agent_framework.azure import AzureAIAgentClient
 from azure.identity.aio import AzureCliCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AgentDefinition
+from azure.ai.agents.aio import AgentsClient
 
-# Import logging configuration
-from log_util import LogUtil, vdebug
+# Load environment variables
+load_dotenv()
 
-# Import diagram generator
-from diagram_generator import MermaidDiagramGenerator
-
-# Load environment variables early (from shared .env)
-load_dotenv('.env')
-
-# Read logging configuration from environment
-verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
-create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
-output_folder = os.getenv("OUTPUT_PATH", "./output")
-data_folder = os.getenv("DATA_PATH", "./data")
-
-# Setup logging with explicit parameters
-logging_config = LogUtil()
-logging_config.setup_logging(verbose=verbose_output)
-
-PROJECT_ENDPOINT = os.getenv("PROJECT_ENDPOINT")
-MODEL_DEPLOYMENT = os.getenv("MODEL_DEPLOYMENT")
+PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
+MODEL_DEPLOYMENT = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME")
 
 
 async def main():
@@ -57,12 +31,14 @@ async def main():
             
             print("\n📋 Creating new agent in Azure AI Foundry...")
             
-            created_agent = await project_client.agents.create(
-                definition=AgentDefinition(
-                    name="DemoAssistant",
-                    model=MODEL_DEPLOYMENT,
-                    instructions="You are a helpful AI assistant. Be concise and friendly.",
-                )
+            # NOTE: In recent azure-ai-projects previews, the .agents surface may require a different signature.
+            # Use azure.ai.agents.AgentsClient for a stable create_agent API.
+            async with AgentsClient(endpoint=PROJECT_ENDPOINT, credential=credential) as agents_client:
+                created_agent = await agents_client.create_agent(
+                model=MODEL_DEPLOYMENT,
+                name="First AFW Agent",
+                instructions="You are a helpful AI assistant. Be concise and friendly.",
+                description="Created by "
             )
             
             print(f"✅ Agent created successfully!")
@@ -72,7 +48,8 @@ async def main():
             async with ChatAgent(
                 chat_client=AzureAIAgentClient(
                     project_client=project_client,
-                    agent_id=created_agent.id
+                    agent_id=created_agent.id,
+                    async_credential=credential
                 )
             ) as agent:
                 
@@ -82,7 +59,14 @@ async def main():
                 
                 while True:
                     # Get user input
-                    user_input = input("You: ")
+                    try:
+                        user_input = input("You: ")
+                    except EOFError:
+                        print("\n👋 Received EOF - exiting.")
+                        break
+                    except KeyboardInterrupt:
+                        print("\n👋 Interrupted - exiting.")
+                        break
                     
                     if user_input.lower() in ['quit', 'exit', 'q']:
                         print("\n👋 Goodbye!")
@@ -100,4 +84,9 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")
+    except Exception as e:
+        print(f"\n❌ Unexpected error: {e}")
