@@ -26,9 +26,13 @@ DEPLOYMENT = os.getenv('AZURE_OPENAI_CHAT_DEPLOYMENT_NAME')
 API_KEY = os.getenv('AZURE_OPENAI_API_KEY')
 API_VERSION = os.getenv('AZURE_OPENAI_API_VERSION')
 
-# Create demo directory for file operations
-DEMO_DIR = Path(__file__).parent / "demo_files"
-DEMO_DIR.mkdir(exist_ok=True)
+# Create output directory for file operations, from env var OUTPUT_PATH
+OUTPUT_PATH = os.getenv("OUTPUT_PATH", "").strip()
+if OUTPUT_PATH:
+    DEMO_DIR = Path(OUTPUT_PATH)
+else:
+    DEMO_DIR = Path(__file__).parent / "output"
+DEMO_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ============================================================================
