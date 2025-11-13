@@ -278,12 +278,15 @@ Type 'quit' to exit
             print("-"*75)
             print("✅ Request completed!\n")
             
-        except KeyboardInterrupt:
-            print("\n\n👋 Demo ended!")
+        except (KeyboardInterrupt, EOFError):
+            print("\n\n👋 See you again soon.")
             break
         except Exception as e:
             print(f"\n❌ Error: {e}\n")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")
