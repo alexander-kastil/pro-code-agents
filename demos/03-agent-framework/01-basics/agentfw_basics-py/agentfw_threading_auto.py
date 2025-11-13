@@ -1,30 +1,13 @@
 import asyncio
 import os
 import json
-import logging
 from datetime import datetime
 from dotenv import load_dotenv
 
 from agent_framework.azure import AzureOpenAIChatClient
 
-# Import logging configuration
-from log_util import LogUtil, vdebug
-
-# Import diagram generator
-from diagram_generator import MermaidDiagramGenerator
-
-# Load environment variables early
+# Load environment variables
 load_dotenv('.env')
-
-# Read logging configuration from environment
-verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
-create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
-output_folder = os.getenv("OUTPUT_PATH", "./output")
-data_folder = os.getenv("DATA_PATH", "./data")
-
-# Setup logging with explicit parameters
-logging_config = LogUtil()
-logging_config.setup_logging(verbose=verbose_output)
 
 # File to save thread history
 THREAD_FILE = "thread_history.json"

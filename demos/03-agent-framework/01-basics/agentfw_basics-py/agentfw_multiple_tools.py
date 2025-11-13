@@ -11,7 +11,6 @@ The agent automatically chooses the right tool based on your question.
 
 import asyncio
 import os
-import logging
 from typing import Annotated
 from pydantic import Field
 from dotenv import load_dotenv
@@ -20,24 +19,8 @@ import requests
 
 from agent_framework.azure import AzureOpenAIChatClient
 
-# Import logging configuration
-from log_util import LogUtil, vdebug
-
-# Import diagram generator
-from diagram_generator import MermaidDiagramGenerator
-
-# Load environment variables early
-load_dotenv('.env')
-
-# Read logging configuration from environment
-verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
-create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
-output_folder = os.getenv("OUTPUT_PATH", "./output")
-data_folder = os.getenv("DATA_PATH", "./data")
-
-# Setup logging with explicit parameters
-logging_config = LogUtil()
-logging_config.setup_logging(verbose=verbose_output)
+# Load environment variables
+load_dotenv()
 
 ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 DEPLOYMENT = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME")
@@ -119,7 +102,14 @@ async def main():
     print("="*70 + "\n")
     
     while True:
-        user_input = input("You: ")
+        try:
+            user_input = input("You: ")
+        except EOFError:
+            print("\n👋 Received EOF - exiting.")
+            break
+        except KeyboardInterrupt:
+            print("\n👋 Interrupted - exiting.")
+            break
         
         if user_input.lower() in ['quit', 'exit', 'q']:
             print("\n👋 Goodbye!")
@@ -136,4 +126,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")
