@@ -1,20 +1,27 @@
 """
 Built-in Tools Demo - Code Interpreter and Web Search
 
-This demo shows how to use the built-in Code Interpreter and Web Search tools
-with Azure OpenAI through the Agent Framework.
+⚠️ IMPORTANT LIMITATION:
+This demo attempts to use HostedCodeInterpreterTool and HostedWebSearchTool
+with AzureOpenAIChatClient, but these tools are NOT SUPPORTED with ChatCompletion API.
 
-Built-in tools available:
-- Code Interpreter: Execute Python code in a sandboxed environment
-- Web Search: Search the web for information (Bing Search)
+These hosted tools only work with:
+- AzureOpenAIResponsesClient (supports HostedCodeInterpreterTool)
+- Azure AI Agents Service (supports BingGroundingTool for web search)
+
+For working web search example, see: agentfw_bing_search.py
+
+This file is kept for educational purposes to show what doesn't work.
 """
 
 import asyncio
 import os
+import logging
 from dotenv import load_dotenv
 
 from agent_framework.azure import AzureOpenAIChatClient
 from agent_framework import HostedCodeInterpreterTool, HostedWebSearchTool
+from utils.log_util import LogUtil, vdebug
 
 # Load environment variables
 load_dotenv()
@@ -27,6 +34,10 @@ API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "2024-07-01-preview")
 
 async def main():
     """Interactive demo: Agent with built-in Code Interpreter and Web Search tools."""
+    
+    # Setup logging (use verbose=True to see debug logs including tool calls)
+    log_util = LogUtil()
+    log_util.setup_logging(verbose=True)
     
     print("\n" + "="*70)
     print("🛠️ DEMO: Built-in Tools - Code Interpreter & Web Search")
@@ -98,10 +109,25 @@ Examples to try:
         if not user_input.strip():
             continue
         
+        logging.info(f"User query: {user_input}")
         print("Agent: ", end="", flush=True)
+        
         async for chunk in agent.run_stream(user_input):
+            # Log tool calls
+            if hasattr(chunk, 'tool_calls') and chunk.tool_calls:
+                for tool_call in chunk.tool_calls:
+                    logging.info(f"🔧 Tool called: {tool_call.type}")
+                    vdebug(f"Tool call details: {tool_call}")
+            
+            # Log tool outputs
+            if hasattr(chunk, 'tool_outputs') and chunk.tool_outputs:
+                for tool_output in chunk.tool_outputs:
+                    logging.info(f"📤 Tool output received")
+                    vdebug(f"Tool output details: {tool_output}")
+            
             if chunk.text:
                 print(chunk.text, end="", flush=True)
+        
         print("\n")
 
 
