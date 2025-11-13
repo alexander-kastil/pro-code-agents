@@ -76,7 +76,13 @@ async def main():
         api_key=API_KEY,
         api_version=API_VERSION
     ).create_agent(
-        instructions="You are a helpful assistant with weather, calculator, and time tools. Choose the right tool automatically.",
+        instructions=(
+            "You are a helpful assistant with weather, calculator, and time tools. "
+            "Choose the right tool automatically. "
+            "For math explanations, format key equations using LaTeX display math blocks with \\[ and \\], "
+            "and use inline LaTeX with \\( and \\) for short expressions. "
+            "Do not use code fences; keep the prose concise."
+        ),
         name="MultiToolBot",
         tools=[get_weather, calculate, get_time]
     )

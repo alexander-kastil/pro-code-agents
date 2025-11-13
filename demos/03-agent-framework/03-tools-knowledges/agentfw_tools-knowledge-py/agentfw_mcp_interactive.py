@@ -3,9 +3,9 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from agent_framework.azure import AzureOpenAIChatClient
-from agent_framework import MCPStdioTool
+from utils.mcp_start import start_calculator_server
 
-load_dotenv('.env03')
+load_dotenv()
 
 ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
@@ -33,19 +33,15 @@ REQUIREMENTS:
 Let's start!
     """)
     
-    input("Press Enter to start MCP server...")
+    try:
+        input("Press Enter to start MCP server...")
+    except EOFError:
+        print("\n(Non-interactive environment detected; continuing...)")
     
     try:
         print("\nStarting MCP calculator server...")
-        print("Command: uvx mcp-server-calculator")
-        
-        async with MCPStdioTool(
-            name="calculator",
-            command="venv\\Scripts\\uvx.exe",
-            args=["mcp-server-calculator"]
-        ) as mcp_server:
-            
-            print("✅ MCP server started successfully!\n")
+
+        async with start_calculator_server() as mcp_server:
             
             # Create agent
             print("Creating agent with MCP calculator tools...")
@@ -61,7 +57,11 @@ Let's start!
                 instructions=(
                     "You are a helpful math assistant. "
                     "Use the calculator tools for all mathematical calculations. "
-                    "Show your work and explain the steps."
+                    "Show your work and explain the steps. "
+                    "When presenting formulas or multi-step derivations, use LaTeX display math with \\[ and \\] blocks "
+                    "(for example: \\[ \\text{radians} = 45^\\circ \\times \\frac{\\pi}{180} \\]). "
+                    "Use inline LaTeX with \\( and \\) for short expressions. "
+                    "Avoid code fences and keep the narrative concise."
                 ),
                 tools=mcp_server
             )
@@ -102,7 +102,13 @@ Type 'quit' to exit
                     break
                 except Exception as e:
                     print(f"\n❌ Error: {e}")
-    
+    except KeyboardInterrupt:
+        print("\n✅ Exiting... Goodbye!")
+        return
+    except asyncio.CancelledError:
+        # Suppress noisy cancellation stack traces during shutdown
+        print("\n✅ Exiting... Goodbye!")
+        return
     except FileNotFoundError:
         print("\n❌ ERROR: 'uvx' command not found!")
         print("\nSOLUTION:")
@@ -119,4 +125,9 @@ Type 'quit' to exit
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n✅ Exiting... Goodbye!")
+    except asyncio.CancelledError:
+        print("\n✅ Exiting... Goodbye!")
