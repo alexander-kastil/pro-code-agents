@@ -1,11 +1,3 @@
-"""
-NEW 10: Response Streaming with Agent Framework (Interactive Demo)
-
-This demo shows how to use streaming responses with the Agent Framework.
-Streaming provides real-time, token-by-token output for a more responsive user experience.
-Based on agentfw_create_agent.py with focus on streaming capabilities.
-"""
-
 import asyncio
 import os
 from dotenv import load_dotenv

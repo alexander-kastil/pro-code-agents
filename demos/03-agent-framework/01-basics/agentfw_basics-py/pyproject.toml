@@ -11,4 +11,5 @@ dependencies = [
     "azure-ai-agents==1.2.0b5",
     "pdf2image==1.17.0",
     "pillow==12.0.0",
+    "pymupdf==1.24.14",
 ]
