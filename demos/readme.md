@@ -91,18 +91,14 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Human-in-the-loop strategies for tool calls
 - Function-calling middleware for advanced workflows
 
-### Microsoft Agent Framework Workflows
+### Workflows & Orchestrations
 
 - Workflow types and visualization
 - Executor, edges, checkpoints
+- Orchestration Patterns (Sequential, Concurrent, ...)
 - Branching in Workflows
-- Observability & Workflow Visualization
 - Human-in-the-loop branching
 - Use Agents inside workflows
-
-### Microsoft Agent Framework Orchestration
-
-- Orchestration Patterns (Sequential, Concurrent, ...)
 - Multi-Agent coordination
 - Orchestrate Azure AI Foundry Agents
 
