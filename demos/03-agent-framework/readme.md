@@ -7,7 +7,7 @@
 - Agent types and configuration essentials
 - Integrating Azure AI Foundry agents
 - Threads, conversation persistence, and memory
-- Gouvernance, Middleware & Observability
+- Governance, Middleware & Observability
 - Multi-modal capabilities and structured outputs
 
 ### Mastering Tools & Knowledge

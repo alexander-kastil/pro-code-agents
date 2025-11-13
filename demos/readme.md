@@ -76,11 +76,11 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Introduction to the Agent Framework
 - Chat Clients vs Agents: Key differences
 - Agent types and configuration essentials
-- Multi-modal capabilities and structured outputs
-- Threads, conversation persistence, and memory
-- Middleware and dependency injection fundamentals
-- ChatReducer and prompt rendering middleware
 - Integrating Azure AI Foundry agents
+- Threads, Conversation management & persistence
+- Implementing long-term memory
+- Governance, Middleware & Observability
+- Multi-modal capabilities and structured outputs
 
 ### Mastering Tools & Knowledge
 
@@ -100,7 +100,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Human-in-the-loop branching
 - Use Agents inside workflows
 
-### Orchestrating Agents
+### Microsoft Agent Framework Orchestration
 
 - Orchestration Patterns (Sequential, Concurrent, ...)
 - Multi-Agent coordination
@@ -112,7 +112,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 - Declarative Agents vs Custom Engine Agents
 - Teams Developer Portal, Microsoft 365 Agent Toolkit & DevTunnel
-- Identity & Access Setup: App Registrations and Single Sign-On (SSO)
+- Governance, Identity & Access Management
 
 ### Copilot Connectors & APIs
 
