@@ -2,6 +2,7 @@
 agent-framework==1.0.0b251111
 azure-identity==1.25.1
 python-dotenv==1.2.1  # For .env file support
+requests>=2.31.0  # For REST API demos
 
 # Azure AI Foundry Agents SDKs used directly in code
 azure-ai-projects==2.0.0b1

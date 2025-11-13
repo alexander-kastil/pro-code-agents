@@ -7,6 +7,7 @@ dependencies = [
     "agent-framework==1.0.0b251111",
     "azure-identity==1.25.1",
     "python-dotenv==1.2.1",
+    "requests>=2.31.0",
     "azure-ai-projects==2.0.0b1",
     "azure-ai-agents==1.2.0b5",
 ]
