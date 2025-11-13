@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 
 from agent_framework.azure import AzureOpenAIChatClient
 from agent_framework._types import ChatMessage, TextContent, UriContent
-from pdf_converter import PdfConverter
+from utils.pdf_converter import PdfConverter
 
 # Load environment variables
 load_dotenv()
