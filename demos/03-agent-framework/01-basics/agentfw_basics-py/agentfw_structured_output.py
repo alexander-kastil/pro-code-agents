@@ -1,10 +1,3 @@
-"""
-NEW 08: Structured Output with Pydantic (Interactive Demo)
-
-This demo shows how to extract structured data from text using Pydantic models.
-The agent returns typed Python objects instead of plain text.
-"""
-
 import asyncio
 import os
 from pydantic import BaseModel

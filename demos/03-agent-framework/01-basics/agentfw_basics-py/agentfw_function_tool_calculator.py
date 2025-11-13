@@ -1,10 +1,3 @@
-"""
-NEW 05: Function Tools - Calculator (Interactive Demo)
-
-This demo shows a calculator function tool.
-The agent can perform mathematical calculations.
-"""
-
 import asyncio
 import os
 from typing import Annotated

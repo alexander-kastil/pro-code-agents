@@ -1,14 +1,3 @@
-"""
-NEW 06: Multiple Function Tools (Interactive Demo)
-
-This demo shows an agent with MULTIPLE tools:
-- Weather tool
-- Calculator tool
-- Time zone tool
-
-The agent automatically chooses the right tool based on your question.
-"""
-
 import asyncio
 import os
 from typing import Annotated
