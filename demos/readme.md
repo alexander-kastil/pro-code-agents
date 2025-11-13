@@ -91,16 +91,16 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Human-in-the-loop strategies for tool calls
 - Function-calling middleware for advanced workflows
 
-### Workflows & Orchestrations
+### Orchestration & Workflows
 
+- Introduction to Multi-Agent Orchestration
+- Orchestration Patterns (Sequential, Concurrent, ...)
 - Workflow types and visualization
 - Executor, edges, checkpoints
-- Orchestration Patterns (Sequential, Concurrent, ...)
 - Branching in Workflows
+- Observability & Workflow Visualization
 - Human-in-the-loop branching
 - Use Agents inside workflows
-- Multi-Agent coordination
-- Orchestrate Azure AI Foundry Agents
 
 ## Module 4: Microsoft Copilot Pro-Code Extensibility
 

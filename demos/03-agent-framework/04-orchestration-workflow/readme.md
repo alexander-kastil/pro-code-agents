@@ -1,8 +1,13 @@
-# Orchestrating Agents with Microsoft Agent Framework
+# Orchestration & Workflows
 
+- Introduction to Multi-Agent Orchestration
 - Orchestration Patterns (Sequential, Concurrent, ...)
-- Multi-Agent coordination
-- Orchestrate Azure AI Foundry Agents
+- Workflow types and visualization
+- Executor, edges, checkpoints
+- Branching in Workflows
+- Observability & Workflow Visualization
+- Human-in-the-loop branching
+- Use Agents inside workflows
 
 ## Links & Resources
 
