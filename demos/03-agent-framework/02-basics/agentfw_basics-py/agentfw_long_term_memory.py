@@ -215,7 +215,11 @@ Be conversational and warm!""",
                 print(f"\n🆕 THREAD #{thread_num} created\n")
             
             # Get user input
-            user_input = input("You: ").strip()
+            try:
+                user_input = input("You: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print("\n👋 See you again soon.")
+                break
             
             if not user_input:
                 continue
@@ -257,4 +261,7 @@ Be conversational and warm!""",
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")

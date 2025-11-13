@@ -97,7 +97,11 @@ async def main():
     # message_count already set above when loading thread
     
     while True:
-        user_input = input("You: ").strip()
+        try:
+            user_input = input("You: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\n👋 See you again soon.")
+            break
         
         if user_input.lower() in ['quit', 'exit', 'q']:
             print("\n👋 Demo completed!")
@@ -186,4 +190,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n👋 See you again soon.")
