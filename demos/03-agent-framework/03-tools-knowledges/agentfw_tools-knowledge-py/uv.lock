@@ -172,6 +172,7 @@ dependencies = [
     { name = "azure-ai-projects" },
     { name = "azure-identity" },
     { name = "python-dotenv" },
+    { name = "requests" },
 ]
 
 [package.metadata]
@@ -181,6 +182,7 @@ requires-dist = [
     { name = "azure-ai-projects", specifier = "==2.0.0b1" },
     { name = "azure-identity", specifier = "==1.25.1" },
     { name = "python-dotenv", specifier = "==1.2.1" },
+    { name = "requests", specifier = ">=2.31.0" },
 ]
 
 [[package]]
