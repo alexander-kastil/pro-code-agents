@@ -124,7 +124,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Extending Agent Actions with API Plugins
 - Enhancing UI with Adaptive Cards
 
-### Custom Engine Agents
+### Introduction to Custom Engine Agents
 
 - Use Cases for Custom Engine Agents
 - Microsoft Agent SDK & Teams AI Library
