@@ -28,7 +28,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ## Modules
 
-## Module 1: Copilot, Agents & Azure AI Foundry Essentials
+## Module 1: Copilot & Agent Extensibility Fundamentals
 
 ### Azure AI Foundry Essentials
 
