@@ -1,5 +1,0 @@
-langchain
-langchain-community
-youtube-transcript-api
-requests
-fastmcp
