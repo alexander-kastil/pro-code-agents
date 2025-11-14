@@ -131,7 +131,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Exploring Microsoft Agents Playground
 - Tools, Knowledge Integration & Azure AI Search (RAG)
 
-## Module 5: Agent Integrating using Microsoft Agents SDK
+## Module 5: Agent Integration using Microsoft Agents SDK
 
 - Copilot is the UI for Agents & AI
 - Overview Microsoft Agents SDK
