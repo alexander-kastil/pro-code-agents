@@ -1,7 +1,7 @@
 param(
-    [string]$ResourceGroup = "rg-pro-code-agents",
+    [string]$ResourceGroup = "rg-pro-code-agents-func",
     [string]$Location = "swedencentral",
-    [string]$AppName = "ProCodeAgents-YoutubeTranscript",
+    [string]$AppName = "YoutubeTranscript-demo",
     [string]$StorageName = "procodestorageacct",
     [string]$StorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=procodestorageacct;AccountKey=V2Zp9uwbdT14k8mtcspa9Zmk9Rl3JIvI/XaDvuFfs52n3bmzuP/MF5OLWlBX1hy1++IVMmuX65Pq+AStcjNF0g==;EndpointSuffix=core.windows.net"
 )
@@ -18,6 +18,18 @@ function Ensure-AzCli() {
 function Ensure-Func() {
     if (-not (Get-Command func -ErrorAction SilentlyContinue)) {
         throw "Azure Functions Core Tools 'func' is not installed or not on PATH. Install v4 from https://aka.ms/azfunc-install."
+    }
+}
+
+function Ensure-FlexLocationSupported([string]$loc) {
+    try {
+        $regions = az functionapp list-flexconsumption-locations -o tsv --query "[].name"
+        if (-not ($regions -split "\r?\n" | Where-Object { $_ -eq $loc })) {
+            Write-Host "Warning: '$loc' not in current Flex supported regions." -ForegroundColor Yellow
+            Write-Host "Run: az functionapp list-flexconsumption-locations -o table" -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Host "Could not verify Flex regions (az CLI >=2.60 required). Proceeding..." -ForegroundColor Yellow
     }
 }
 
@@ -41,6 +53,7 @@ function New-NameIfEmpty([string]$prefix, [int]$maxLen) {
 Ensure-AzCli
 Ensure-Func
 Ensure-Login
+Ensure-FlexLocationSupported -loc $Location
 
 if ([string]::IsNullOrWhiteSpace($AppName)) {
     # Function app name must be globally unique
@@ -87,7 +100,7 @@ if ($nameAvailable -eq "true") {
     Write-Host "Using existing storage account: $StorageName" -ForegroundColor DarkCyan
 }
 
-# Create function app (Linux Consumption, Python 3.11)
+# Create function app (Flex Consumption, Python 3.11)
 $faExists = ""
 try {
     $faExists = az functionapp show `
@@ -103,11 +116,10 @@ if ([string]::IsNullOrWhiteSpace($faExists)) {
         --name $AppName `
         --resource-group $ResourceGroup `
         --storage-account $StorageName `
-        --consumption-plan-location $Location `
+        --flexconsumption-location $Location `
         --runtime python `
         --runtime-version 3.11 `
         --functions-version 4 `
-        --os-type linux `
         --only-show-errors | Out-Null
 } else {
     Write-Host "Using existing function app: $AppName" -ForegroundColor DarkCyan
