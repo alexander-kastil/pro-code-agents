@@ -58,7 +58,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Authentication & Security Best Practices
 - Hosting MCP in Azure & API Management Integration
 
-## Module 2: Building Agents using Azure AI Foundry Agent Service
+## Module 2: Build Agents using Azure AI Foundry Agent Service
 
 - Introduction to Azure AI Foundry Agent Service
 - Threads, Runs, Messages: Managing Inputs & Outputs
@@ -131,7 +131,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Exploring Microsoft Agents Playground
 - Tools, Knowledge Integration & Azure AI Search (RAG)
 
-## Module 5: Integrating Agents using the Microsoft Agents SDK
+## Module 5: Agent Integrating using Microsoft Agents SDK
 
 - Copilot is the UI for Agents & AI
 - Overview Microsoft Agents SDK
