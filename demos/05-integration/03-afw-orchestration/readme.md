@@ -1,4 +1,4 @@
-# Integrating Azure AI Foundry Agents with Microsoft Agents SDK
+# Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 
 | Demo            | Description                                                                                |
 | --------------- | ------------------------------------------------------------------------------------------ |

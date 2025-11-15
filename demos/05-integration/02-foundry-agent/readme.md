@@ -1,4 +1,4 @@
-# Copilot Custom Engine Agents using Microsoft Agents SDK
+# Connecting Azure AI Foundry Agents
 
 [Microsoft 365 Agents SDK](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/)
 
