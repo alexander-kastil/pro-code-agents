@@ -5,38 +5,32 @@ using Azure.Storage.Blobs.Models;
 
 namespace RagAzure;
 
-public class DocumentUploadHandler
+public class DocumentUploadHandler(AzureConfiguration config)
 {
-    private readonly AzureConfiguration _config;
-
-    public DocumentUploadHandler(AzureConfiguration config)
-    {
-        _config = config;
-    }
 
     public async Task UploadDocumentsAsync(BlobServiceClient blobServiceClient)
     {
         Console.WriteLine("\n## 1. Upload documents from local folder to Azure Blob Storage");
-        
-        var containerClient = blobServiceClient.GetBlobContainerClient(_config.StorageContainerName);
-        
+
+        var containerClient = blobServiceClient.GetBlobContainerClient(config.StorageContainerName);
+
         // Create container if it doesn't exist
         await containerClient.CreateIfNotExistsAsync();
-        
-        var assetsDir = new DirectoryInfo(_config.AssetsDir);
+
+        var assetsDir = new DirectoryInfo(config.AssetsDir);
         if (!assetsDir.Exists)
         {
-            Console.WriteLine($"❌ Assets directory not found: {_config.AssetsDir}");
+            Console.WriteLine($"❌ Assets directory not found: {config.AssetsDir}");
             return;
         }
-        
+
         var files = assetsDir.GetFiles("*.md").OrderBy(f => f.Name).ToList();
         if (files.Count == 0)
         {
-            Console.WriteLine($"❌ No markdown files found in {_config.AssetsDir}");
+            Console.WriteLine($"❌ No markdown files found in {config.AssetsDir}");
             return;
         }
-        
+
         // Create processed documents JSON structure
         var processedDocuments = new
         {
@@ -51,16 +45,16 @@ public class DocumentUploadHandler
                 }
             }).ToList()
         };
-        
+
         // Upload the processed documents JSON file
-        var jsonData = JsonSerializer.Serialize(processedDocuments, new JsonSerializerOptions 
-        { 
-            WriteIndented = true 
+        var jsonData = JsonSerializer.Serialize(processedDocuments, new JsonSerializerOptions
+        {
+            WriteIndented = true
         });
-        
-        var blobClient = containerClient.GetBlobClient(_config.ProcessedBlobName);
+
+        var blobClient = containerClient.GetBlobClient(config.ProcessedBlobName);
         var content = Encoding.UTF8.GetBytes(jsonData);
-        
+
         await blobClient.UploadAsync(
             new BinaryData(content),
             new BlobUploadOptions
@@ -70,7 +64,7 @@ public class DocumentUploadHandler
                     ContentType = "application/json"
                 }
             });
-        
-        Console.WriteLine($"✅ Uploaded {processedDocuments.policies.Count} policy documents to {_config.ProcessedBlobName}");
+
+        Console.WriteLine($"✅ Uploaded {processedDocuments.policies.Count} policy documents to {config.ProcessedBlobName}");
     }
 }

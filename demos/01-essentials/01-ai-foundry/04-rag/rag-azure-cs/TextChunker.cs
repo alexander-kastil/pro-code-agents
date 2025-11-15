@@ -2,16 +2,8 @@ using System.Text.RegularExpressions;
 
 namespace RagAzure;
 
-public class TextChunker
+public class TextChunker(int chunkSize = 1000, int chunkOverlap = 200)
 {
-    private readonly int _chunkSize;
-    private readonly int _chunkOverlap;
-
-    public TextChunker(int chunkSize = 1000, int chunkOverlap = 200)
-    {
-        _chunkSize = chunkSize;
-        _chunkOverlap = chunkOverlap;
-    }
 
     public string CleanText(string text)
     {
@@ -25,18 +17,18 @@ public class TextChunker
         text = CleanText(text);
         var chunks = new List<ChunkResult>();
 
-        if (text.Length <= _chunkSize)
+        if (text.Length <= chunkSize)
         {
-            return new List<ChunkResult>
-            {
-                new ChunkResult
+            return
+            [
+                new()
                 {
                     Content = text,
                     ChunkId = 0,
                     ChunkCount = 1,
-                    Metadata = new Dictionary<string, string>(metadata)
+                    Metadata = new(metadata)
                 }
-            };
+            ];
         }
 
         int start = 0;
@@ -44,7 +36,7 @@ public class TextChunker
 
         while (start < text.Length)
         {
-            int end = Math.Min(start + _chunkSize, text.Length);
+            int end = Math.Min(start + chunkSize, text.Length);
 
             if (end < text.Length)
             {
@@ -59,17 +51,17 @@ public class TextChunker
 
             if (!string.IsNullOrWhiteSpace(chunkText))
             {
-                chunks.Add(new ChunkResult
+                chunks.Add(new()
                 {
                     Content = chunkText,
                     ChunkId = chunkId,
                     ChunkCount = 0, // Will be updated after all chunks are created
-                    Metadata = new Dictionary<string, string>(metadata)
+                    Metadata = new(metadata)
                 });
                 chunkId++;
             }
 
-            start = Math.Max(start + _chunkSize - _chunkOverlap, end);
+            start = Math.Max(start + chunkSize - chunkOverlap, end);
         }
 
         // Update chunk count for all chunks

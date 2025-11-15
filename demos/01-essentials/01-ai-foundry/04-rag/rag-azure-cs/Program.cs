@@ -29,7 +29,7 @@ SearchIndexClient? searchIndexClient = null;
 SearchClient? searchClient = null;
 object? embeddingsClient = null;
 SearchIndexManager? indexManager = null;
-var processedDocuments = new List<SearchDocument>();
+List<SearchDocument> processedDocuments = [];
 
 bool running = true;
 
@@ -234,7 +234,7 @@ async Task RunWholeProcess()
 
 static bool ValidateConfiguration(AzureConfiguration config)
 {
-    var missingSettings = new List<string>();
+    List<string> missingSettings = [];
 
     if (string.IsNullOrWhiteSpace(config.StorageConnectionString))
         missingSettings.Add("StorageConnectionString");
