@@ -1,9 +1,11 @@
 using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 using ConnectedAgents.Models;
+using ConnectedAgentsAI.Utilities;
 using sk_ai_agent;
 using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ConnectedAgentsAI.Services;
@@ -49,13 +51,16 @@ public class AiAgentRunner(global::ConnectedAgents.Models.AiAppConfig config)
         // Create a thread for the conversation
         PersistentAgentThread agentThread = await client.Threads.CreateThreadAsync();
 
+        string userQuery = "What is the return policy for damaged products?";
+        StringBuilder agentResponse = new StringBuilder();
+
         try
         {
             // Create a user message
             PersistentThreadMessage message = await client.Messages.CreateMessageAsync(
                 threadId: agentThread.Id,
                 role: MessageRole.User,
-                content: "What is the return policy for damaged products?"
+                content: userQuery
             );
 
             // Create and process the run
@@ -84,7 +89,7 @@ public class AiAgentRunner(global::ConnectedAgents.Models.AiAppConfig config)
                     threadId: agentThread.Id,
                     order: ListSortOrder.Ascending);
 
-                // Display the conversation
+                // Display the conversation and collect agent response
                 await foreach (PersistentThreadMessage msg in messages)
                 {
                     Console.Write($"[{msg.Role}]: ");
@@ -93,9 +98,28 @@ public class AiAgentRunner(global::ConnectedAgents.Models.AiAppConfig config)
                         if (contentItem is MessageTextContent textContent)
                         {
                             Console.WriteLine(textContent.Text);
+
+                            // Collect agent responses only
+                            if (msg.Role == MessageRole.Agent)
+                            {
+                                agentResponse.AppendLine(textContent.Text);
+                            }
                         }
                     }
                 }
+
+                // Save the ticket to output folder
+                string outputFolder = Path.Combine(Directory.GetCurrentDirectory(), "output");
+                string savedFilePath = OutputHelper.SaveTicketFile(
+                    outputFolder,
+                    userQuery,
+                    agentResponse.ToString(),
+                    config,
+                    tokenUsageIn: (int)(run.Usage?.PromptTokens ?? 0),
+                    tokenUsageOut: (int)(run.Usage?.CompletionTokens ?? 0)
+                );
+
+                AgentUtils.LogGreen($"Ticket saved to: {savedFilePath}");
             }
         }
         finally
