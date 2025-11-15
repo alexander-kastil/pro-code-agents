@@ -49,7 +49,7 @@ tools = [
 
 messages = [
     {"role": "system", "content": "You are a weather chatbot."},
-    {"role": "user", "content": "is it sunny in berkeley CA?"},
+    {"role": "user", "content": "Is it sunny in Vienna?"},
 ]
 response = client.chat.completions.create(
     model=MODEL_NAME,

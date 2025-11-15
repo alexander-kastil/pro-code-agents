@@ -37,7 +37,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Deploying LLMs in Azure AI Foundry
 - Model Router: Smart Model Selection
 - Azure AI Foundry SDK & Microsoft.Extensions.AI
-- Retrieval-Augmented Generation (RAG) Basics
+- Retrieval-Augmented Generation (RAG) and Azure AI Search
 - Infrastructure as Code (IaC) using Azure Developer CLI
 
 ### Agentic AI Fundamentals
@@ -50,7 +50,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Multi-Agent Solutions & Orchestration Patterns
 - Governance & Guardrails for Responsible Agents
 
-### Model Context Protocol Servers (MCP)
+### Implementing Model Context Protocol Servers (MCP)
 
 - MCP Core Concepts & Architecture
 - Transports: STDIO vs HTTP Streaming
@@ -137,6 +137,6 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Overview Microsoft Agents SDK
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
 - Connecting Azure AI Foundry Agents
-- Integrating AG-Ul with Microsoft Agent Framework
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
+- Front-End Integration using Agent–User Interaction (AG-UI) Protocol

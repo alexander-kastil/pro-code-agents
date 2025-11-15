@@ -37,8 +37,8 @@ var chatOptions = new ChatOptions
 
 var chatHistory = new List<ChatMessage>
 {
-    new(ChatRole.System, "You are a weather chatbot. Always respond using Celsius only; never mention Fahrenheit."),
-    new(ChatRole.User, "is it sunny in Berkeley CA?")
+    new(ChatRole.System, "You are a weather chatbot. Always use Celsius. When the user asks about current, future, or past weather for any location, you MUST call the 'lookup_weather' tool with the city name (and optional zip). Do not answer weather questions without calling the tool. After receiving the tool result, summarize it plainly in Celsius."),
+    new(ChatRole.User, "What is the weather in Vienna?")
 };
 
 ChatResponse response = await client.GetResponseAsync(chatHistory, chatOptions);
@@ -47,14 +47,32 @@ foreach (ChatMessage message in response.Messages)
 {
     if (message.Role == ChatRole.Assistant && !string.IsNullOrWhiteSpace(message.Text))
     {
-        Console.WriteLine($"Assistant >>> {message.Text}");
+        Console.WriteLine($"Assistant >> {message.Text}");
     }
 }
 
-static WeatherReport LookupWeather(string? cityName, string? zipCode) => new(
-    CityName: cityName,
-    ZipCode: zipCode,
-    Weather: "sunny",
-    TemperatureCelsius: 24);
+static WeatherReport LookupWeather(string? cityName, string? zipCode)
+{
+    // Favor reasonable temperature ranges per season so responses feel more natural.
+    var (minTemp, maxTemp) = DateTime.UtcNow.Month switch
+    {
+        12 or 1 or 2 => (3, 10),
+        3 or 4 or 5 => (8, 18),
+        6 or 7 or 8 => (18, 30),
+        _ => (10, 20)
+    };
 
-internal sealed record WeatherReport(string? CityName, string? ZipCode, string Weather, int TemperatureCelsius);
+    int temperature = Random.Shared.Next(minTemp, maxTemp + 1);
+
+    string weather = temperature switch
+    {
+        >= 24 => "sunny",
+        >= 17 => "cloudy",
+        >= 10 => "raining",
+        _ => "snowing"
+    };
+
+    return new(cityName, zipCode, weather, temperature);
+}
+
+public sealed record WeatherReport(string? CityName, string? ZipCode, string Weather, int TemperatureCelsius);
