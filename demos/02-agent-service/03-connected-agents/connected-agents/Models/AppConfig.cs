@@ -10,6 +10,7 @@ public class AppConfig
     public bool VerboseOutput { get; set; }
     public bool CreateMermaidDiagram { get; set; }
     public string TicketFolderPath { get; set; } = "./tickets";
+    public string OutputPath { get; set; } = "output";
 
     public static AppConfig FromConfiguration(IConfiguration configuration)
     {
@@ -19,7 +20,8 @@ public class AppConfig
             Model = configuration["Model"] ?? throw new InvalidOperationException("Model is required in appsettings.json"),
             VerboseOutput = configuration.GetValue<bool>("VerboseOutput", false),
             CreateMermaidDiagram = configuration.GetValue<bool>("CreateMermaidDiagram", false),
-            TicketFolderPath = configuration["TicketFolderPath"] ?? "./tickets"
+            TicketFolderPath = configuration["TicketFolderPath"] ?? "./tickets",
+            OutputPath = configuration["OUTPUT_PATH"] ?? "output"
         };
 
         return cfg;

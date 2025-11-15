@@ -12,7 +12,6 @@ Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin
 
 The following projects still target .NET versions below 10 and need migration:
 
-- [ ] [demos/02-agent-service/03-connected-agents/connected-agents/connected-agents.csproj](demos/02-agent-service/03-connected-agents/connected-agents/connected-agents.csproj)
 - [ ] [demos/03-agent-framework/01-intro/agentfw-azure-agent/af-azure-ai-agent.csproj](demos/03-agent-framework/01-intro/agentfw-azure-agent/af-azure-ai-agent.csproj)
 - [ ] [demos/03-agent-framework/04-orchestration-workflow/agentfw-orchestration/af-azure-ai-agent.csproj](demos/03-agent-framework/04-orchestration-workflow/agentfw-orchestration/af-azure-ai-agent.csproj)
 - [ ] [demos/04-copilot-extensibility/02-connectors-api/02-connectors/dotnet/parts-inventory/PartsInventoryConnector.csproj](demos/04-copilot-extensibility/02-connectors-api/02-connectors/dotnet/parts-inventory/PartsInventoryConnector.csproj)

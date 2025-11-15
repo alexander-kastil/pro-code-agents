@@ -6,32 +6,25 @@ using System.Text;
 
 namespace ConnectedAgents.Services;
 
-public class AgentRunner
+public sealed class AgentRunner(AppConfig config)
 {
-    private readonly AppConfig _config;
-
-    public AgentRunner(AppConfig config)
-    {
-        _config = config ?? throw new ArgumentNullException(nameof(config));
-    }
-
     public async Task RunAsync()
     {
-        Console.WriteLine($"Using project endpoint: {_config.ProjectConnectionString}");
-        Console.WriteLine($"Using model: {_config.Model}\n");
+        Console.WriteLine($"Using project endpoint: {config.ProjectConnectionString}");
+        Console.WriteLine($"Using model: {config.Model}\n");
 
-        var triageAgentInstructions = """
-You are a triage coordinator. For each ticket:
-1. First, determine its priority (High/Medium/Low)
-2. Then, decide which team should handle it (Frontend/Backend/Infrastructure/Marketing)
-3. Finally, estimate the effort required (Small/Medium/Large)
+        const string triageAgentInstructions = """
+    You are a triage coordinator. For each ticket:
+    1. First, determine its priority (High/Medium/Low)
+    2. Then, decide which team should handle it (Frontend/Backend/Infrastructure/Marketing)
+    3. Finally, estimate the effort required (Small/Medium/Large)
 
-Provide a clear summary with all three assessments.
-""";
+    Provide a clear summary with all three assessments.
+    """;
 
         Console.WriteLine("Initializing PersistentAgentsClient...");
         var agentsClient = new PersistentAgentsClient(
-            _config.ProjectConnectionString,
+            config.ProjectConnectionString,
             new DefaultAzureCredential(new DefaultAzureCredentialOptions
             {
                 ExcludeEnvironmentCredential = true,
@@ -44,7 +37,7 @@ Provide a clear summary with all three assessments.
         {
             Console.WriteLine("Creating triage agent...");
             PersistentAgent triageAgent = await agentsClient.Administration.CreateAgentAsync(
-                model: _config.Model,
+                model: config.Model,
                 name: "triage-agent",
                 instructions: triageAgentInstructions
             );
@@ -115,13 +108,14 @@ Provide a clear summary with all three assessments.
 
                 var resolution = resolutionBuilder.ToString();
 
-                if (_config.CreateMermaidDiagram)
+                if (config.CreateMermaidDiagram)
                 {
                     try
                     {
                         Console.WriteLine("Generating Mermaid diagram file...");
+                        var ticketsPath = Path.Combine(config.OutputPath, "tickets");
                         var filePath = DiagramHelper.SaveDiagramFile(
-                            ticketFolderPath: _config.TicketFolderPath,
+                            ticketFolderPath: ticketsPath,
                             ticketPrompt: prompt,
                             resolution: string.IsNullOrWhiteSpace(resolution) ? "Pending" : resolution,
                             tokenUsageIn: 0,
@@ -145,7 +139,7 @@ Provide a clear summary with all three assessments.
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
-            if (_config.VerboseOutput)
+            if (config.VerboseOutput)
             {
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
             }
