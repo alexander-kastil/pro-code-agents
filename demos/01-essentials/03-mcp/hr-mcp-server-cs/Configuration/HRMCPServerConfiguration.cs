@@ -6,7 +6,7 @@ namespace HRMCPServer;
 public class HRMCPServerConfiguration
 {
     public const string SectionName = "HRMCPServer";
-    
+
     /// <summary>
     /// The path of the employees file for HR MCP Server
     /// </summary>

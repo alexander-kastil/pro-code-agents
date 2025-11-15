@@ -79,23 +79,23 @@ public class Employee
     {
         if (string.IsNullOrWhiteSpace(json))
         {
-            return new List<string>();
+            return [];
         }
 
         try
         {
             var result = JsonSerializer.Deserialize<List<string>>(json);
-            return result ?? new List<string>();
+            return result ?? [];
         }
         catch
         {
-            return new List<string>();
+            return [];
         }
     }
 
     private static string SerializeList(List<string>? values)
     {
-        return JsonSerializer.Serialize(values ?? new List<string>());
+        return JsonSerializer.Serialize(values ?? []);
     }
 }
 

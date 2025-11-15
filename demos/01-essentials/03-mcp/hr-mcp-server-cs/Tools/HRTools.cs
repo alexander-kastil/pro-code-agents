@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ModelContextProtocol.Server;
 using HRMCPServer.Services;
 
@@ -12,27 +10,19 @@ namespace HRMCPServer;
 /// All modifications are temporary and reset when the server restarts.
 /// </summary>
 [McpServerToolType]
-internal class HRTools
+internal class HRTools(IEmployeeService employeeService, ILogger<HRTools> logger)
 {
-    private readonly IEmployeeService _employeeService;
-    private readonly ILogger<HRTools> _logger;
-
-    public HRTools(
-        IEmployeeService employeeService,
-        ILogger<HRTools> logger)
-    {
-        _employeeService = employeeService ?? throw new ArgumentNullException(nameof(employeeService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly IEmployeeService _employeeService = employeeService ?? throw new ArgumentNullException(nameof(employeeService));
+    private readonly ILogger<HRTools> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     [McpServerTool]
     [Description("Provides the whole list of the employees")]
     public async Task<EmployeeCollection> ListEmployees()
     {
         var employees = await _employeeService.GetAllEmployeesAsync();
-        return new EmployeeCollection 
-        { 
-            Employees = employees 
+        return new EmployeeCollection
+        {
+            Employees = employees
         };
     }
 
@@ -57,12 +47,12 @@ internal class HRTools
         };
 
         var success = await _employeeService.AddEmployeeAsync(employee);
-        
+
         if (!success)
         {
             return $"Employee with email '{employee.Email}' already exists.";
         }
-        
+
         return $"Successfully added employee: {employee.FullName}";
     }
 
@@ -81,16 +71,16 @@ internal class HRTools
             // Update fields if provided
             if (!string.IsNullOrWhiteSpace(firstName))
                 employee.FirstName = firstName.Trim();
-            
+
             if (!string.IsNullOrWhiteSpace(lastName))
                 employee.LastName = lastName.Trim();
-            
+
             if (!string.IsNullOrWhiteSpace(currentRole))
                 employee.CurrentRole = currentRole.Trim();
-            
+
             if (spokenLanguages != null)
                 employee.SpokenLanguages = ParseCommaSeparatedString(spokenLanguages);
-            
+
             if (skills != null)
                 employee.Skills = ParseCommaSeparatedString(skills);
         });
@@ -99,7 +89,7 @@ internal class HRTools
         {
             return $"Employee with email '{email}' not found.";
         }
-        
+
         return $"Successfully updated employee with email: {email}";
     }
 
@@ -114,7 +104,7 @@ internal class HRTools
         {
             return $"Employee with email '{email}' not found.";
         }
-        
+
         return $"Successfully removed employee with email: {email}";
     }
 
@@ -124,10 +114,10 @@ internal class HRTools
         [Description("Search term to find in employee data")] string searchTerm)
     {
         var matchingEmployees = await _employeeService.SearchEmployeesAsync(searchTerm);
-        
-        return new EmployeeCollection 
-        { 
-            Employees = matchingEmployees 
+
+        return new EmployeeCollection
+        {
+            Employees = matchingEmployees
         };
     }
 

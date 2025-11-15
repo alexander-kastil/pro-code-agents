@@ -6,18 +6,10 @@ namespace HRMCPServer.Services;
 /// <summary>
 /// Service for managing employee data in memory
 /// </summary>
-public class EmployeeService : IEmployeeService
+public class EmployeeService(EmployeeDbContext dbContext, ILogger<EmployeeService> logger) : IEmployeeService
 {
-    private readonly EmployeeDbContext _dbContext;
-    private readonly ILogger<EmployeeService> _logger;
-
-    public EmployeeService(
-        EmployeeDbContext dbContext,
-        ILogger<EmployeeService> logger)
-    {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly EmployeeDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    private readonly ILogger<EmployeeService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<List<Employee>> GetAllEmployeesAsync()
     {
@@ -30,8 +22,7 @@ public class EmployeeService : IEmployeeService
 
     public async Task<bool> AddEmployeeAsync(Employee employee)
     {
-        if (employee == null)
-            throw new ArgumentNullException(nameof(employee));
+        ArgumentNullException.ThrowIfNull(employee);
 
         var email = employee.Email.Trim();
 
@@ -54,8 +45,7 @@ public class EmployeeService : IEmployeeService
         if (string.IsNullOrWhiteSpace(email))
             throw new ArgumentException("Email cannot be null or empty", nameof(email));
 
-        if (updateAction == null)
-            throw new ArgumentNullException(nameof(updateAction));
+        ArgumentNullException.ThrowIfNull(updateAction);
 
         var normalizedEmail = email.Trim();
 
@@ -105,19 +95,25 @@ public class EmployeeService : IEmployeeService
 
         var searchTermLower = searchTerm.Trim().ToLowerInvariant();
 
+        // Use EF.Functions.Like for better performance on supported databases
         var employees = await _dbContext.Employees
             .AsNoTracking()
+            .Where(c =>
+                EF.Functions.Like(c.FirstName, $"%{searchTerm}%") ||
+                EF.Functions.Like(c.LastName, $"%{searchTerm}%") ||
+                EF.Functions.Like(c.Email, $"%{searchTerm}%") ||
+                EF.Functions.Like(c.CurrentRole, $"%{searchTerm}%"))
             .ToListAsync();
 
-        var matchingEmployees = employees.Where(c =>
-            c.FirstName.ToLowerInvariant().Contains(searchTermLower) ||
-            c.LastName.ToLowerInvariant().Contains(searchTermLower) ||
-            c.Email.ToLowerInvariant().Contains(searchTermLower) ||
-            c.CurrentRole.ToLowerInvariant().Contains(searchTermLower) ||
-            c.Skills.Any(skill => skill.ToLowerInvariant().Contains(searchTermLower)) ||
-            c.SpokenLanguages.Any(lang => lang.ToLowerInvariant().Contains(searchTermLower))
-        ).ToList();
+        // Client-side filtering for JSON arrays (Skills and SpokenLanguages)
+        var clientSideMatches = await _dbContext.Employees
+            .AsNoTracking()
+            .ToListAsync()
+            .ContinueWith(t => t.Result.Where(c =>
+                c.Skills.Exists(skill => skill.Contains(searchTermLower, StringComparison.OrdinalIgnoreCase)) ||
+                c.SpokenLanguages.Exists(lang => lang.Contains(searchTermLower, StringComparison.OrdinalIgnoreCase))
+            ).ToList());
 
-        return matchingEmployees;
+        return [.. employees.Union(clientSideMatches).DistinctBy(e => e.Id)];
     }
 }
