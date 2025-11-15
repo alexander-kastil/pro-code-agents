@@ -20,8 +20,9 @@
 
 ## Plugin Authentication
 
-[01 - Integrate an API plugin with an API secured with a key](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agent-api-plugin-auth/3-exercise-integrate-api-plugin-key)
+[01 - Integrate an API plugin with an API secured with a key](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agent-api-plugin-auth/3-exercise-integrate-api-plugin-key) - 10 Minutes
 
-[02 - Integrate an API plugin with an API secured with OAuth](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agent-api-plugin-auth/5-exercise-integrate-api-plugin-oauth)
+[02 - Integrate an API plugin with an API secured with OAuth](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agent-api-plugin-auth/5-exercise-integrate-api-plugin-oauth) - 15 Minutes
+
 
 > Note: If you are already familiar with these labs or you need more examples you can also complete the [Declarative Agent track at Copilot Developer Camp](https://microsoft.github.io/copilot-camp/pages/extend-m365-copilot/)
