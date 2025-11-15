@@ -4,6 +4,5 @@
 
 | Lab                                                           | Time in Minutes |
 | ------------------------------------------------------------- | --------------- |
-|                                                               |                 |
 | [Implement a custom connector](./src/PartsInventoryConnector) | 40              |
 | **Total:**                                                    | **40**          |
