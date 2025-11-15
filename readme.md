@@ -15,7 +15,6 @@ The following projects still target .NET versions below 10 and need migration:
 - [ ] [demos/04-copilot-extensibility/02-connectors-api/02-connectors/dotnet/parts-inventory/PartsInventoryConnector.csproj](demos/04-copilot-extensibility/02-connectors-api/02-connectors/dotnet/parts-inventory/PartsInventoryConnector.csproj)
 - [ ] [demos/04-copilot-extensibility/03-agents/01-intro/01-semantic-kernel/sk-email-agent/email-agent.csproj](demos/04-copilot-extensibility/03-agents/01-intro/01-semantic-kernel/sk-email-agent/email-agent.csproj)
 - [ ] [demos/04-copilot-extensibility/03-agents/01-intro/01-semantic-kernel/sk-mcp-tooling/sk-use-mcp.csproj](demos/04-copilot-extensibility/03-agents/01-intro/01-semantic-kernel/sk-mcp-tooling/sk-use-mcp.csproj)
-- [ ] [demos/05-integration/02-m365-agents-sdk/copilot-studio-client/copilot-studio-client.csproj](demos/05-integration/02-m365-agents-sdk/copilot-studio-client/copilot-studio-client.csproj)
 - [ ] [demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj](demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj)
 - [ ] [demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj](demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj)
 - [ ] [labs/01-essentials/03-mcp/cs/remote-mcp-functions-dotnet/src/FunctionsMcpTool.csproj](labs/01-essentials/03-mcp/cs/remote-mcp-functions-dotnet/src/FunctionsMcpTool.csproj) (currently net8.0, Azure Functions)
