@@ -16,7 +16,7 @@
 
 ## Using Adaptive Cards
 
-[Return rich responses with Adaptive Cards](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agent-action-api-plugin-adaptive-cards-vsc/3-exercise-return-rich-responses-adaptive-cards) - 15 Minutes
+[01 - Return rich responses with Adaptive Cards](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agent-action-api-plugin-adaptive-cards-vsc/3-exercise-return-rich-responses-adaptive-cards) - 15 Minutes
 
 ## Plugin Authentication
 
