@@ -1,7 +1,7 @@
 # Declarative Agents
 
-| Lab                                                                                                                                                                                                            | Time in Minutes |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| Lab | Time in Minutes |
+| --- | --------------- |
 | [Create a declarative agent](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agents-build-your-first/3-exercise-create-declarative-agent)                                               | 15              |
 | [Configure custom knowledge](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agents-build-your-first/5-exercise-custom-knowledge)                                                       | 10              |
 | [Add conversation starters](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agents-build-your-first/7-exercise-conversation-starters)                                                   | 5               |
