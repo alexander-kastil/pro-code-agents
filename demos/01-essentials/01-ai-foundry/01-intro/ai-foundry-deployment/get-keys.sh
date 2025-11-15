@@ -222,28 +222,35 @@ elif [ -n "$aiFoundryProjectEndpoint" ] && [[ "$aiFoundryProjectEndpoint" == *"a
     echo "Converted project endpoint: $aiFoundryProjectEndpoint"
 fi
 
-# Overwrite the existing .env file
-if [ -f ../.env ]; then
-    rm ../.env
+# Get the directory where the script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Overwrite the existing .env file in the same directory as the script
+if [ -f "$SCRIPT_DIR/.env" ]; then
+    rm "$SCRIPT_DIR/.env"
 fi
 
 # Store the keys and properties in a file
-echo "Storing the keys and properties in '.env' file..."
+echo "Storing the keys and properties in '.env' file in $SCRIPT_DIR..."
 
 # Azure Storage (with both naming conventions)
-echo "AZURE_STORAGE_ACCOUNT_NAME=\"$storageAccountName\"" >> ../.env
-echo "AZURE_STORAGE_ACCOUNT_KEY=\"$storageAccountKey\"" >> ../.env
-echo "AZURE_STORAGE_CONNECTION_STRING=\"$storageAccountConnectionString\"" >> ../.env
+echo "AZURE_STORAGE_ACCOUNT_NAME=\"$storageAccountName\"" >> "$SCRIPT_DIR/.env"
+echo "AZURE_STORAGE_ACCOUNT_KEY=\"$storageAccountKey\"" >> "$SCRIPT_DIR/.env"
+echo "AZURE_STORAGE_CONNECTION_STRING=\"$storageAccountConnectionString\"" >> "$SCRIPT_DIR/.env"
+# For Python projects compatibility
+echo "STORAGE_ACCOUNT_NAME=\"$storageAccountName\"" >> "$SCRIPT_DIR/.env"
+echo "STORAGE_ACCOUNT_KEY=\"$storageAccountKey\"" >> "$SCRIPT_DIR/.env"
+echo "STORAGE_CONNECTION_STRING=\"$storageAccountConnectionString\"" >> "$SCRIPT_DIR/.env"
 
 # Other Azure services
-echo "LOG_ANALYTICS_WORKSPACE_NAME=\"$logAnalyticsWorkspaceName\"" >> ../.env
-echo "SEARCH_SERVICE_NAME=\"$searchServiceName\"" >> ../.env
-echo "SEARCH_SERVICE_ENDPOINT=\"$searchServiceEndpoint\"" >> ../.env
-echo "SEARCH_ADMIN_KEY=\"$searchServiceKey\"" >> ../.env
-echo "AI_FOUNDRY_HUB_NAME=\"$aiFoundryHubName\"" >> ../.env
-echo "AI_FOUNDRY_PROJECT_NAME=\"$aiFoundryProjectName\"" >> ../.env
-echo "AI_FOUNDRY_ENDPOINT=\"$aiFoundryEndpoint\"" >> ../.env
-echo "AI_FOUNDRY_KEY=\"$aiFoundryKey\"" >> ../.env
+echo "LOG_ANALYTICS_WORKSPACE_NAME=\"$logAnalyticsWorkspaceName\"" >> "$SCRIPT_DIR/.env"
+echo "SEARCH_SERVICE_NAME=\"$searchServiceName\"" >> "$SCRIPT_DIR/.env"
+echo "SEARCH_SERVICE_ENDPOINT=\"$searchServiceEndpoint\"" >> "$SCRIPT_DIR/.env"
+echo "SEARCH_ADMIN_KEY=\"$searchServiceKey\"" >> "$SCRIPT_DIR/.env"
+echo "AI_FOUNDRY_HUB_NAME=\"$aiFoundryHubName\"" >> "$SCRIPT_DIR/.env"
+echo "AI_FOUNDRY_PROJECT_NAME=\"$aiFoundryProjectName\"" >> "$SCRIPT_DIR/.env"
+echo "AI_FOUNDRY_ENDPOINT=\"$aiFoundryEndpoint\"" >> "$SCRIPT_DIR/.env"
+echo "AI_FOUNDRY_KEY=\"$aiFoundryKey\"" >> "$SCRIPT_DIR/.env"
 
 if [ -n "$containerRegistryName" ]; then
     acr_username=$(az acr credential show --name $containerRegistryName --query username -o tsv 2>/dev/null || echo "")
@@ -261,21 +268,31 @@ if [ -z "$aiFoundryHubEndpoint" ] && [ -n "$aiFoundryHubName" ]; then
         echo "Constructed hub endpoint: $aiFoundryHubEndpoint"
     fi
 fi
-echo "AI_FOUNDRY_HUB_ENDPOINT=\"$aiFoundryHubEndpoint\"" >> ../.env
+echo "AI_FOUNDRY_HUB_ENDPOINT=\"$aiFoundryHubEndpoint\"" >> "$SCRIPT_DIR/.env"
 
-echo "AI_FOUNDRY_PROJECT_ENDPOINT=\"$aiFoundryProjectEndpoint\"" >> ../.env
-echo "AZURE_AI_CONNECTION_ID=\"$azureAIConnectionId\"" >> ../.env
+echo "AI_FOUNDRY_PROJECT_ENDPOINT=\"$aiFoundryProjectEndpoint\"" >> "$SCRIPT_DIR/.env"
+echo "AZURE_AI_CONNECTION_ID=\"$azureAIConnectionId\"" >> "$SCRIPT_DIR/.env"
+
 # Azure Cosmos DB
-echo "COSMOS_ENDPOINT=\"$cosmosDbEndpoint\"" >> ../.env
-echo "COSMOS_KEY=\"$cosmosDbKey\"" >> ../.env
-echo "COSMOS_CONNECTION_STRING=\"$cosmosDbConnectionString\"" >> ../.env
+echo "COSMOS_ENDPOINT=\"$cosmosDbEndpoint\"" >> "$SCRIPT_DIR/.env"
+echo "COSMOS_KEY=\"$cosmosDbKey\"" >> "$SCRIPT_DIR/.env"
+echo "COSMOS_CONNECTION_STRING=\"$cosmosDbConnectionString\"" >> "$SCRIPT_DIR/.env"
 
 # For backward compatibility, also set OpenAI-style variables pointing to AI Foundry
-echo "AZURE_OPENAI_SERVICE_NAME=\"$aiFoundryHubName\"" >> ../.env
-echo "AZURE_OPENAI_ENDPOINT=\"$aiFoundryEndpoint\"" >> ../.env
-echo "AZURE_OPENAI_KEY=\"$aiFoundryKey\"" >> ../.env
-echo "AZURE_OPENAI_DEPLOYMENT_NAME=\"gpt-4.1-mini\"" >> ../.env
-echo "MODEL_DEPLOYMENT_NAME=\"gpt-4.1-mini\"" >> ../.env
+echo "AZURE_OPENAI_SERVICE_NAME=\"$aiFoundryHubName\"" >> "$SCRIPT_DIR/.env"
+echo "AZURE_OPENAI_ENDPOINT=\"$aiFoundryEndpoint\"" >> "$SCRIPT_DIR/.env"
+echo "AZURE_OPENAI_KEY=\"$aiFoundryKey\"" >> "$SCRIPT_DIR/.env"
+echo "AZURE_OPENAI_DEPLOYMENT_NAME=\"gpt-4o-mini\"" >> "$SCRIPT_DIR/.env"
+echo "MODEL_DEPLOYMENT_NAME=\"gpt-4o-mini\"" >> "$SCRIPT_DIR/.env"
+
+# Additional variables for Python projects
+echo "AZURE_AI_MODELS_ENDPOINT=\"$aiFoundryEndpoint\"" >> "$SCRIPT_DIR/.env"
+echo "AZURE_AI_MODELS_KEY=\"$aiFoundryKey\"" >> "$SCRIPT_DIR/.env"
+echo "PROJECT_ENDPOINT=\"$aiFoundryProjectEndpoint\"" >> "$SCRIPT_DIR/.env"
+echo "EMBEDDINGS_MODEL=\"text-embedding-ada-002\"" >> "$SCRIPT_DIR/.env"
+echo "STORAGE_CONTAINER_NAME=\"policy-uploads\"" >> "$SCRIPT_DIR/.env"
+echo "PROCESSED_BLOB_NAME=\"processed_documents_for_vectorization.json\"" >> "$SCRIPT_DIR/.env"
+echo "ASSETS_DIR=\"./assets/policies\"" >> "$SCRIPT_DIR/.env"
 
 echo "Keys and properties are stored in '.env' file successfully."
 
@@ -290,16 +307,16 @@ echo "AI Foundry Project: $aiFoundryProjectName"
 echo "Key Vault: $keyVaultName"
 echo "Container Registry: $containerRegistryName"
 echo "Application Insights: $applicationInsightsName"
-echo "ACR_NAME=\"$containerRegistryName\"" >> ../.env
-echo "ACR_USERNAME=\"$acr_username\"" >> ../.env
-echo "ACR_PASSWORD=\"$acr_password\"" >> ../.env
+echo "ACR_NAME=\"$containerRegistryName\"" >> "$SCRIPT_DIR/.env"
+echo "ACR_USERNAME=\"$acr_username\"" >> "$SCRIPT_DIR/.env"
+echo "ACR_PASSWORD=\"$acr_password\"" >> "$SCRIPT_DIR/.env"
 
 if [ -n "$cosmosDbAccountName" ]; then
     echo "Cosmos DB: $cosmosDbAccountName"
 else
     echo "Cosmos DB: NOT FOUND - You may need to deploy this service"
 fi
-echo "Environment file created: ../.env"
+echo "Environment file created: $SCRIPT_DIR/.env"
 
 # Show what needs to be deployed
 missing_services=""
@@ -312,3 +329,43 @@ if [ -n "$missing_services" ]; then
     echo "⚠️  Missing services:$missing_services"
     echo "You may need to deploy these services manually or check your deployment template."
 fi
+
+# Create appsettings.json file
+echo ""
+echo "Creating appsettings.json file..."
+
+# Overwrite the existing appsettings.json file in the same directory as the script
+cat > "$SCRIPT_DIR/appsettings.json" << EOF
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "AllowedHosts": "*",
+    "AzureConfig": {
+        "ProjectEndpoint": "${aiFoundryProjectEndpoint}",
+        "EmbeddingsModel": "text-embedding-ada-002",
+        "AzureAIModelsEndpoint": "${aiFoundryEndpoint}",
+        "AzureAIModelsKey": "${aiFoundryKey}",
+        "AssetsDir": "./assets/policies",
+        "StorageAccountName": "${storageAccountName}",
+        "StorageContainerName": "policy-uploads",
+        "StorageConnectionString": "${storageAccountConnectionString}",
+        "ProcessedBlobName": "processed_documents_for_vectorization.json",
+        "SearchServiceName": "${searchServiceName}",
+        "SearchServiceEndpoint": "${searchServiceEndpoint}",
+        "SearchAdminKey": "${searchServiceKey}",
+        "SearchIndexName": "insurance-documents-index",
+        "ChunkSize": 1000,
+        "ChunkOverlap": 200
+    }
+}
+EOF
+
+echo "appsettings.json file created: $SCRIPT_DIR/appsettings.json"
+echo ""
+echo "✅ Configuration files created successfully!"
+echo "   - .env file: $SCRIPT_DIR/.env"
+echo "   - appsettings.json file: $SCRIPT_DIR/appsettings.json"
