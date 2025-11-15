@@ -1,9 +1,8 @@
-using System.Runtime.InteropServices;
+namespace AFWOrchestration;
 
-#pragma warning disable CS8618
-interface IAgentPersona
+public interface IAgentPersona
 {
-    static string Name { get; }
-    static string Instructions { get; }
-    static string Description { get; }
+    static abstract string Name { get; }
+    static abstract string Instructions { get; }
+    static abstract string Description { get; }
 }

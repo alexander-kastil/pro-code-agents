@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Configuration;
-using System;
 
-namespace ConnectedAgents.Models;
+namespace AFWOrchestration;
 
 public class OrchestrationAppConfig
 {

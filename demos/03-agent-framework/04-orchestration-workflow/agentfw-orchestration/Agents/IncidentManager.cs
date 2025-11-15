@@ -1,5 +1,4 @@
-
-#pragma warning restore CS8618
+namespace AFWOrchestration;
 
 public class IncidentManager : IAgentPersona
 {

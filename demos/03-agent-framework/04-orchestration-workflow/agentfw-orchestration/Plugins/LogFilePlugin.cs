@@ -1,7 +1,7 @@
 ﻿using Azure.AI.Agents.Persistent;
 using System.Text.Json;
 
-namespace SKOrchestration;
+namespace AFWOrchestration;
 
 public static class LogFilePlugin
 {

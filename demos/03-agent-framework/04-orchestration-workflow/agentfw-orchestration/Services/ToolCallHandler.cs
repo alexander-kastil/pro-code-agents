@@ -1,12 +1,12 @@
 using System.Text.Json;
 
-namespace SKOrchestration;
+namespace AFWOrchestration;
 
 public static class ToolCallHandler
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() 
-    { 
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     public static string HandleToolCall(string functionName, string argumentsJson)

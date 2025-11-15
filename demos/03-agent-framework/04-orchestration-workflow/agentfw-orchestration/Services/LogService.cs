@@ -1,4 +1,5 @@
-namespace SKOrchestration;
+namespace AFWOrchestration;
+
 public class LogService
 {
     public static async Task CopyLogFilesAsync(string sourceDirectory, string destinationDirectory)

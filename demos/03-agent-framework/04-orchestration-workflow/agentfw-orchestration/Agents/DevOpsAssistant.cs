@@ -1,3 +1,5 @@
+namespace AFWOrchestration;
+
 public class DevOpsAssistant : IAgentPersona
 {
     public static string Name => "DEVOPS_ASSISTANT";

@@ -1,4 +1,4 @@
-namespace SKOrchestration;
+namespace AFWOrchestration;
 
 public class AppConfig
 {

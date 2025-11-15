@@ -1,54 +1,46 @@
 using Azure.AI.Agents.Persistent;
 using Azure.Identity;
-using ConnectedAgents.Models;
-using SKOrchestration;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ConnectedAgentsOrchestration.Services;
+namespace AFWOrchestration;
 
-public class OrchestrationRunner
+public class OrchestrationRunner(OrchestrationAppConfig config)
 {
-    private readonly global::ConnectedAgents.Models.OrchestrationAppConfig _config;
-
-    public OrchestrationRunner(global::ConnectedAgents.Models.OrchestrationAppConfig config)
-    {
-        _config = config ?? throw new ArgumentNullException(nameof(config));
-    }
 
     public async Task RunAsync()
     {
         // Create the Persistent Agents Client
         PersistentAgentsClient client = new PersistentAgentsClient(
-            _config.ProjectConnectionString,
+            config.ProjectConnectionString,
             new AzureCliCredential());
 
         // Create the incident manager agent with log file reading capability
         PersistentAgent incidentAgent = await client.Administration.CreateAgentAsync(
-            model: _config.Model,
+            model: config.Model,
             name: IncidentManager.Name,
             instructions: IncidentManager.Instructions,
             tools: new List<ToolDefinition> { LogFilePlugin.GetToolDefinition() }
         );
 
         // Set outcome directory for plugins
-        var outcomeDirectory = Path.Combine(Directory.GetCurrentDirectory(), _config.OutcomeDirectory);
+        var outcomeDirectory = Path.Combine(Directory.GetCurrentDirectory(), config.OutcomeDirectory);
         DevopsPlugin.OutcomeDirectory = outcomeDirectory;
         LogFilePlugin.OutcomeDirectory = outcomeDirectory;
 
         // Create the devops agent with devops operation capabilities
         PersistentAgent devOpsAgent = await client.Administration.CreateAgentAsync(
-            model: _config.Model,
+            model: config.Model,
             name: DevOpsAssistant.Name,
             instructions: DevOpsAssistant.Instructions,
             tools: DevopsPlugin.GetToolDefinitions()
         );
 
         // Get all log files in the "logs" directory
-        var logDirectory = Path.Combine(Directory.GetCurrentDirectory(), _config.LogDirectory);
+        var logDirectory = Path.Combine(Directory.GetCurrentDirectory(), config.LogDirectory);
         foreach (var filePath in Directory.GetFiles(logDirectory))
         {
             var fileName = Path.GetFileName(filePath);
