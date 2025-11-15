@@ -1,5 +1,7 @@
 # Lab: Microsoft 365 Data Access using Microsoft Graph
 
+Estimated time to complete: 40 minutes
+
 ## Exercise 1: Access and download files from OneDrive
 
 In this exercise, you'll create a .NET Core console app that will access and download files from a user's OneDrive account using Microsoft Graph.
