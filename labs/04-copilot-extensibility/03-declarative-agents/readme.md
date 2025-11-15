@@ -2,11 +2,11 @@
 
 ## Create your first declarative agent
 
-[01 - Create a declarative agent](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agents-build-your-first/3-exercise-create-declarative-agent)
+[01 - Create a declarative agent](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agents-build-your-first/3-exercise-create-declarative-agent) - 15 Minutes
 
-[02 - Configure custom knowledge](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agents-build-your-first/5-exercise-custom-knowledge)
+[02 - Configure custom knowledge](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agents-build-your-first/5-exercise-custom-knowledge) - 10 Minutes
 
-[03 - Add conversation starters](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agents-build-your-first/7-exercise-conversation-starters)
+[03 - Add conversation starters](https://learn.microsoft.com/en-us/training/modules/copilot-declarative-agents-build-your-first/7-exercise-conversation-starters) - 5 minutes
 
 ## Add Api Actions & Connectors to your declarative agent
 
