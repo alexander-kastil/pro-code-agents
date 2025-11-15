@@ -1,4 +1,4 @@
-# Implementing Pro Code Agents and Copilots using Microsoft Agent Framework and Azure AI Agent Service
+# Building Pro-Code Copilots and Agentic Apps with Azure AI Foundry & Microsoft Agent Framework
 
 Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) containing:
 
