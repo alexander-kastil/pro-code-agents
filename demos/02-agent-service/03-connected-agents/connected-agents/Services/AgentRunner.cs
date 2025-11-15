@@ -2,9 +2,7 @@ using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 using ConnectedAgents.Models;
 using ConnectedAgents.Utilities;
-using System;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ConnectedAgents.Services;
 
