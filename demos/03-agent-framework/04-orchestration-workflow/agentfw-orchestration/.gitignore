@@ -398,6 +398,17 @@ FodyWeavers.xsd
 
 # Windows Installer files from build outputs
 *.cab
+ 
+# --- Demo data handling ---
+# Include sample data logs in source control but ignore outcomes.
+# Un-ignore data directory and logs under it (overrides *.log and [Ll]ogs/ above)
+!data/
+!data/logs/
+!data/logs/*.log
+
+# Ignore generated outcomes
+data/outcome/
+data/outcome/**
 *.msi
 *.msix
 *.msm
