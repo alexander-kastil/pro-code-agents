@@ -2,8 +2,8 @@
 
 Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) containing:
 
-- [Module 1: Copilot, Agents & Azure AI Foundry Essentials](./demos/01-essentials/)
-- [Module 2: Implementing Agents using Azure AI Foundry Agent Service](./demos/02-agent-service)
+- [Module 1: Copilot & Agent Extensibility Fundamentals](./demos/01-essentials/)
+- [Module 2: Building Agents using Azure AI Foundry Agent Service](./demos/02-agent-service)
 - [Module 3: Orchestrating Agents using Microsoft Agent Framework](./demos/03-agent-framework)
 - [Module 4: Pro-Code Extensibility using Microsoft 365 Agent Toolkit & Custom Engine Agents](./demos/04-copilot-extensibility/)
 - [Module 5: Agent & Copilot Integration using the Microsoft Agents SDK](./demos/05-integration)
