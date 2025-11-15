@@ -8,20 +8,13 @@ using System.Threading.Tasks;
 
 namespace ConnectedAgentsAI.Services;
 
-public class AiAgentRunner
+public class AiAgentRunner(global::ConnectedAgents.Models.AiAppConfig config)
 {
-    private readonly global::ConnectedAgents.Models.AiAppConfig _config;
-
-    public AiAgentRunner(global::ConnectedAgents.Models.AiAppConfig config)
-    {
-        _config = config ?? throw new ArgumentNullException(nameof(config));
-    }
-
     public async Task RunAsync()
     {
         // Create the Persistent Agents Client
         PersistentAgentsClient client = new PersistentAgentsClient(
-            _config.ProjectConnectionString,
+            config.ProjectConnectionString,
             new AzureCliCredential());
 
         string knowledgeFile = Path.Combine("data", "return-policy.md");
@@ -45,8 +38,8 @@ public class AiAgentRunner
 
         // Define an Azure AI agent with file search tool
         PersistentAgent agent = await client.Administration.CreateAgentAsync(
-            model: _config.Model,
-            name: _config.AgentName,
+            model: config.Model,
+            name: config.AgentName,
             instructions: AgentUtils.ReadAgentInstructions("instructions.md"),
             tools: [new FileSearchToolDefinition()],
             toolResources: new ToolResources { FileSearch = fileSearchResource });

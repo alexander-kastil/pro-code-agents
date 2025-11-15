@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using ConnectedAgents.Models;
 using ConnectedAgentsAI.Services;
 
 var builder = new ConfigurationBuilder()
