@@ -8,6 +8,21 @@ Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin
 - [Module 4: Pro-Code Extensibility using Microsoft 365 Agent Toolkit & Custom Engine Agents](./demos/04-copilot-extensibility/)
 - [Module 5: Agent & Copilot Integration using the Microsoft Agents SDK](./demos/05-integration)
 
+## Pending .NET 10 Migration
+
+The following projects still target .NET versions below 10 and need migration:
+
+- [ ] [demos/02-agent-service/03-connected-agents/connected-agents/connected-agents.csproj](demos/02-agent-service/03-connected-agents/connected-agents/connected-agents.csproj)
+- [ ] [demos/03-agent-framework/01-intro/agentfw-azure-agent/af-azure-ai-agent.csproj](demos/03-agent-framework/01-intro/agentfw-azure-agent/af-azure-ai-agent.csproj)
+- [ ] [demos/03-agent-framework/04-orchestration-workflow/agentfw-orchestration/af-azure-ai-agent.csproj](demos/03-agent-framework/04-orchestration-workflow/agentfw-orchestration/af-azure-ai-agent.csproj)
+- [ ] [demos/04-copilot-extensibility/02-connectors-api/02-connectors/dotnet/parts-inventory/PartsInventoryConnector.csproj](demos/04-copilot-extensibility/02-connectors-api/02-connectors/dotnet/parts-inventory/PartsInventoryConnector.csproj)
+- [ ] [demos/04-copilot-extensibility/03-agents/01-intro/01-semantic-kernel/sk-email-agent/email-agent.csproj](demos/04-copilot-extensibility/03-agents/01-intro/01-semantic-kernel/sk-email-agent/email-agent.csproj)
+- [ ] [demos/04-copilot-extensibility/03-agents/01-intro/01-semantic-kernel/sk-mcp-tooling/sk-use-mcp.csproj](demos/04-copilot-extensibility/03-agents/01-intro/01-semantic-kernel/sk-mcp-tooling/sk-use-mcp.csproj)
+- [ ] [demos/05-integration/02-m365-agents-sdk/copilot-studio-client/copilot-studio-client.csproj](demos/05-integration/02-m365-agents-sdk/copilot-studio-client/copilot-studio-client.csproj)
+- [ ] [demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj](demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj)
+- [ ] [demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj](demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj)
+- [ ] [labs/01-essentials/03-mcp/cs/remote-mcp-functions-dotnet/src/FunctionsMcpTool.csproj](labs/01-essentials/03-mcp/cs/remote-mcp-functions-dotnet/src/FunctionsMcpTool.csproj) (currently net8.0, Azure Functions)
+
 ## Cloning the Repository
 
 This repository uses Git submodules. To clone the repository and automatically download all submodules, use:
