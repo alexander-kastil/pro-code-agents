@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.AI.Evaluation;
 using Microsoft.Extensions.AI.Evaluation.Quality;
-using Microsoft.Extensions.AI.Evaluation.Safety;
 
 // Load configuration from appsettings.json
 IConfiguration configuration = new ConfigurationBuilder()
