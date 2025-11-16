@@ -23,7 +23,7 @@
 
 ---
 
-## ⚠️ Agents Requiring Configuration (4/10)
+## ⚠️ Agents Requiring Configuration (3/10)
 
 ### 5. agents-bing-grounding.py ⚠️
 
@@ -43,15 +43,6 @@
   2. Update `SHAREPOINT_CONNECTION` in `.env` with the actual connection name
   3. Replace `<sharepoint_resource_document>` in the code with actual SharePoint document reference
   4. Example: `SHAREPOINT_CONNECTION="your-sharepoint-connection"`
-
-### 7. agents-mcp.py ⚠️
-
-- **Status**: NEEDS MODEL UPGRADE
-- **Error**: `The model 'gpt-5-mini' cannot be used with the following tools: mcp`
-- **Fixed**: Removed invalid import `RunStepActivityDetails`
-- **Action Required**:
-  1. Change `MODEL_DEPLOYMENT` in `.env` to a compatible model (e.g., `gpt-4o`, `gpt-4`)
-  2. MCP Server URL and Label are already configured in `.env`
 
 ### 8. agents-azfunction.py ⚠️
 
