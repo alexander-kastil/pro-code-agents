@@ -1,10 +1,13 @@
 # Azure AI Agent Service Basics
 
-Samples:
+## Demo Scripts Overview
 
-- `agent-basics.py`: Main script to create and run the agent.
-- `agent-event-handler.py`: Custom event handler for processing agent events.
-- `agent-response-format.py`: Defines the response format for the agent.
-- `agent-input-url.py`: Handles URL input for the agent.
-- `agent-input-file.py`: Handles file input for the agent.
-- `agent-input-base64.py`: Handles base64 encoded input for the agent.
+| Script                     | Focus                                  | What It Demonstrates                                                                                                                                                                                                        |
+| -------------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent-basics.py`          | Core lifecycle                         | Creates an agent, a thread, sends a user message, starts a run, polls status, and lists messages. Shows the minimal synchronous workflow for interacting with Azure AI Agents and how statuses transition until completion. |
+| `agent-event-handler.py`   | Streaming events                       | Introduces an event handler to stream granular lifecycle events (run state, step creation, message deltas). Demonstrates incremental token delivery and how to inspect event payloads without waiting for full completion.  |
+| `agent-response-format.py` | Structured output                      | Configures the agent to return a JSON-formatted response via `AgentsResponseFormat`. Illustrates enforcing structured data (e.g. list of planets) suitable for downstream parsing. Highlights response format control.      |
+| `agent-input-file.py`      | File input (image)                     | Uploads a local image file and passes it alongside text in a single multi-modal message. Shows file upload with purpose `AGENTS`, constructing mixed content blocks, and processing model vision capabilities.              |
+| `agent-input-url.py`       | URL image input                        | Uses a public image URL with detail level control instead of an uploaded file. Demonstrates sending external resource references directly and contrasts with file-based ingestion.                                          |
+| `agent-input-base64.py`    | Data URL image input                   | Converts an image to Base64 and sends it as a `data:` URL. Shows an alternative for inline embedding when direct file upload or external hosting is not desired. Reinforces multi-modal message construction patterns.      |
+| `agent-output.py`          | Post-processing & external integration | Runs an agent, captures its response, then generates a QR code and uploads it to Azure Blob Storage. Demonstrates chaining agent output into application logic and persisting artifacts externally.                         |
