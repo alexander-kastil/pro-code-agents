@@ -12,7 +12,6 @@ Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin
 
 The following projects still target .NET versions below 10 and need migration:
 
-- [ ] [demos/04-copilot-extensibility/02-connectors-api/02-connectors/dotnet/parts-inventory/PartsInventoryConnector.csproj](demos/04-copilot-extensibility/02-connectors-api/02-connectors/dotnet/parts-inventory/PartsInventoryConnector.csproj)
 - [ ] [demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj](demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj)
 - [ ] [demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj](demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj)
 
