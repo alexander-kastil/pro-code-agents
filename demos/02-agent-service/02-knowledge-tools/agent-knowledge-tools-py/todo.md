@@ -1,6 +1,6 @@
 # Agent Testing Summary
 
-## ✅ Working Agents (5/10)
+## ✅ Working Agents (6/10)
 
 ### 1. agents-file-search.py ✅
 
@@ -33,9 +33,23 @@
 - **Test Result**: Completed run with MCP tool calls using upgraded model
 - **No action needed**
 
+### 6. agents-azfunction.py ✅
+
+- **Status**: WORKING
+- **Test Result**: Successfully called Azure Function for currency conversion (100 EUR to THB)
+- **Features**:
+  - Detailed logging enabled for troubleshooting
+  - Well-formatted output with visual separators
+  - Graceful Ctrl+C handling
+  - Interactive Y/N prompt after each conversion
+  - Proper error handling and cleanup
+- **Key Fix**: Added `enable_auto_function_calls(toolset)` before creating agent
+- **Note**: Interactive agent - requires user input at runtime
+- **No action needed**
+
 ---
 
-## ⚠️ Agents Requiring Configuration (3/10)
+## ⚠️ Agents Requiring Configuration (2/10)
 
 ### 6. agents-bing-grounding.py ⚠️
 
@@ -55,16 +69,6 @@
   2. Update `SHAREPOINT_CONNECTION` in `.env` with the actual connection name
   3. Replace `<sharepoint_resource_document>` in the code with actual SharePoint document reference
   4. Example: `SHAREPOINT_CONNECTION="your-sharepoint-connection"`
-
-### 8. agents-azfunction.py ⚠️
-
-- **Status**: NEEDS AZURE FUNCTION DEPLOYMENT
-- **Note**: Interactive agent - requires user input at runtime
-- **Action Required**:
-  1. Deploy the Azure Function for currency conversion
-  2. Update `FUNCTION_DEPLOYMENT_URL` in `.env` with the deployed function URL
-  3. Currently set to `http://localhost:7071/api/convertTo` (local development)
-  4. For testing locally, you'll need the Azure Function code
 
 ---
 
@@ -92,25 +96,27 @@
 
 ## Configuration Summary
 
-### Current .env.copy Variables:
+### Current .env Variables:
 
 ```
 PROJECT_ENDPOINT="https://pro-code-agents-resource.services.ai.azure.com/api/projects/pro-code-agents"
-MODEL_DEPLOYMENT="gpt-5-mini"
-FUNCTION_DEPLOYMENT_URL="http://localhost:7071/api/convertTo"
+MODEL_DEPLOYMENT="gpt-4o"
+FUNCTION_DEPLOYMENT_URL="https://pro-code-currency-converter.azurewebsites.net/api/convertto"
 BING_CONNECTION="bing-connection"
 SHAREPOINT_CONNECTION="sharepoint-connection"
 AZURE_PLAYWRIGHT_CONNECTION_ID=""
 COMPUTER_USE_ENVIRONMENT=""
 MCP_SERVER_URL="https://gitmcp.io/Azure/azure-rest-api-specs"
 MCP_SERVER_LABEL="github"
+AZURE_AI_SEARCH_CONNECTION="procodeaisearch"
+AZURE_AI_INDEX_NAME="insurance-documents-index"
 ```
 
 ### Priority Actions:
 
-1. **HIGH PRIORITY**: Upgrade `MODEL_DEPLOYMENT` to `gpt-4o` or `gpt-4` for tools compatibility
-2. **MEDIUM PRIORITY**: Create Bing and SharePoint connections in Azure AI Foundry
-3. **MEDIUM PRIORITY**: Deploy or configure the Azure Function for currency conversion
+1. ✅ **COMPLETED**: Upgraded `MODEL_DEPLOYMENT` to `gpt-4o`
+2. ✅ **COMPLETED**: Azure Function deployed and working
+3. **MEDIUM PRIORITY**: Create Bing and SharePoint connections in Azure AI Foundry
 4. **LOW PRIORITY**: Check for SDK updates (beyond `azure-ai-agents 1.2.0b6`) to enable Browser Automation and Computer Use features
 
 ---
@@ -118,7 +124,7 @@ MCP_SERVER_LABEL="github"
 ## Post-SDK Upgrade Status
 
 - Upgraded SDKs to: `azure-ai-agents==1.2.0b6`, `azure-ai-projects==2.0.0b2`, `azure-identity==1.26.0b1`.
-- Verified working after upgrade: `agents-file-search.py`, `agents-code-interpreter.py`, `agents-mcp.py`, `agents-ai-search-rag.py`.
+- Verified working after upgrade: `agents-file-search.py`, `agents-code-interpreter.py`, `agents-mcp.py`, `agents-ai-search-rag.py`, `agents-azfunction.py`, `agents-function-calling.py`.
 
 ---
 
@@ -127,12 +133,29 @@ MCP_SERVER_LABEL="github"
 - ✅ Created `function_calling_functions.py` - Support functions for function calling agent
 - ✅ Updated `.env.copy` - Added all required environment variables
 - ✅ Fixed `agents-mcp.py` - Removed invalid import
+- ✅ Fixed `agents-azfunction.py` - Complete rewrite with current API patterns:
+  - Corrected API usage: `project_client.agents.create_agent()` with `toolset` parameter
+  - Added `enable_auto_function_calls(toolset)` for automatic function execution
+  - Implemented detailed logging (DETAILED_LOGGING flag)
+  - Added formatted output with visual separators and emojis
+  - Implemented graceful Ctrl+C handling
+  - Added Y/N prompt for continuing conversations
+  - Proper message content extraction from response list structure
 
 ---
 
 ## Next Steps:
 
-1. Copy `.env.copy` to `.env` if not already done
-2. Update `MODEL_DEPLOYMENT` to a compatible model (gpt-4o recommended)
-3. Configure Azure connections as needed for specific agents
-4. Run individual agents to test specific functionality
+1. ✅ ~~Copy `.env.copy` to `.env` if not already done~~
+2. ✅ ~~Update `MODEL_DEPLOYMENT` to a compatible model (gpt-4o recommended)~~
+3. ✅ ~~Deploy Azure Function for currency conversion~~
+4. **REMAINING**: Configure Bing and SharePoint connections in Azure AI Foundry for respective agents
+5. **REMAINING**: Monitor SDK updates for Browser Automation and Computer Use feature availability
+
+---
+
+## Success Rate: 6/10 (60%)
+
+**Working**: File Search, Code Interpreter, Function Calling, AI Search RAG, MCP, Azure Function  
+**Need Config**: Bing Grounding, SharePoint  
+**Not Available**: Browser Automation, Computer Use
