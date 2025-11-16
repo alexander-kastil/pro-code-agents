@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ConnectedAgents.Services;
 
-public sealed class AgentRunner(AppConfig config)
+public sealed class AgentRunnerConnected(AppConfig config)
 {
     public async Task RunAsync()
     {

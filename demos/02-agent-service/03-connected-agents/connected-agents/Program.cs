@@ -21,7 +21,7 @@ if (!appConfig.VerboseOutput)
 Console.WriteLine("Starting connected agents triage...");
 
 // Run the agent flow
-var runner = new AgentRunner(appConfig);
+var runner = new AgentRunnerConnected(appConfig);
 await runner.RunAsync();
 
 Console.WriteLine("Finished.");
