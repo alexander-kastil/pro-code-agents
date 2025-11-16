@@ -3,7 +3,7 @@ import os
 from typing import Any, Dict, Optional
 
 import requests
-from azure.ai.agents.models import FunctionTool, ToolSet, MessageRole
+from azure.ai.agents.models import FunctionTool, ToolSet
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
@@ -62,57 +62,57 @@ def main() -> None:
         credential=DefaultAzureCredential(),
     )
 
+    functions = FunctionTool([convert_currency_via_function])
     toolset = ToolSet()
-    toolset.add(FunctionTool({convert_currency_via_function}))
+    toolset.add(functions)
 
     with project_client:
-        agents_client = project_client.agents
-        agent = agents_client.create_agent(
+        agent = project_client.agents.create_agent(
             model=model,
             name="currency-conversion-agent",
             instructions=(
                 "You assist with currency conversion questions by calling the convert_currency_via_function."
                 "Always call the tool when a user provides currencies or amounts."
             ),
-            toolset=toolset,
+            toolset=toolset
         )
 
-        thread = agents_client.threads.create()
+        thread = project_client.agents.threads.create()
         print(f"You're chatting with: {agent.name} ({agent.id})")
 
-        try:
-            default_example = "Exchange 100 EUR to THB"
-            prompt_text = (
-                "What currency do you want to exchang? Example. Exchange 100 EUR to THB. "
-                "Press Enter to accept or Enter your own prompt"
+        default_example = "Exchange 100 EUR to THB"
+        prompt_text = (
+            "What currency do you want to exchang? Example. Exchange 100 EUR to THB. "
+            "Press Enter to accept or Enter your own prompt"
+        )
+        while True:
+            raw = input(f"{prompt_text}\n> ")
+            user_prompt = default_example if raw.strip() == "" else raw
+            if user_prompt.lower() == "quit":
+                break
+
+            message = project_client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content=user_prompt
             )
-            while True:
-                raw = input(f"{prompt_text}\n> ")
-                user_prompt = default_example if raw.strip() == "" else raw
-                if user_prompt.lower() == "quit":
-                    break
+            
+            run = project_client.agents.create_and_process_run(
+                thread_id=thread.id, 
+                agent_id=agent.id
+            )
 
-                agents_client.messages.create(
-                    thread_id=thread.id,
-                    role="user",
-                    content=user_prompt,
-                )
+            if run.status == "failed":
+                print(f"Run failed: {run.last_error}")
+                continue
 
-                run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+            messages = project_client.agents.list_messages(thread_id=thread.id)
+            last_msg = messages.get_last_text_message_by_role("assistant")
+            if last_msg:
+                print(f"Assistant: {last_msg.text.value}")
 
-                if run.status == "failed":
-                    print(f"Run failed: {run.last_error}")
-                    continue
-
-                last_msg = agents_client.messages.get_last_message_text_by_role(
-                    thread_id=thread.id, role=MessageRole.AGENT
-                )
-                if last_msg:
-                    print(f"Assistant: {last_msg.text.value}")
-        finally:
-            project_client.agents.delete_agent(agent.id)
-            # Updated for current SDK: delete thread via threads client
-            project_client.agents.threads.delete(thread.id)
+        project_client.agents.delete_agent(agent.id)
+        print("Deleted agent")
 
 
 if __name__ == "__main__":
