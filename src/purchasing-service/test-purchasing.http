@@ -1,0 +1,69 @@
+@host = http://localhost:5151
+@email = offers@integrations.at
+
+### Test 1: Bulk order - 3 products (total 15)
+POST {{host}}/api/purchasing/offer
+Content-Type: application/json
+
+{
+  "supplierId": 1,
+  "requestId": "REQ-BULK-3P-{{$guid}}",
+  "offerDetails": [
+    { "productName": "Butter Chicken", "requestedAmount": 14 },
+    { "productName": "Blini with Salmon", "requestedAmount": 15 },
+    { "productName": "Falafel", "requestedAmount": 16 }
+  ],
+  "email": "{{email}}"
+}
+
+### Test 2: Bulk order - 4 products (total 17)
+POST {{host}}/api/purchasing/offer
+Content-Type: application/json
+
+{
+  "supplierId": 2,
+  "requestId": "REQ-BULK-4P-{{$guid}}",
+  "offerDetails": [
+    { "productName": "Wiener Schnitzel", "requestedAmount": 20 },
+    { "productName": "Curry Wurst", "requestedAmount": 18 },
+    { "productName": "Cevapcici", "requestedAmount": 15 },
+    { "productName": "Greek salad", "requestedAmount": 14 }
+  ],
+  "email": "{{email}}"
+}
+
+### Test 3: Bulk order - 5 products (total 25)
+POST {{host}}/api/purchasing/offer
+Content-Type: application/json
+
+{
+  "supplierId": 3,
+  "requestId": "REQ-BULK-5P-{{$guid}}",
+  "offerDetails": [
+    { "productName": "Pad Ka Prao", "requestedAmount": 22 },
+    { "productName": "Spare Ribs", "requestedAmount": 24 },
+    { "productName": "Butter Chicken", "requestedAmount": 18 },
+    { "productName": "Blini with Salmon", "requestedAmount": 16 },
+    { "productName": "Falafel", "requestedAmount": 14 }
+  ],
+  "email": "{{email}}"
+}
+
+### Test 4: Bulk order - 7 products (total 30)
+POST {{host}}/api/purchasing/offer
+Content-Type: application/json
+
+{
+  "supplierId": 4,
+  "requestId": "REQ-BULK-7P-{{$guid}}",
+  "offerDetails": [
+    { "productName": "Wiener Schnitzel", "requestedAmount": 30 },
+    { "productName": "Curry Wurst", "requestedAmount": 28 },
+    { "productName": "Cevapcici", "requestedAmount": 20 },
+    { "productName": "Greek salad", "requestedAmount": 18 },
+    { "productName": "Pad Ka Prao", "requestedAmount": 16 },
+    { "productName": "Spare Ribs", "requestedAmount": 14 },
+    { "productName": "Butter Chicken", "requestedAmount": 15 }
+  ],
+  "email": "{{email}}"
+}
