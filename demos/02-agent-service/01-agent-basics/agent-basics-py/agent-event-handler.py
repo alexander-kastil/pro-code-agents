@@ -58,32 +58,37 @@ class MyEventHandler(AgentEventHandler[str]):
 with agents_client:
 
     # Create an agent and run stream with event handler
-    agent = agents_client.create_agent(
+    agent = agents_client.agents.create_agent(
         model=model, name="event-handler-agent", instructions="You are a helpful agent"
     )
-    
     print(f"Created agent: {agent.name}, ID: {agent.id}")
 
     # Create a thread for the conversation
-    thread = agents_client.threads.create()
+    thread = agents_client.agents.threads.create()
     print(f"Created thread, thread ID {thread.id}")
 
-    message = agents_client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+    message = agents_client.agents.messages.create(
+        thread_id=thread.id, role="user", content="Hello, tell me a joke"
+    )
     print(f"Created message, message ID {message.id}")
 
     # [START create_stream]
-    with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()) as stream:
+    with agents_client.agents.runs.stream(
+        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
+    ) as stream:
         for event_type, event_data, func_return in stream:
-            print(f"Received data.")
+            print("Received data.")
             print(f"Streaming receive Event Type: {event_type}")
             print(f"Event Data: {str(event_data)[:100]}...")
             print(f"Event Function return: {func_return}\n")
     # [END create_stream]
 
-    agents_client.delete_agent(agent.id)
+    agents_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    messages = agents_client.agents.messages.list(
+        thread_id=thread.id, order=ListSortOrder.ASCENDING
+    )
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]

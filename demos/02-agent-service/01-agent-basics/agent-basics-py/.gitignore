@@ -30,7 +30,6 @@ _.swo
 
 # Local development settings
 
-.env
 .env.local
 
 # Unit test / coverage reports

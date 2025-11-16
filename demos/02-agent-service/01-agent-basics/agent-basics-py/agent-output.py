@@ -19,7 +19,6 @@ def main():
     endpoint = os.getenv("PROJECT_ENDPOINT")
     model = os.getenv("MODEL_DEPLOYMENT")
     storage_connection_string = os.getenv("STORAGE_CONNECTION_STRING")
-    storage_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
     storage_container_name = os.getenv("STORAGE_CONTAINER_NAME")
 
     print(f"Using endpoint: {endpoint}")
