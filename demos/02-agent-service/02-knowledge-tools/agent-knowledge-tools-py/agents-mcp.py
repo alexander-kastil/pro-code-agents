@@ -8,7 +8,6 @@ from azure.ai.agents.models import (
     McpTool,
     MessageRole,
     RequiredMcpToolCall,
-    RunStepActivityDetails,
     SubmitToolApprovalAction,
     ToolApproval,
 )
@@ -145,21 +144,6 @@ def main():
                 for call in tool_calls:
                     print(f"    Tool Call ID: {call.get('id')}")
                     print(f"    Type: {call.get('type')}")
-
-            if isinstance(step_details, RunStepActivityDetails):
-                for activity in step_details.activities:
-                    for function_name, function_definition in activity.tools.items():
-                        print(
-                            f'  The function {function_name} with description "{function_definition.description}" will be called.:'
-                        )
-                        if len(function_definition.parameters) > 0:
-                            print("  Function parameters:")
-                            for argument, func_argument in function_definition.parameters.properties.items():
-                                print(f"      {argument}")
-                                print(f"      Type: {func_argument.type}")
-                                print(f"      Description: {func_argument.description}")
-                        else:
-                            print("This function has no parameters")
 
             print()  # add an extra newline between steps
 

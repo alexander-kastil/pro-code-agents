@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import ConnectionType
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
 
@@ -13,9 +12,13 @@ def main():
     load_dotenv()
     endpoint = os.getenv("PROJECT_ENDPOINT")
     model = os.getenv("MODEL_DEPLOYMENT")
+    index_name = os.getenv("AZURE_AI_INDEX_NAME")
+    connection_name = os.getenv("AZURE_AI_SEARCH_CONNECTION", "procodeaisearch")
 
     print(f"Using endpoint: {endpoint}")
     print(f"Using model: {model}")
+    print(f"Using Azure AI Search connection: {connection_name}")
+    print(f"Using Azure AI Search index: {index_name}")
 
     project_client = AIProjectClient(
         endpoint=endpoint,
@@ -26,13 +29,17 @@ def main():
         agents_client = project_client.agents
 
         # [START create_agent_with_azure_ai_search_tool]
-        conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
+        if not index_name:
+            raise ValueError("AZURE_AI_INDEX_NAME must be set in .env")
+
+        # Resolve the Azure AI Search connection by name provided in env
+        conn_id = project_client.connections.get(connection_name).id
         print(conn_id)
 
         # Initialize agent AI search tool and add the search index connection id
         ai_search = AzureAISearchTool(
             index_connection_id=conn_id,
-            index_name="insurance-documents-index",
+            index_name=index_name,
             query_type=AzureAISearchQueryType.SIMPLE,
             top_k=3,
             filter="",
