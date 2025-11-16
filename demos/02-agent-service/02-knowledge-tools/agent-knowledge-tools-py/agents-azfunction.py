@@ -8,6 +8,15 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 
+# Detailed logging flag
+DETAILED_LOGGING = True
+
+
+def log(message: str) -> None:
+    """Print log message if detailed logging is enabled."""
+    if DETAILED_LOGGING:
+        print(f"[LOG] {message}")
+
 
 def convert_currency_via_function(
     from_currency: str,
@@ -47,72 +56,142 @@ def convert_currency_via_function(
 
 
 def main() -> None:
-    os.system("cls" if os.name == "nt" else "clear")
-    load_dotenv()
+    try:
+        os.system("cls" if os.name == "nt" else "clear")
+        load_dotenv()
 
-    endpoint = os.getenv("PROJECT_ENDPOINT")
-    model = os.getenv("MODEL_DEPLOYMENT")
+        endpoint = os.getenv("PROJECT_ENDPOINT")
+        model = os.getenv("MODEL_DEPLOYMENT")
 
-    print(f"Using endpoint: {endpoint}")
-    print(f"Using model: {model}")
-    print("Azure Function endpoint:", os.getenv("FUNCTION_DEPLOYMENT_URL"))
+        log(f"Using endpoint: {endpoint}")
+        log(f"Using model: {model}")
+        log(f"Azure Function endpoint: {os.getenv('FUNCTION_DEPLOYMENT_URL')}")
 
-    project_client = AIProjectClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(),
-    )
-
-    functions = FunctionTool([convert_currency_via_function])
-    toolset = ToolSet()
-    toolset.add(functions)
-
-    with project_client:
-        agent = project_client.agents.create_agent(
-            model=model,
-            name="currency-conversion-agent",
-            instructions=(
-                "You assist with currency conversion questions by calling the convert_currency_via_function."
-                "Always call the tool when a user provides currencies or amounts."
-            ),
-            toolset=toolset
+        project_client = AIProjectClient(
+            endpoint=endpoint,
+            credential=DefaultAzureCredential(),
         )
+        log("Created AIProjectClient")
 
-        thread = project_client.agents.threads.create()
-        print(f"You're chatting with: {agent.name} ({agent.id})")
+        functions = FunctionTool([convert_currency_via_function])
+        toolset = ToolSet()
+        toolset.add(functions)
+        log("Created ToolSet with FunctionTool")
 
-        default_example = "Exchange 100 EUR to THB"
-        prompt_text = (
-            "What currency do you want to exchang? Example. Exchange 100 EUR to THB. "
-            "Press Enter to accept or Enter your own prompt"
-        )
-        while True:
-            raw = input(f"{prompt_text}\n> ")
-            user_prompt = default_example if raw.strip() == "" else raw
-            if user_prompt.lower() == "quit":
-                break
+        with project_client:
+            # Enable automatic function calling
+            project_client.agents.enable_auto_function_calls(toolset)
+            log("Enabled auto function calls")
 
-            message = project_client.agents.create_message(
-                thread_id=thread.id,
-                role="user",
-                content=user_prompt
+            agent = project_client.agents.create_agent(
+                model=model,
+                name="currency-conversion-agent",
+                instructions=(
+                    "You assist with currency conversion questions by calling the convert_currency_via_function."
+                    "Always call the tool when a user provides currencies or amounts."
+                ),
+                toolset=toolset
             )
+            log(f"Created agent: {agent.name} ({agent.id})")
+
+            thread = project_client.agents.threads.create()
+            log(f"Created thread: {thread.id}")
             
-            run = project_client.agents.create_and_process_run(
-                thread_id=thread.id, 
-                agent_id=agent.id
-            )
+            print(f"\n{'='*70}")
+            print(f"💱 Currency Conversion Agent")
+            print(f"Agent: {agent.name} ({agent.id})")
+            print(f"{'='*70}\n")
 
-            if run.status == "failed":
-                print(f"Run failed: {run.last_error}")
-                continue
+            while True:
+                try:
+                    user_input = input("Enter currencies to exchange (e.g., '100 EUR to THB') or 'quit' to exit:\n> ").strip()
+                    
+                    if user_input.lower() == "quit":
+                        break
+                    
+                    if not user_input:
+                        print("Please enter a currency conversion request.\n")
+                        continue
 
-            messages = project_client.agents.list_messages(thread_id=thread.id)
-            last_msg = messages.get_last_text_message_by_role("assistant")
-            if last_msg:
-                print(f"Assistant: {last_msg.text.value}")
+                    log(f"User input: {user_input}")
 
-        project_client.agents.delete_agent(agent.id)
-        print("Deleted agent")
+                    message = project_client.agents.messages.create(
+                        thread_id=thread.id,
+                        role="user",
+                        content=user_input
+                    )
+                    log(f"Created message: {message['id'] if isinstance(message, dict) else message.id}")
+                    
+                    log("Creating and processing run...")
+                    run = project_client.agents.runs.create_and_process(
+                        thread_id=thread.id, 
+                        agent_id=agent.id,
+                        toolset=toolset
+                    )
+                    log(f"Run completed with status: {run.status}")
+
+                    if run.status == "failed":
+                        print(f"\n❌ Error: {run.last_error}\n")
+                        log(f"Run error details: {run.last_error}")
+                        continue
+
+                    messages = project_client.agents.messages.list(thread_id=thread.id)
+                    log(f"Retrieved messages from thread")
+                    
+                    for message in messages:
+                        if message.role == "assistant":
+                            # Extract text from message content
+                            if isinstance(message.content, list) and len(message.content) > 0:
+                                if message.content[0].get('type') == 'text':
+                                    assistant_text = message.content[0]['text']['value']
+                                    log(f"Assistant response: {assistant_text}")
+                                    print(f"\n{'─'*70}")
+                                    print(f"✅ Result:")
+                                    print(f"   {assistant_text}")
+                                    print(f"{'─'*70}\n")
+                            else:
+                                log(f"Assistant message: {message.content}")
+                                print(f"\n✅ Result: {message.content}\n")
+                            break
+                    
+                    # Ask if user wants to continue
+                    while True:
+                        continue_prompt = input("Do you want to exchange anything else? (y/n): ").strip().lower()
+                        if continue_prompt in ['y', 'yes']:
+                            print()
+                            break
+                        elif continue_prompt in ['n', 'no']:
+                            print("\nThank you for using the Currency Conversion Agent!")
+                            break
+                        else:
+                            print("Please enter 'y' or 'n'")
+                    
+                    if continue_prompt in ['n', 'no']:
+                        break
+                        
+                except KeyboardInterrupt:
+                    print("\n\n⚠️  Interrupted by user. Exiting gracefully...")
+                    log("User interrupted with Ctrl+C")
+                    break
+                except Exception as e:
+                    print(f"\n❌ Error: {type(e).__name__}: {e}\n")
+                    log(f"Error during conversation: {type(e).__name__}: {e}")
+                    continue
+
+            project_client.agents.delete_agent(agent.id)
+            log(f"Deleted agent: {agent.id}")
+            print(f"\n{'='*70}")
+            print("🗑️  Agent deleted successfully")
+            print(f"{'='*70}\n")
+            
+    except KeyboardInterrupt:
+        print("\n\n⚠️  Interrupted by user. Exiting gracefully...")
+        log("User interrupted with Ctrl+C during startup")
+    except Exception as e:
+        print(f"\n❌ Error: {type(e).__name__}: {e}")
+        if DETAILED_LOGGING:
+            import traceback
+            traceback.print_exc()
 
 
 if __name__ == "__main__":
