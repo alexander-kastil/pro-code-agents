@@ -178,11 +178,18 @@ def main() -> None:
                     log(f"Error during conversation: {type(e).__name__}: {e}")
                     continue
 
-            project_client.agents.delete_agent(agent.id)
-            log(f"Deleted agent: {agent.id}")
-            print(f"\n{'='*70}")
-            print("🗑️  Agent deleted successfully")
-            print(f"{'='*70}\n")
+            delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+            if delete_on_exit:
+                project_client.agents.delete_agent(agent.id)
+                log(f"Deleted agent: {agent.id}")
+                print(f"\n{'='*70}")
+                print("🗑️  Agent deleted successfully")
+                print(f"{'='*70}\n")
+            else:
+                log(f"Agent {agent.id} preserved for examination")
+                print(f"\n{'='*70}")
+                print(f"💾  Agent {agent.id} preserved for examination in Azure AI Foundry")
+                print(f"{'='*70}\n")
             
     except KeyboardInterrupt:
         print("\n\n⚠️  Interrupted by user. Exiting gracefully...")

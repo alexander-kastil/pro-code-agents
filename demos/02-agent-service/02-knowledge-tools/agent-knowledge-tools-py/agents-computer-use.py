@@ -182,8 +182,13 @@ def main():
                 print(f"{msg.role}: {last_text.text.value}")
 
     # Optional: Delete the agent once the run is finished.
-    agents_client.delete_agent(agent.id)
-    print("Deleted agent")
+    # Controlled by DELETE_AGENT_ON_EXIT environment variable
+    delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+    if delete_on_exit:
+        agents_client.delete_agent(agent.id)
+        print("Deleted agent")
+    else:
+        print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
 
 if __name__ == '__main__':

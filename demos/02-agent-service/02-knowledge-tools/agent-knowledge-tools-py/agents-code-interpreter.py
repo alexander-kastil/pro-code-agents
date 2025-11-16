@@ -87,8 +87,12 @@ def main():
         agents_client.files.delete(file.id)
         print("Deleted file")
 
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
+        delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+        if delete_on_exit:
+            agents_client.delete_agent(agent.id)
+            print("Deleted agent")
+        else:
+            print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
 
 if __name__ == '__main__':

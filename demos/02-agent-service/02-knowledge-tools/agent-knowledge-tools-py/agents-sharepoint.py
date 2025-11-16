@@ -64,9 +64,13 @@ def main():
             # Check if you got "Rate limit is exceeded.", then you want to get more quota
             print(f"Run failed: {run.last_error}")
 
-        # Delete the agent when done
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
+        # Delete the agent when done (if configured)
+        delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+        if delete_on_exit:
+            agents_client.delete_agent(agent.id)
+            print("Deleted agent")
+        else:
+            print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
         # Fetch and log all messages
         messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)

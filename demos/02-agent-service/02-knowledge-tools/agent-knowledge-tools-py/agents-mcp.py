@@ -169,9 +169,13 @@ def main():
             print(f"Error removing tool: {e}")
 
         # Clean-up and delete the agent once the run is finished.
-        # NOTE: Comment out this line if you plan to reuse the agent later.
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
+        # Controlled by DELETE_AGENT_ON_EXIT environment variable
+        delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+        if delete_on_exit:
+            agents_client.delete_agent(agent.id)
+            print("Deleted agent")
+        else:
+            print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
 
 if __name__ == '__main__':

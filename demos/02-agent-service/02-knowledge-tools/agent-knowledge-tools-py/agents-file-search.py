@@ -60,8 +60,12 @@ def main():
         if run.status == "failed":
             print(f"Run error: {run.last_error}")
 
-        agents_client.agents.delete_agent(agent.id)
-        print("Deleted agent")
+        delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+        if delete_on_exit:
+            agents_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+        else:
+            print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
         # [START list_messages]
         messages = agents_client.agents.messages.list(

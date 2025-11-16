@@ -93,9 +93,13 @@ def main():
                         print(f"    azure_ai_search output: {azure_ai_search_details.get('output')}")
             print()  # add an extra newline between steps
 
-        # Delete the agent when done
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
+        # Delete the agent when done (if configured)
+        delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+        if delete_on_exit:
+            agents_client.delete_agent(agent.id)
+            print("Deleted agent")
+        else:
+            print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
         # [START populate_references_agent_with_azure_ai_search_tool]
         # Fetch and log all messages

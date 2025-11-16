@@ -81,9 +81,13 @@ def main():
 
             print()  # add an extra newline between steps
 
-        # Delete the agent when done
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
+        # Delete the agent when done (if configured)
+        delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+        if delete_on_exit:
+            agents_client.delete_agent(agent.id)
+            print("Deleted agent")
+        else:
+            print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
         # Print the Agent's response message with optional citation
         response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)

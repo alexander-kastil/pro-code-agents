@@ -85,7 +85,12 @@ def main():
             print(f"{message_data.role}: {last_message_content.text.value}\n")
 
         # Clean up
-        project_client.agents.delete_agent(agent.id)
+        delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+        if delete_on_exit:
+            project_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+        else:
+            print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
         project_client.agents.delete_thread(thread.id)
     
 
