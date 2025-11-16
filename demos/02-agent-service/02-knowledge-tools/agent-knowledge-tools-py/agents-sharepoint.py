@@ -40,6 +40,7 @@ def main():
             model=model,
             name="my-agent",
             instructions="You are a helpful agent",
+            description="Demonstrates SharePoint integration to search and retrieve documents from SharePoint sites with citation support.",
             tools=sharepoint.definitions,
         )
         print(f"Created agent, agent ID: {agent.id}")

@@ -62,6 +62,7 @@ def main():
             model=model,
             name="mcp-agent",
             instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
+            description="Demonstrates Model Context Protocol (MCP) integration to access external tools and services (e.g., GitHub API specs) with approval workflows.",
             tools=mcp_tool.definitions,
         )
         # [END create_agent_with_mcp_tool]

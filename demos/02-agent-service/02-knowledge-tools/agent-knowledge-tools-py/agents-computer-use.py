@@ -75,6 +75,7 @@ def main():
                 You are an computer automation assistant. 
                 Use the computer_use_preview tool to interact with the screen when needed.
                 """,
+            description="Demonstrates Computer Use tool for GUI automation - taking screenshots, clicking, typing, and interacting with desktop applications.",
             tools=computer_use.definitions,
         )
 

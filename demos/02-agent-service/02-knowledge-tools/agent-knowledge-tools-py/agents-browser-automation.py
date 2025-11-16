@@ -47,6 +47,7 @@ def main():
             You can answer questions, provide information, and assist with various tasks 
             related to web browsing using the Browser Automation tool available to you.
             """,
+            description="Demonstrates Browser Automation using Playwright to navigate websites, interact with elements, and extract data from web pages.",
             tools=browser_automation.definitions,
         )
 

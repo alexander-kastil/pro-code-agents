@@ -37,6 +37,7 @@ def main():
             model=model,
             name="bing-grounding-agent",
             instructions="You are a helpful agent",
+            description="Demonstrates Bing Grounding tool to search the web and provide current, factual information with citations.",
             tools=bing.definitions,
         )
         # [END create_agent_with_bing_grounding_tool]

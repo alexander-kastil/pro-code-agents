@@ -28,7 +28,8 @@ def main():
         agent = agents_client.agents.create_agent(
             model=model,
             name="basic-agent",
-            instructions="You are helpful agent"
+            instructions="You are helpful agent",
+            description="Demonstrates basic agent setup and message interaction without specialized tools - a simple conversational agent."
         )
 
         print(f"Created agent: {agent.name}, ID: {agent.id}")

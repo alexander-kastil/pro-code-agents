@@ -90,6 +90,7 @@ def main() -> None:
                     "You assist with currency conversion questions by calling the convert_currency_via_function."
                     "Always call the tool when a user provides currencies or amounts."
                 ),
+                description="Demonstrates calling external Azure Functions as tools for real-time currency conversion using live exchange rates.",
                 toolset=toolset
             )
             log(f"Created agent: {agent.name} ({agent.id})")

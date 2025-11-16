@@ -49,6 +49,7 @@ def main():
             model=model,
             name="insurance-rag-agent",
             instructions="You are a helpful agent to knowledgeably answer questions about insurance products using the Azure AI Search tool to retrieve relevant information from the knowledge base.",
+            description="Demonstrates RAG (Retrieval Augmented Generation) using Azure AI Search to answer questions from a knowledge base of insurance documents.",
             tools=ai_search.definitions,
             tool_resources=ai_search.resources,
         )

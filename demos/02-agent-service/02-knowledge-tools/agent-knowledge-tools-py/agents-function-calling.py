@@ -42,6 +42,7 @@ def main():
                             Then you use those values to submit a support ticket using the function available to you.
                             If a file is saved, tell the user the file name.
                         """,
+            description="Demonstrates custom Function Calling with user-defined Python functions to create support tickets and save data to files.",
             toolset=toolset
         )
 

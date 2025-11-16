@@ -42,6 +42,7 @@ def main():
             model=model,
             name="code-interpreter-agent",
             instructions="You are a helpful agent with access to code interpreter tools. Use the code interpreter to analyze uploaded files and create visualizations as requested. Provide images directly in your response.",
+            description="Demonstrates Code Interpreter tool for analyzing CSV files and generating data visualizations (charts/graphs) in a sandboxed Python environment.",
             tools=code_interpreter.definitions,
             tool_resources=code_interpreter.resources,
         )
