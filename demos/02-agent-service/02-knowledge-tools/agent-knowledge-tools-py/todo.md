@@ -1,6 +1,6 @@
 # Agent Testing Summary
 
-## ✅ Working Agents (3/10)
+## ✅ Working Agents (5/10)
 
 ### 1. agents-file-search.py ✅
 
@@ -21,11 +21,23 @@
 - **Note**: Interactive agent - requires user input at runtime
 - **No action needed**
 
+### 4. agents-ai-search-rag.py ✅
+
+- **Status**: WORKING
+- **Test Result**: Successfully retrieved results from Azure AI Search using `AZURE_AI_SEARCH_CONNECTION=procodeaisearch` and `AZURE_AI_INDEX_NAME=insurance-documents-index`
+- **No action needed**
+
+### 5. agents-mcp.py ✅
+
+- **Status**: WORKING
+- **Test Result**: Completed run with MCP tool calls using upgraded model
+- **No action needed**
+
 ---
 
 ## ⚠️ Agents Requiring Configuration (3/10)
 
-### 5. agents-bing-grounding.py ⚠️
+### 6. agents-bing-grounding.py ⚠️
 
 - **Status**: NEEDS BING CONNECTION
 - **Error**: `ValueError: No value for given attribute`
@@ -34,7 +46,7 @@
   2. Update `BING_CONNECTION` in `.env` with the actual connection name
   3. Example: `BING_CONNECTION="your-bing-connection-name"`
 
-### 6. agents-sharepoint.py ⚠️
+### 7. agents-sharepoint.py ⚠️
 
 - **Status**: NEEDS SHAREPOINT CONNECTION
 - **Error**: `ValueError: No value for given attribute`
@@ -63,19 +75,18 @@
 - **Status**: NOT AVAILABLE
 - **Error**: `ImportError: cannot import name 'BrowserAutomationTool'`
 - **Action Required**:
-  1. Upgrade to a newer version of `azure-ai-agents` that supports Browser Automation
-  2. Set `AZURE_PLAYWRIGHT_CONNECTION_ID` in `.env` once the SDK is upgraded
-  3. This feature may be in preview or requires a specific SDK version
+  1. We upgraded to `azure-ai-agents==1.2.0b6` and `azure-ai-projects==2.0.0b2` (latest pre-release on PyPI); this class is still not present.
+  2. Monitor newer preview drops or gated preview access; once available, set `AZURE_PLAYWRIGHT_CONNECTION_ID` in `.env`.
+  3. Feature availability depends on region/preview enablement.
 
 ### 10. agents-computer-use.py ❌
 
 - **Status**: NOT AVAILABLE
 - **Error**: `ImportError: cannot import name 'ComputerScreenshot'`
 - **Action Required**:
-  1. Upgrade to a newer version of `azure-ai-agents` that supports Computer Use
-  2. Set `COMPUTER_USE_ENVIRONMENT` in `.env` once the SDK is upgraded
-  3. Verify asset files exist: `../assets/cua_screenshot.jpg`, `../assets/cua_screenshot_next.jpg`
-  4. This feature may be in preview or requires a specific SDK version
+  1. With `azure-ai-agents==1.2.0b6` and `azure-ai-projects==2.0.0b2`, these types are still missing.
+  2. After preview availability, set `COMPUTER_USE_ENVIRONMENT` in `.env` (e.g., `cloud`) and ensure assets exist: `../assets/cua_screenshot.jpg`, `../assets/cua_screenshot_next.jpg`.
+  3. Feature likely gated by region/preview enablement.
 
 ---
 
@@ -100,7 +111,14 @@ MCP_SERVER_LABEL="github"
 1. **HIGH PRIORITY**: Upgrade `MODEL_DEPLOYMENT` to `gpt-4o` or `gpt-4` for tools compatibility
 2. **MEDIUM PRIORITY**: Create Bing and SharePoint connections in Azure AI Foundry
 3. **MEDIUM PRIORITY**: Deploy or configure the Azure Function for currency conversion
-4. **LOW PRIORITY**: Check for SDK updates to enable Browser Automation and Computer Use features
+4. **LOW PRIORITY**: Check for SDK updates (beyond `azure-ai-agents 1.2.0b6`) to enable Browser Automation and Computer Use features
+
+---
+
+## Post-SDK Upgrade Status
+
+- Upgraded SDKs to: `azure-ai-agents==1.2.0b6`, `azure-ai-projects==2.0.0b2`, `azure-identity==1.26.0b1`.
+- Verified working after upgrade: `agents-file-search.py`, `agents-code-interpreter.py`, `agents-mcp.py`, `agents-ai-search-rag.py`.
 
 ---
 

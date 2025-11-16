@@ -5,10 +5,10 @@ export async function convertTo(request: HttpRequest, context: InvocationContext
 
     try {
         const body: any = await request.json().catch(() => ({}));
-        const fromCurrency = request.query.get('from') || body.from;
-        const toCurrency = request.query.get('to') || body.to;
-        const amount = parseFloat(request.query.get('amount') || body.amount);
-        const date = request.query.get('date') || body.date || new Date().toISOString().split('T')[0];
+        const fromCurrency = body.from;
+        const toCurrency = body.to;
+        const amount = parseFloat(body.amount);
+        const date = body.date || new Date().toISOString().split('T')[0];
         const fixerKey = process.env.FIXER_KEY;
 
         if (!fromCurrency || !toCurrency || isNaN(amount) || !fixerKey) {

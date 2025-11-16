@@ -1,10 +1,9 @@
 import json
 import os
-import sys
 from typing import Any, Dict, Optional
 
 import requests
-from azure.ai.agents.models import FunctionTool, ToolSet
+from azure.ai.agents.models import FunctionTool, ToolSet, MessageRole
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
@@ -16,13 +15,8 @@ def convert_currency_via_function(
     amount: float,
     date: Optional[str] = None,
 ) -> str:
-    """Convert currency by calling the deployed Azure Function endpoint."""
 
     FUNCTION_DEPLOYMENT_URL = os.getenv("FUNCTION_DEPLOYMENT_URL")
-    if not FUNCTION_DEPLOYMENT_URL:
-        raise ValueError(
-            "FUNCTION_DEPLOYMENT_URL is not set. Update .env with the Azure Function endpoint."
-        )
 
     normalized_from = from_currency.upper()
     normalized_to = to_currency.upper()
@@ -36,20 +30,14 @@ def convert_currency_via_function(
     if date:
         payload["date"] = date
 
-    try:
-        response = requests.post(FUNCTION_DEPLOYMENT_URL.rstrip("/"), json=payload, timeout=15)
-        response.raise_for_status()
-    except requests.RequestException as exc:
-        raise ValueError(f"Currency conversion failed: {exc}") from exc
+    response = requests.post(FUNCTION_DEPLOYMENT_URL.rstrip("/"), json=payload, timeout=20)
+    response.raise_for_status()
 
     conversion = response.json()
 
-    if "result" not in conversion:
-        raise ValueError("Azure Function response did not include a conversion result.")
-
     summary = (
         f"{payload['amount']} {normalized_from} equals "
-        f"{conversion['result']} {normalized_to} on {conversion.get('date')}"
+        f"{conversion.get('result')} {normalized_to} on {conversion.get('date')}"
     )
 
     return json.dumps({
@@ -65,14 +53,6 @@ def main() -> None:
     endpoint = os.getenv("PROJECT_ENDPOINT")
     model = os.getenv("MODEL_DEPLOYMENT")
 
-    if not endpoint or not model:
-        print("PROJECT_ENDPOINT and MODEL_DEPLOYMENT must be set in .env", file=sys.stderr)
-        sys.exit(1)
-
-    if not os.getenv("FUNCTION_DEPLOYMENT_URL"):
-        print("FUNCTION_DEPLOYMENT_URL must be set in .env", file=sys.stderr)
-        sys.exit(1)
-
     print(f"Using endpoint: {endpoint}")
     print(f"Using model: {model}")
     print("Azure Function endpoint:", os.getenv("FUNCTION_DEPLOYMENT_URL"))
@@ -86,7 +66,8 @@ def main() -> None:
     toolset.add(FunctionTool({convert_currency_via_function}))
 
     with project_client:
-        agent = project_client.agents.create_agent(
+        agents_client = project_client.agents
+        agent = agents_client.create_agent(
             model=model,
             name="currency-conversion-agent",
             instructions=(
@@ -96,40 +77,42 @@ def main() -> None:
             toolset=toolset,
         )
 
-        thread = project_client.agents.threads.create()
+        thread = agents_client.threads.create()
         print(f"You're chatting with: {agent.name} ({agent.id})")
 
         try:
+            default_example = "Exchange 100 EUR to THB"
+            prompt_text = (
+                "What currency do you want to exchang? Example. Exchange 100 EUR to THB. "
+                "Press Enter to accept or Enter your own prompt"
+            )
             while True:
-                user_prompt = input("Prompt (type 'quit' to exit): ")
+                raw = input(f"{prompt_text}\n> ")
+                user_prompt = default_example if raw.strip() == "" else raw
                 if user_prompt.lower() == "quit":
                     break
-                if not user_prompt.strip():
-                    print("Please enter a prompt.")
-                    continue
 
-                project_client.agents.create_message(
+                agents_client.messages.create(
                     thread_id=thread.id,
                     role="user",
                     content=user_prompt,
                 )
 
-                run = project_client.agents.create_and_process_run(
-                    thread_id=thread.id,
-                    agent_id=agent.id,
-                )
+                run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
 
                 if run.status == "failed":
                     print(f"Run failed: {run.last_error}")
                     continue
 
-                messages = project_client.agents.list_messages(thread_id=thread.id)
-                last_msg = messages.get_last_text_message_by_role("assistant")
+                last_msg = agents_client.messages.get_last_message_text_by_role(
+                    thread_id=thread.id, role=MessageRole.AGENT
+                )
                 if last_msg:
                     print(f"Assistant: {last_msg.text.value}")
         finally:
             project_client.agents.delete_agent(agent.id)
-            project_client.agents.delete_thread(thread.id)
+            # Updated for current SDK: delete thread via threads client
+            project_client.agents.threads.delete(thread.id)
 
 
 if __name__ == "__main__":
