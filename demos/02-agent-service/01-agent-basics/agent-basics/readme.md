@@ -7,11 +7,11 @@ This C# console application demonstrates the core capabilities of Azure AI Agent
 | Demo                | Focus                                  | What It Demonstrates                                                                                                                                                                                                        |
 | ------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Basics`            | Core lifecycle                         | Creates an agent, a thread, sends a user message, starts a run, polls status, and lists messages. Shows the minimal synchronous workflow for interacting with Azure AI Agents and how statuses transition until completion. |
-| `EventHandler`      | Streaming events                       | Introduces an event handler to stream granular lifecycle events (run state, step creation, message deltas). Demonstrates incremental token delivery and how to inspect event payloads without waiting for full completion.  |
-| `ResponseFormat`    | Structured output                      | Configures the agent to return a JSON-formatted response via `AgentsResponseFormat`. Illustrates enforcing structured data (e.g. list of planets) suitable for downstream parsing. Highlights response format control.      |
-| `InputFile`         | File input (image)                     | Uploads a local image file and passes it alongside text in a single multi-modal message. Shows file upload with purpose `AGENTS`, constructing mixed content blocks, and processing model vision capabilities.              |
-| `InputUrl`          | URL image input                        | Uses a public image URL with detail level control instead of an uploaded file. Demonstrates sending external resource references directly and contrasts with file-based ingestion.                                          |
-| `InputBase64`       | Data URL image input                   | Converts an image to Base64 and sends it as a `data:` URL. Shows an alternative for inline embedding when direct file upload or external hosting is not desired. Reinforces multi-modal message construction patterns.      |
+| `EventHandler`      | Streaming events                       | Demonstrates polling-based status monitoring as an alternative to streaming. Shows how to check run progress iteratively and inspect status transitions without waiting for full completion.  |
+| `ResponseFormat`    | Structured output                      | Configures the agent to return responses suitable for structured data (e.g. list of planets) for downstream parsing. Highlights response format control through instructions.      |
+| `InputFile`         | File input (image)                     | Uploads a local image file to demonstrate file upload with purpose `AGENTS`. Note: Multimodal messages are handled differently in the C# SDK compared to Python.              |
+| `InputUrl`          | URL image input                        | Demonstrates referencing external image resources. Note: The C# SDK handles image URLs differently than the Python SDK, so this demo adapts the approach.                                          |
+| `InputBase64`       | Data URL image input                   | Demonstrates Base64 encoding of images. Note: The C# SDK does not support data URL images in the same way as Python, so this demo shows the encoding process.      |
 | `Output`            | Post-processing & external integration | Runs an agent, captures its response, then generates a QR code and uploads it to Azure Blob Storage. Demonstrates chaining agent output into application logic and persisting artifacts externally.                         |
 
 ## Prerequisites
@@ -60,10 +60,20 @@ Edit `appsettings.json` to configure your Azure resources:
 ## Key Concepts Demonstrated
 
 - **Agent Lifecycle**: Creating agents, threads, messages, and managing run states
-- **Synchronous vs Streaming**: Polling for completion vs real-time event streaming
-- **Multi-modal Input**: Text, images from files, URLs, and Base64-encoded data
-- **Response Formatting**: Structured JSON output for downstream processing
+- **Synchronous Polling**: Checking run completion through status polling
+- **File Upload**: Uploading files to Azure AI Agent Service
+- **Response Processing**: Capturing and using agent responses
 - **External Integration**: Post-processing agent responses and uploading to Azure Storage
+
+## Implementation Notes
+
+This C# implementation uses the `Azure.AI.Agents.Persistent` SDK which has some differences from the Python SDK:
+
+- **Multimodal Messages**: The C# SDK does not support multimodal message content blocks (combining text and images) in the same way as Python. Demos 4-6 have been adapted to demonstrate file uploads and referencing, but not direct image analysis.
+- **Streaming**: The C# SDK has a different streaming API. Demo 2 uses status polling instead of event streaming to demonstrate monitoring run progress.
+- **Response Format**: JSON response formatting is controlled through agent instructions rather than explicit response format parameters.
+
+Despite these differences, all core agent functionality is demonstrated, including agent creation, thread management, message handling, and external integration.
 
 ## Project Structure
 
@@ -73,11 +83,11 @@ agent-basics/
 │   └── AppConfig.cs              # Configuration model
 ├── Services/
 │   ├── AgentRunnerBasics.cs      # Core lifecycle demo
-│   ├── AgentRunnerEventHandler.cs # Streaming events demo
+│   ├── AgentRunnerEventHandler.cs # Status monitoring demo
 │   ├── AgentRunnerResponseFormat.cs # Structured output demo
-│   ├── AgentRunnerInputFile.cs   # File input demo
-│   ├── AgentRunnerInputUrl.cs    # URL input demo
-│   ├── AgentRunnerInputBase64.cs # Base64 input demo
+│   ├── AgentRunnerInputFile.cs   # File upload demo
+│   ├── AgentRunnerInputUrl.cs    # URL reference demo
+│   ├── AgentRunnerInputBase64.cs # Base64 encoding demo
 │   └── AgentRunnerOutput.cs      # External integration demo
 ├── assets/
 │   └── soi.jpg                   # Sample image for demos
