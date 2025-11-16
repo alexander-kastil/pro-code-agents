@@ -1,18 +1,12 @@
 import os
+import time
 from dotenv import load_dotenv
-from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import (
-    FilePurpose,
-    FileSearchTool,
-    ListSortOrder,
-    RunAdditionalFieldList,
-    RunStepFileSearchToolCall,
-    RunStepToolCallDetails,
-)
 from azure.identity import DefaultAzureCredential
-
+from azure.ai.projects import AIProjectClient
+from azure.ai.agents.models import ListSortOrder
 
 def main():
+
     # Clear the console to keep the output focused on the agent interaction
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -24,109 +18,61 @@ def main():
     print(f"Using endpoint: {endpoint}")
     print(f"Using model: {model}")
 
-    asset_file_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "assets", "product-info.md")
-    )
-
-    project_client = AIProjectClient(
+    # Connect to the Azure AI Foundry project
+    agents_client = AIProjectClient(
         endpoint=endpoint,
-        credential=DefaultAzureCredential(),
+        credential=DefaultAzureCredential()
     )
+    with agents_client:
 
-    with project_client:
-        agents_client = project_client.agents
-
-        # Upload file and create vector store
-        # [START upload_file_create_vector_store_and_agent_with_file_search_tool]
-        file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
-        print(f"Uploaded file, file ID: {file.id}")
-
-        vector_store = agents_client.vector_stores.create_and_poll(file_ids=[file.id], name="my_vectorstore")
-        print(f"Created vector store, vector store ID: {vector_store.id}")
-
-        # Create file search tool with resources followed by creating agent
-        file_search = FileSearchTool(vector_store_ids=[vector_store.id])
-
-        agent = agents_client.create_agent(
+        agent = agents_client.agents.create_agent(
             model=model,
-            name="my-agent",
-            instructions="Hello, you are helpful agent and can search information from uploaded files",
-            tools=file_search.definitions,
-            tool_resources=file_search.resources,
+            name="basic-agent",
+            instructions="You are helpful agent"
         )
-        # [END upload_file_create_vector_store_and_agent_with_file_search_tool]
 
-        print(f"Created agent, ID: {agent.id}")
+        print(f"Created agent: {agent.name}, ID: {agent.id}")
 
-        # Create thread for communication
-        thread = agents_client.threads.create()
-        print(f"Created thread, ID: {thread.id}")
+        # Create a thread for the conversation
+        thread = agents_client.agents.threads.create()
+        print(f"Created thread, thread ID: {thread.id}")
 
-        # Create message to thread
-        message = agents_client.messages.create(
-            thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?"
-        )
-        print(f"Created message, ID: {message.id}")
-
-        # Create and process agent run in thread with tools
-        run = agents_client.runs.create_and_process(
+        # [START create_message]
+        message = agents_client.agents.messages.create(
             thread_id=thread.id,
-            agent_id=agent.id,
+            role="user",
+            content="Hello, tell me a joke"
         )
-        print(f"Run finished with status: {run.status}")
+        # [END create_message]
+        print(f"Created message, message ID: {message.id}")
+
+        # [START create_run]
+        run = agents_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
+
+        # Poll the run as long as run status is queued or in progress
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            # Wait for a second between status checks
+            time.sleep(1)
+            run = agents_client.agents.runs.get(thread_id=thread.id, run_id=run.id)
+            # [END create_run]
+            print(f"Run status: {run.status}")
 
         if run.status == "failed":
-            # Check if you got "Rate limit is exceeded.", then you want to get more quota
-            print(f"Run failed: {run.last_error}")
+            print(f"Run error: {run.last_error}")
 
-        # [START teardown]
-        # Delete the file when done
-        agents_client.vector_stores.delete(vector_store.id)
-        print("Deleted vector store")
-
-        agents_client.files.delete(file_id=file.id)
-        print("Deleted file")
-
-        # Delete the agent when done
-        agents_client.delete_agent(agent.id)
+        agents_client.agents.delete_agent(agent.id)
         print("Deleted agent")
-        # [END teardown]
 
-        for run_step in agents_client.run_steps.list(
-            thread_id=thread.id, run_id=run.id, include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
-        ):
-            if isinstance(run_step.step_details, RunStepToolCallDetails):
-                for tool_call in run_step.step_details.tool_calls:
-                    if (
-                        isinstance(tool_call, RunStepFileSearchToolCall)
-                        and tool_call.file_search
-                        and tool_call.file_search.results
-                        and tool_call.file_search.results[0].content
-                        and tool_call.file_search.results[0].content[0].text
-                    ):
-                        print(
-                            "The search tool has found the next relevant content in "
-                            f"the file {tool_call.file_search.results[0].file_name}:"
-                        )
-                        # Note: technically we may have several search results, however in our example
-                        # we only have one file, so we are taking the only result.
-                        print(tool_call.file_search.results[0].content[0].text)
-                        print("===============================================================")
-
-        # Fetch and log all messages
-        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-
-        # Print last messages from the thread
-        file_name = os.path.split(asset_file_path)[-1]
+        # [START list_messages]
+        messages = agents_client.agents.messages.list(
+            thread_id=thread.id,
+            order=ListSortOrder.ASCENDING
+        )
         for msg in messages:
             if msg.text_messages:
-                last_text = msg.text_messages[-1].text.value
-                for annotation in msg.text_messages[-1].text.annotations:
-                    citation = (
-                        file_name if annotation.file_citation.file_id == file.id else annotation.file_citation.file_id
-                    )
-                    last_text = last_text.replace(annotation.text, f" [{citation}]")
-                print(f"{msg.role}: {last_text}")
+                last_text = msg.text_messages[-1]
+                print(f"{msg.role}: {last_text.text.value}")
+        # [END list_messages]
 
 
 if __name__ == '__main__':
