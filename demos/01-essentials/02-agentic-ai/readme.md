@@ -1,12 +1,12 @@
 # Agentic AI Fundamentals
 
-- Overview Agents & Agentic AI
+- What Are Agents & Agentic AI?
 - Prompt Engineering vs Context Engineering
-- Knowledge & Agentic Retrieval Augmented Generation
-- Function Calling, REST & Model Context Protocol Servers (MCP)
-- Evaluate generative AI Performance
-- Multi Agent Solutions & Orchestration
-- Agents Governance & Guardrails
+- Knowledge Integration & Agentic RAG
+- Function Calling, REST APIs & MCP Servers
+- Evaluating Generative AI Performance
+- Multi-Agent Solutions & Orchestration Patterns
+- Governance & Guardrails for Responsible Agents
 
 ## Links & Resources
 

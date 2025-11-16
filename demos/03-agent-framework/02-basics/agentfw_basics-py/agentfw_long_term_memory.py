@@ -11,7 +11,8 @@ from openai import AsyncAzureOpenAI
 load_dotenv('.env')
 
 # File for persisting memory profile only
-MEMORY_FILE = "ai_memory_profile.json"
+OUTPUT_PATH = os.getenv("OUTPUT_PATH", "./output")
+MEMORY_FILE = os.path.join(OUTPUT_PATH, "ai_memory_profile.json")
 
 class AIMemoryExtractor(ContextProvider):
     """
@@ -49,6 +50,9 @@ class AIMemoryExtractor(ContextProvider):
     def _save_profile(self):
         """Save user profile to JSON file."""
         try:
+            # Ensure output directory exists
+            os.makedirs(os.path.dirname(self.memory_file), exist_ok=True)
+            
             data = {
                 'timestamp': datetime.now().isoformat(),
                 'profile': self.user_profile
