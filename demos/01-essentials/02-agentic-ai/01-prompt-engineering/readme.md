@@ -1,10 +1,18 @@
 # Prompt Engineering for Agentic AI
 
-This folder contains a comprehensive Jupyter notebook demonstrating prompt engineering techniques for working with agentic AI models using Azure AI Foundry.
+This folder contains comprehensive Jupyter notebooks demonstrating prompt engineering techniques and advanced agentic AI patterns using Azure AI Foundry.
 
 ## Contents
 
-- `prompt-engineering.ipynb` - Interactive Jupyter notebook with examples and exercises
+### Notebooks
+
+- `prompt-engineering.ipynb` - Interactive Jupyter notebook with prompt engineering examples and exercises
+- `agentic-rag.ipynb` - **NEW**: Agentic Retrieval-Augmented Generation patterns and techniques
+- `deep-reasoning.ipynb` - **NEW**: Deep reasoning capabilities including Chain-of-Thought, Tree of Thoughts, and Self-Consistency
+- `react-framework.ipynb` - **NEW**: ReAct (Reasoning and Acting) framework for building autonomous agents
+
+### Configuration and Setup
+
 - `requirements.txt` - Python dependencies
 - `.env.copy` - Environment configuration template
 - `setup.sh` - Setup script for Linux/macOS
@@ -92,36 +100,68 @@ You can find these values in your Azure AI Foundry project settings.
 
 ## Notebook Topics
 
-The notebook covers the following prompt engineering techniques:
+### Prompt Engineering (`prompt-engineering.ipynb`)
 
-### 1. Introduction to Prompt Engineering
-- What is prompt engineering and why it matters
-- Importance for agentic AI systems
+Covers fundamental prompt engineering techniques:
 
-### 2. Basic Prompt Structures
-- Vague vs. specific prompts
-- Role-based prompting
-- Output format control
+1. **Introduction to Prompt Engineering** - What is prompt engineering and why it matters
+2. **Basic Prompt Structures** - Vague vs. specific prompts, role-based prompting, output format control
+3. **Prompt Refinement Techniques** - Few-shot learning, using delimiters and structure, temperature control
+4. **Chain of Thought Prompting** - Basic CoT, few-shot CoT, self-consistency techniques
+5. **Advanced Patterns** - Instruction following with constraints, iterative refinement, meta-prompting
+6. **Best Practices Summary** - Key principles and practical exercises
 
-### 3. Prompt Refinement Techniques
-- Few-shot learning (zero-shot vs. few-shot)
-- Using delimiters and structure
-- Temperature control for creativity vs. consistency
+### Agentic RAG (`agentic-rag.ipynb`)
 
-### 4. Chain of Thought Prompting
-- Basic chain of thought
-- Few-shot chain of thought
-- Self-consistency techniques
+Demonstrates building intelligent RAG systems with agent capabilities:
 
-### 5. Advanced Patterns
-- Instruction following with constraints
-- Iterative refinement through conversation
-- Meta-prompting (asking AI to improve prompts)
+1. **Introduction to Agentic RAG** - Understanding agentic vs. traditional RAG
+2. **Traditional RAG vs. Agentic RAG** - Side-by-side comparison
+3. **Building an Agentic RAG System** - Query decomposition, query reformulation, iterative retrieval
+4. **Advanced Agentic RAG Patterns** - Corrective RAG (self-correction), adaptive retrieval strategies
+5. **Production Best Practices** - Implementation guidance and optimization techniques
 
-### 6. Best Practices Summary
-- Key principles of effective prompt engineering
-- Best practices for agentic AI
-- Practical exercises
+**Key Features:**
+- Dynamic query planning and reformulation
+- Self-reflection and iterative refinement
+- Multi-step reasoning for complex questions
+- Transparent reasoning traces
+
+### Deep Reasoning (`deep-reasoning.ipynb`)
+
+Explores advanced reasoning techniques for complex problem-solving:
+
+1. **Chain-of-Thought Reasoning** - Basic CoT, few-shot CoT, complex problem solving
+2. **Tree of Thoughts** - Generating and evaluating multiple reasoning paths
+3. **Self-Consistency** - Multiple reasoning paths with majority voting
+4. **Multi-Step Problem Solving** - Least-to-Most prompting for complex problems
+5. **Reasoning with Verification** - Self-verification and multi-agent verification
+6. **Production Considerations** - Cost, latency, and reliability trade-offs
+
+**Key Techniques:**
+- Chain-of-Thought (CoT)
+- Tree of Thoughts (ToT)
+- Self-Consistency
+- Least-to-Most Prompting
+- Self-Verification
+
+### ReAct Framework (`react-framework.ipynb`)
+
+Implements the Reasoning and Acting framework for autonomous agents:
+
+1. **Introduction to ReAct** - Core concepts: Thought → Action → Observation loop
+2. **Basic ReAct Pattern** - Simple agent implementation
+3. **ReAct with Tool Usage** - Enhanced tool handling and execution
+4. **Multi-Step ReAct Reasoning** - Complex multi-step problem solving
+5. **Error Handling and Recovery** - Robust error recovery mechanisms
+6. **Advanced ReAct Patterns** - ReAct with self-reflection and meta-reasoning
+
+**Key Capabilities:**
+- Interleaved reasoning and acting
+- Tool usage and orchestration
+- Error recovery and adaptation
+- Transparent decision-making traces
+- Self-reflection on progress
 
 ## Key Features
 
@@ -132,14 +172,32 @@ The notebook covers the following prompt engineering techniques:
 
 ## Learning Objectives
 
-After completing this notebook, you will be able to:
+After completing these notebooks, you will be able to:
 
+### General Skills
 1. Understand the fundamentals of prompt engineering for AI models
 2. Design effective prompts for different use cases
-3. Apply chain of thought reasoning to complex problems
-4. Use few-shot learning to improve model consistency
-5. Control model output through temperature and constraints
-6. Iterate and refine prompts for optimal results
+3. Control model output through temperature and constraints
+4. Iterate and refine prompts for optimal results
+
+### Agentic RAG Skills
+5. Build RAG systems with autonomous decision-making capabilities
+6. Implement query decomposition and reformulation strategies
+7. Create self-reflecting retrieval systems
+8. Apply corrective and adaptive retrieval patterns
+
+### Deep Reasoning Skills
+9. Apply Chain-of-Thought reasoning to complex problems
+10. Implement Tree of Thoughts for exploring multiple solution paths
+11. Use Self-Consistency to improve answer accuracy
+12. Break down complex problems using Least-to-Most prompting
+13. Build self-verification systems
+
+### ReAct Framework Skills
+14. Implement the ReAct (Reasoning and Acting) pattern
+15. Build agents that use tools autonomously
+16. Handle errors and recovery in agent systems
+17. Create transparent, explainable agent behaviors
 
 ## Troubleshooting
 
@@ -158,9 +216,31 @@ After completing this notebook, you will be able to:
 
 ## Additional Resources
 
+### General Resources
 - [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-studio/)
 - [OpenAI Best Practices for Prompt Engineering](https://platform.openai.com/docs/guides/prompt-engineering)
 - [Prompt Engineering Guide](https://www.promptingguide.ai/)
+
+### Agentic RAG Resources
+- [Agentic Retrieval in Azure AI Search](https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/introducing-agentic-retrieval-in-azure-ai-search/4414677)
+- [Azure AI Search Documentation](https://learn.microsoft.com/azure/search/)
+- [RAG Patterns and Best Practices](https://learn.microsoft.com/azure/ai-studio/concepts/retrieval-augmented-generation)
+
+### Deep Reasoning Resources
+- [Chain-of-Thought Prompting Paper](https://arxiv.org/abs/2201.11903)
+- [Tree of Thoughts Paper](https://arxiv.org/abs/2305.10601)
+- [Self-Consistency Improves Chain of Thought](https://arxiv.org/abs/2203.11171)
+- [Least-to-Most Prompting Paper](https://arxiv.org/abs/2205.10625)
+
+### ReAct Framework Resources
+- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
+- [Microsoft Agent Framework](https://learn.microsoft.com/azure/ai-studio/)
+- [Azure AI Foundry Agents](https://learn.microsoft.com/azure/ai-studio/concepts/agents)
+
+### Related Course Materials
+- See `demos/01-essentials/02-agentic-ai/02-rag/` for production RAG implementations
+- See `demos/01-essentials/02-agentic-ai/03-evaluations/` for evaluation techniques
+- See `demos/03-agent-framework/` for Microsoft Agent Framework examples
 
 ## Contributing
 
