@@ -4,15 +4,8 @@ using Microsoft.ApplicationInsights;
 
 namespace FoodApp
 {
-    public class AILogger
+    public class AILogger(TelemetryClient ai)
     {
-        private TelemetryClient ai;
-
-        public AILogger(TelemetryClient tc)
-        {
-            ai = tc;
-        }
-
         public void LogEvent(string text, string param)
         {
             var props = new Dictionary<string, string> { { text, param } };
@@ -28,6 +21,5 @@ namespace FoodApp
         {
             ai.TrackEvent(text, arr);
         }
-
     }
 }

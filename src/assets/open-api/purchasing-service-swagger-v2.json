@@ -1,0 +1,344 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Purchasing Service",
+        "version": "1.0",
+        "description": "APIs to request supplier offers and read supplier information for purchasing scenarios"
+    },
+    "host": "purchasing-service-dev.azurewebsites.net",
+    "schemes": [
+        "https"
+    ],
+    "paths": {
+        "/api/Purchasing/offer": {
+            "post": {
+                "tags": [
+                    "Purchasing"
+                ],
+                "summary": "Create supplier offer",
+                "description": "Creates an offer by submitting requested products for a specific supplier",
+                "operationId": "CreateOffer",
+                "consumes": [
+                    "application/json",
+                    "text/json",
+                    "application/*+json"
+                ],
+                "produces": [
+                    "text/plain",
+                    "application/json",
+                    "text/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Offer request payload containing supplier and requested products",
+                        "schema": {
+                            "$ref": "#/definitions/OfferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Offer successfully generated",
+                        "schema": {
+                            "$ref": "#/definitions/OfferResponse"
+                        }
+                    }
+                },
+                "x-ms-openai-data": {
+                    "openai-enabled": true,
+                    "operations": [
+                        {
+                            "x-ms-require-user-confirmation": false
+                        }
+                    ]
+                }
+            }
+        },
+        "/api/Suppliers": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "List suppliers",
+                "description": "Returns all suppliers available to the purchasing service",
+                "operationId": "GetSuppliers",
+                "produces": [
+                    "text/plain",
+                    "application/json",
+                    "text/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suppliers returned successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Supplier"
+                            }
+                        }
+                    }
+                },
+                "x-ms-openai-data": {
+                    "openai-enabled": true,
+                    "operations": [
+                        {
+                            "x-ms-require-user-confirmation": false
+                        }
+                    ]
+                }
+            }
+        },
+        "/api/Suppliers/{id}": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Get supplier by ID",
+                "description": "Fetches a supplier using its numeric identifier",
+                "operationId": "GetSupplierById",
+                "produces": [
+                    "text/plain",
+                    "application/json",
+                    "text/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique supplier identifier",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supplier returned successfully",
+                        "schema": {
+                            "$ref": "#/definitions/Supplier"
+                        }
+                    }
+                },
+                "x-ms-openai-data": {
+                    "openai-enabled": true,
+                    "operations": [
+                        {
+                            "x-ms-require-user-confirmation": false
+                        }
+                    ]
+                }
+            }
+        },
+        "/api/Suppliers/by-name/{name}": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Get supplier by name",
+                "description": "Fetches a supplier using its company name",
+                "operationId": "GetSupplierByName",
+                "produces": [
+                    "text/plain",
+                    "application/json",
+                    "text/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "Supplier company name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supplier returned successfully",
+                        "schema": {
+                            "$ref": "#/definitions/Supplier"
+                        }
+                    }
+                },
+                "x-ms-openai-data": {
+                    "openai-enabled": true,
+                    "operations": [
+                        {
+                            "x-ms-require-user-confirmation": false
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "definitions": {
+        "OfferProductRequest": {
+            "type": "object",
+            "required": [
+                "productName"
+            ],
+            "properties": {
+                "productName": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "requestedAmount": {
+                    "type": "integer",
+                    "format": "int32",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                }
+            },
+            "additionalProperties": false
+        },
+        "OfferProductResponse": {
+            "type": "object",
+            "properties": {
+                "productName": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "basePrice": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "offeredPrice": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "requestedAmount": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "offeredAmount": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "deliveryDurationDays": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "isAvailable": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "OfferRequest": {
+            "type": "object",
+            "required": [
+                "supplierId",
+                "offerRequestId",
+                "products"
+            ],
+            "properties": {
+                "supplierId": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "offerRequestId": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "products": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/OfferProductRequest"
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "OfferResponse": {
+            "type": "object",
+            "properties": {
+                "offerRequestId": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "supplier": {
+                    "$ref": "#/definitions/Supplier"
+                },
+                "transportationCost": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "generatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OfferProductResponse"
+                    },
+                    "x-nullable": true
+                }
+            },
+            "additionalProperties": false
+        },
+        "Supplier": {
+            "type": "object",
+            "properties": {
+                "supplierId": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "companyName": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "contactName": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "contactTitle": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "address": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "city": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "region": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "postalCode": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "country": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "phone": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "eMail": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "homePage": {
+                    "type": "string",
+                    "x-nullable": true
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "x-ms-openai-manifest": {
+        "humanName": "Purchasing Service",
+        "modelDescription": "APIs to request supplier offers and list suppliers",
+        "contactEmail": "",
+        "legalUrl": ""
+    },
+    "securityDefinitions": {}
+}

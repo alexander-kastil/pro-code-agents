@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,13 +10,8 @@ namespace FoodApi
     //dotnet-ef migrations add MIGRATION-NAME
     //dotnet-ef database update
 
-    public class FoodDBContext : DbContext //Use DbContext if not using Identity
+    public class FoodDBContext(DbContextOptions<FoodDBContext> options) : DbContext(options)
     {
-        public FoodDBContext(DbContextOptions<FoodDBContext> options) : base(options)
-        {
-            Database.EnsureCreated();
-        }
-
         public DbSet<FoodItem> Food { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,7 +25,7 @@ namespace FoodApi
                 MinStock = 3,
                 Price = 12m,
                 Code = "btc",
-                Description = "Tender chicken simmered in a smoky tomato-butter sauce that’s bright with garam masala. Each bite balances gentle heat with velvety richness, making it a comfort dish you’ll keep dipping naan into.",
+                Description = "Tender chicken simmered in a smoky tomato-butter sauce that's bright with garam masala. Each bite balances gentle heat with velvety richness, making it a comfort dish you'll keep dipping naan into.",
                 PictureUrl = "https://m365copilotdev.blob.core.windows.net/food/butter-chicken.jpg"
             });
             list.Add(new FoodItem
@@ -52,7 +47,7 @@ namespace FoodApi
                 MinStock = 6,
                 Price = 18m,
                 Code = "ws",
-                Description = "A paper-thin veal cutlet fried until the golden crust crackles at the first bite. Finished with a squeeze of lemon, it’s a plate that brings alpine coziness and Oktoberfest swagger to the table.",
+                Description = "A paper-thin veal cutlet fried until the golden crust crackles at the first bite. Finished with a squeeze of lemon, it's a plate that brings alpine coziness and Oktoberfest swagger to the table.",
                 PictureUrl = "https://m365copilotdev.blob.core.windows.net/food/wiener-schnitzel.jpg"
             });
             list.Add(new FoodItem
@@ -113,7 +108,7 @@ namespace FoodApi
             list.Add(new FoodItem
             {
                 ID = 9,
-                Name = "Falaffel with Humus",
+                Name = "Falafel with Humus",
                 InStock = 26,
                 MinStock = 6,
                 Price = 9m,

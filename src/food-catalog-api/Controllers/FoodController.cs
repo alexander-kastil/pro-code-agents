@@ -11,22 +11,15 @@ namespace FoodApi
 {
     [Route("[controller]")]
     [ApiController]
-    public class FoodController : ControllerBase
+    public class FoodController(FoodDBContext Ctx, IConfiguration config) : ControllerBase
     {
-        public FoodController(FoodDBContext context, IConfiguration config)
-        {
-            ctx = context;
-            cfg = config.Get<FoodConfig>();
-        }
-
-        FoodDBContext ctx;
-        FoodConfig cfg;
+        private FoodConfig Cfg { get; } = config.Get<FoodConfig>();
 
         // http://localhost:PORT/food
         [HttpGet()]
         public IEnumerable<FoodItem> GetFood()
         {
-            return ctx.Food.ToArray();
+            return Ctx.Food.ToArray();
         }
 
         // GET /food/byname?name=Apple
@@ -35,7 +28,7 @@ namespace FoodApi
         {
             if (string.IsNullOrWhiteSpace(name))
                 return BadRequest("Name parameter is required.");
-            var items = ctx.Food.Where(f => f.Name.Contains(name)).ToList();
+            var items = Ctx.Food.Where(f => f.Name.Contains(name)).ToList();
             if (items.Count == 0)
                 return NotFound();
             return Ok(items);
@@ -45,17 +38,17 @@ namespace FoodApi
         [HttpGet("{id}")]
         public FoodItem GetById(int id)
         {
-            return ctx.Food.FirstOrDefault(v => v.ID == id);
+            return Ctx.Food.FirstOrDefault(v => v.ID == id);
         }
 
         // http://localhost:PORT/food
         [HttpPost()]
         public FoodItem InsertFood(FoodItem item)
         {
-            ctx.Food.Add(item);
-            ctx.SaveChanges();
+            Ctx.Food.Add(item);
+            Ctx.SaveChanges();
 
-            if (cfg.FeatureManagement.PublishEvents)
+            if (Cfg.FeatureManagement.PublishEvents)
             {
                 Console.WriteLine("Publishing event to Service Bus - mock");
             }
@@ -66,11 +59,11 @@ namespace FoodApi
         [HttpPut()]
         public FoodItem UpdateFood(FoodItem item)
         {
-            ctx.Food.Attach(item);
-            ctx.Entry(item).State = EntityState.Modified;
-            ctx.SaveChanges();
+            Ctx.Food.Attach(item);
+            Ctx.Entry(item).State = EntityState.Modified;
+            Ctx.SaveChanges();
 
-            if (cfg.FeatureManagement.PublishEvents)
+            if (Cfg.FeatureManagement.PublishEvents)
             {
                 Console.WriteLine("Publishing event to Service Bus - mock");
             }
@@ -84,11 +77,11 @@ namespace FoodApi
             var item = GetById(id);
             if (item != null)
             {
-                ctx.Remove(item);
-                ctx.SaveChanges();
+                Ctx.Remove(item);
+                Ctx.SaveChanges();
             }
 
-            if (cfg.FeatureManagement.PublishEvents)
+            if (Cfg.FeatureManagement.PublishEvents)
             {
                 Console.WriteLine("Publishing event to Service Bus - mock");
             }
@@ -99,11 +92,11 @@ namespace FoodApi
         [HttpPatch("{id}/update-instock")]
         public ActionResult<FoodItem> UpdateInStock(int id, [FromQuery] int amount)
         {
-            var item = ctx.Food.FirstOrDefault(f => f.ID == id);
+            var item = Ctx.Food.FirstOrDefault(f => f.ID == id);
             if (item == null)
                 return NotFound();
             item.InStock += amount;
-            ctx.SaveChanges();
+            Ctx.SaveChanges();
             return Ok(item);
         }
     }

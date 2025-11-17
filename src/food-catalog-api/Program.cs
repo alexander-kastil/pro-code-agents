@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,19 +42,22 @@ if (string.IsNullOrWhiteSpace(connectionString))
     throw new InvalidOperationException("Connection string 'DefaultDatabase' is not configured.");
 }
 
-builder.Services.AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString));
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<FoodDBContext>(options => options.UseSqlite("Data Source=foodcatalog.db"));
+}
+else
+{
+    builder.Services.AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString));
+}
 
 //Microsoft Identity auth
 var az = Configuration.GetSection("Azure");
 
 builder.Services.AddControllers();
 
-// Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Food-Catalog-Api", Version = "v1" });
-});
+// OpenAPI
+builder.Services.AddOpenApi();
 
 // Cors
 builder.Services.AddCors(o => o.AddPolicy("nocors", builder =>
@@ -73,15 +75,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.MapOpenApi();
+    app.UseSwaggerUi(options =>
+    {
+        options.DocumentPath = "/openapi/v1.json";
+        options.Path = "";
+    });
 }
-
-// Swagger
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Food-Api");
-    c.RoutePrefix = string.Empty;
-});
 
 //Cors and Routing
 app.UseCors("nocors");
