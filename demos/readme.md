@@ -62,7 +62,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 - Introduction to Azure AI Foundry Agent Service
 - Threads, Runs, Messages: Managing Inputs & Outputs
-- Knowledge Integration: Foundty IQ, File Search, Azure AI Search, Bing Grounding ...
+- Knowledge Integration: Foundry IQ, File Search, Azure AI Search, Bing Grounding ...
 - Executing Actions with Tools: Code Interpreter, Azure Functions, OpenAPI & MCP
 - Automating UI Tasks using Browser Automation and Computer Use
 - Tracing, Observability & Performance Evaluation
