@@ -72,7 +72,7 @@ git submodule update --init --recursive
 
 ## Coding Standards
 
-### General Principles
+This repository uses modular coding standards organized by technology area. All standards follow these general principles:
 
 1. **Educational Focus**: Code should be clear and well-documented for learning purposes
 2. **Minimal Changes**: When making updates, preserve existing structure and patterns
@@ -80,20 +80,87 @@ git submodule update --init --recursive
 4. **Consistency**: Match the coding style of existing files in the same module
 5. **Minimal Error Handling**: Use only absolutely necessary error handling - these are demos and excessive try-catch blocks make code hard to read and understand
 
-### Python Style
+### Coding Standards Reference
 
+For detailed coding standards, refer to the following documents in `.github/coding-standards/`:
+
+- **[General Coding Standards](.github/coding-standards/general.md)**: Common standards for all languages including:
+  - Code organization and file naming
+  - Documentation standards (README files, code comments)
+  - Configuration management (.env for Python, appsettings.json for C#)
+  - Error handling patterns
+  - Dependency management
+  - Version control and Git practices
+  - Testing standards
+  - Security best practices
+
+- **[Azure AI Foundry Standards](.github/coding-standards/azure-ai-foundry.md)**: Standards for Azure AI Foundry projects:
+  - Python: SDK usage, client initialization, async patterns
+  - C#: Configuration, Azure AI Inference, async/await patterns
+  - RAG implementation patterns
+  - Performance and security considerations
+
+- **[MCP Development Standards](.github/coding-standards/mcp-development.md)**: Model Context Protocol server development:
+  - Python: FastMCP framework, tool definitions, logging
+  - C#: MCP server implementation, tool registration
+  - Complete server examples
+  - Startup scripts and deployment
+
+- **[Agent Service Standards](.github/coding-standards/agent-service.md)**: Azure AI Foundry Agent Service:
+  - Agent creation and configuration
+  - Thread management and conversation handling
+  - Function calling and tool integration
+  - File handling and knowledge bases
+  - Multi-agent systems and orchestration
+  - Observability and monitoring
+
+- **[Agent Framework Standards](.github/coding-standards/agent-framework.md)**: Microsoft Agent Framework:
+  - Client initialization and agent creation
+  - Chat interactions and streaming
+  - Tools, plugins, and structured output
+  - Long-term memory and middleware
+  - Workflows and orchestration patterns
+  - Multi-agent collaboration
+
+- **[Pro Code Agents & SDK Standards](.github/coding-standards/pro-code-agents.md)**: Pro-code extensibility and integration:
+  - Microsoft 365 Copilot extensibility (declarative agents, API plugins)
+  - Custom Engine Agents (Teams bots, C# implementation)
+  - Connectors (Node.js/TypeScript message extensions)
+  - Microsoft Agents SDK integration patterns
+  - Service-to-service authentication
+  - Configuration and deployment
+
+- **[Jupyter Notebook Standards](.github/coding-standards/jupyter-notebooks.md)**: Educational notebook guidelines:
+  - Standard notebook structure and organization
+  - Markdown guidelines for explanations
+  - Code cell standards and formatting
+  - Interactive examples and visualizations
+  - Educational best practices
+  - Error handling in notebooks
+  - Testing and validation
+
+### Quick Reference
+
+**Python Projects:**
+- Use `.env` files for configuration
+- Type hints for function parameters and returns
+- `requirements.txt` AND `pyproject.toml` for dependencies
 - Follow PEP 8 guidelines
-- Use type hints where appropriate
-- Keep Jupyter notebooks clean with clear markdown explanations
-- Organize imports: standard library, third-party, local imports
+- Use async/await for Azure SDK operations
 
-### C# / .NET Style
+**C# Projects:**
+- Use `appsettings.json` for configuration (NOT environment variables or user secrets)
+- XML documentation for public APIs
+- PascalCase for classes/methods, camelCase for parameters
+- async/await patterns for all I/O operations
+- .NET 8.0 target framework
 
-- Follow standard C# naming conventions (PascalCase for classes/methods, camelCase for parameters)
-- Use `appsettings.json` for all configuration - never use environment variables or user secrets
-- Keep code simple and focused for educational purposes
-- Use async/await patterns for Azure SDK calls
-- Add XML documentation comments for public APIs
+**Jupyter Notebooks:**
+- Clear structure: Title → ToC → Setup → Content → Summary
+- Progressive complexity in examples
+- Comprehensive explanations in markdown cells
+- Interactive examples with user input
+- Checkpoint cells to verify setup
 
 ### Documentation Style
 
