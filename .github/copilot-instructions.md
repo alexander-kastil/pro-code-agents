@@ -21,9 +21,9 @@ This repository contains training materials for a 5-day class on "Implementing P
 
 ## Tech Stack
 
-- **Python**: Primary language for Azure AI implementations (azure-ai-projects, azure-ai-inference, azure-ai-evaluation, agent-framework)
+- **Python**: Primary language for Azure AI implementations (azure-ai-projects, azure-ai-inference, azure-ai-evaluation, agent-framework) (Python 3.11)
 - **TypeScript/JavaScript**: Used for web applications and Node.js examples
-- **C# / .NET**: Used for some Azure AI Foundry examples
+- **C# / .NET**: Used for some Azure AI Foundry examples (.NET 10)
 - **Azure AI Services**: Azure AI Foundry, Azure AI Agent Service, Azure OpenAI
 - **Microsoft Agent Framework**: For building and orchestrating agents
 - **Model Context Protocol (MCP)**: For implementing custom servers
@@ -40,39 +40,9 @@ The repository is organized into 5 main modules:
 
 ## Development Guidelines
 
-### Building and Testing
-
-- **Python Projects**:
-  - This repository uses `uv` for Python dependency management
-  - **IMPORTANT**: Always maintain synchronized `requirements.txt` and `pyproject.toml` files
-  - Install dependencies: `uv pip install -r requirements.txt` or `uv sync`
-  - Main dependencies: azure-ai-projects, azure-ai-inference, azure-ai-evaluation, agent-framework
-- **C# / .NET Projects**:
-  - Restore dependencies: `dotnet restore`
-  - Build: `dotnet build`
-  - Run: `dotnet run`
-  - **IMPORTANT**: Always use `appsettings.json` for configuration management
-  - Do NOT use environment variables or user secrets
-  - Configuration should be in `appsettings.json` and optionally `appsettings.Development.json`
-  - Use the dotnet cli for managing dependencies and running projects
-
-### Repository Setup
-
-This repository uses Git submodules. When cloning:
-
-```bash
-git clone --recursive https://github.com/alexander-kastil/pro-code-agents.git
-```
-
-If already cloned without recursive flag:
-
-```bash
-git submodule update --init --recursive
-```
-
 ## Coding Standards
 
-### General Principles
+This repository uses modular coding standards organized by technology area. All standards follow these general principles:
 
 1. **Educational Focus**: Code should be clear and well-documented for learning purposes
 2. **Minimal Changes**: When making updates, preserve existing structure and patterns
@@ -80,20 +50,76 @@ git submodule update --init --recursive
 4. **Consistency**: Match the coding style of existing files in the same module
 5. **Minimal Error Handling**: Use only absolutely necessary error handling - these are demos and excessive try-catch blocks make code hard to read and understand
 
-### Python Style
+### Coding Standards Reference
 
-- Follow PEP 8 guidelines
-- Use type hints where appropriate
-- Keep Jupyter notebooks clean with clear markdown explanations
-- Organize imports: standard library, third-party, local imports
+For detailed coding standards, refer to the following documents in `.github/coding-standards/`:
 
-### C# / .NET Style
+- **[General Coding Standards](.github/coding-standards/general.md)**: Common standards for all languages including:
 
-- Follow standard C# naming conventions (PascalCase for classes/methods, camelCase for parameters)
-- Use `appsettings.json` for all configuration - never use environment variables or user secrets
-- Keep code simple and focused for educational purposes
-- Use async/await patterns for Azure SDK calls
-- Add XML documentation comments for public APIs
+  - Code organization and file naming
+  - Documentation standards (README files, code comments)
+  - Configuration management (.env for Python, appsettings.json for C#)
+  - Error handling patterns
+  - Dependency management
+  - Version control and Git practices
+  - Testing standards
+  - Security best practices
+
+- **[Azure AI Foundry Standards](.github/coding-standards/azure-ai-foundry.md)**: Standards for Azure AI Foundry projects:
+
+  - Python: SDK usage, client initialization, async patterns
+  - C#: Configuration, Azure AI Inference, async/await patterns
+  - RAG implementation patterns
+  - Performance and security considerations
+
+- **[MCP Development Standards](.github/coding-standards/mcp-development.md)**: Model Context Protocol server development:
+
+  - Python: FastMCP framework, tool definitions, logging
+  - C#: MCP server implementation, tool registration
+  - Complete server examples
+  - Startup scripts and deployment
+
+- **[Agent Service Standards](.github/coding-standards/agent-service.md)**: Azure AI Foundry Agent Service:
+
+  - Agent creation and configuration
+  - Thread management and conversation handling
+  - Function calling and tool integration
+  - File handling and knowledge bases
+  - Multi-agent systems and orchestration
+  - Observability and monitoring
+
+- **[Agent Framework Standards](.github/coding-standards/agent-framework.md)**: Microsoft Agent Framework:
+
+  - Client initialization and agent creation
+  - Chat interactions and streaming
+  - Tools, plugins, and structured output
+  - Long-term memory and middleware
+  - Workflows and orchestration patterns
+  - Multi-agent collaboration
+
+- **[Pro Code Agents & SDK Standards](.github/coding-standards/pro-code-agents.md)**: Pro-code extensibility and integration:
+
+  - Microsoft 365 Copilot extensibility (declarative agents, API plugins)
+  - Custom Engine Agents (Teams bots, C# implementation)
+  - Connectors (Node.js/TypeScript message extensions)
+  - Microsoft Agents SDK integration patterns
+  - Service-to-service authentication
+  - Configuration and deployment
+
+- **[Jupyter Notebook Standards](.github/coding-standards/jupyter-notebooks.md)**: Educational notebook guidelines:
+  - Standard notebook structure and organization
+  - Markdown guidelines for explanations
+  - Code cell standards and formatting
+  - Interactive examples and visualizations
+  - Educational best practices
+  - Error handling in notebooks
+  - Testing and validation
+
+## Programming Languages / Tech Stack
+
+- [Python Projects](.github/coding-standards/python.md)
+- [C# Projects](.github/coding-standards/csharp.md)
+- [Jupyter Notebooks](.github/coding-standards/jupyter-notebooks.md)
 
 ### Documentation Style
 
@@ -104,13 +130,3 @@ When creating or updating documentation (see `.github/prompts/create-docs.prompt
 - Add architecture diagrams for complex components
 - Follow the bottom-up documentation approach (service → component → project)
 - Use proper markdown code fencing with language identifiers (MD040)
-
-## Custom Prompts
-
-The repository includes custom prompts in `.github/prompts/`:
-
-- `guard.prompt.md`: Basic rules for controlled task execution
-- `create-docs.prompt.md`: Template for generating comprehensive documentation
-- `playwright.prompt.md`: Guidelines for browser automation tasks
-
-Refer to these when working on specific types of tasks.
