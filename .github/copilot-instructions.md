@@ -21,9 +21,9 @@ This repository contains training materials for a 5-day class on "Implementing P
 
 ## Tech Stack
 
-- **Python**: Primary language for Azure AI implementations (azure-ai-projects, azure-ai-inference, azure-ai-evaluation, agent-framework)
+- **Python**: Primary language for Azure AI implementations (azure-ai-projects, azure-ai-inference, azure-ai-evaluation, agent-framework) (Python 3.11)
 - **TypeScript/JavaScript**: Used for web applications and Node.js examples
-- **C# / .NET**: Used for some Azure AI Foundry examples
+- **C# / .NET**: Used for some Azure AI Foundry examples (.NET 10)
 - **Azure AI Services**: Azure AI Foundry, Azure AI Agent Service, Azure OpenAI
 - **Microsoft Agent Framework**: For building and orchestrating agents
 - **Model Context Protocol (MCP)**: For implementing custom servers
@@ -40,36 +40,6 @@ The repository is organized into 5 main modules:
 
 ## Development Guidelines
 
-### Building and Testing
-
-- **Python Projects**:
-  - This repository uses `uv` for Python dependency management
-  - **IMPORTANT**: Always maintain synchronized `requirements.txt` and `pyproject.toml` files
-  - Install dependencies: `uv pip install -r requirements.txt` or `uv sync`
-  - Main dependencies: azure-ai-projects, azure-ai-inference, azure-ai-evaluation, agent-framework
-- **C# / .NET Projects**:
-  - Restore dependencies: `dotnet restore`
-  - Build: `dotnet build`
-  - Run: `dotnet run`
-  - **IMPORTANT**: Always use `appsettings.json` for configuration management
-  - Do NOT use environment variables or user secrets
-  - Configuration should be in `appsettings.json` and optionally `appsettings.Development.json`
-  - Use the dotnet cli for managing dependencies and running projects
-
-### Repository Setup
-
-This repository uses Git submodules. When cloning:
-
-```bash
-git clone --recursive https://github.com/alexander-kastil/pro-code-agents.git
-```
-
-If already cloned without recursive flag:
-
-```bash
-git submodule update --init --recursive
-```
-
 ## Coding Standards
 
 This repository uses modular coding standards organized by technology area. All standards follow these general principles:
@@ -85,6 +55,7 @@ This repository uses modular coding standards organized by technology area. All 
 For detailed coding standards, refer to the following documents in `.github/coding-standards/`:
 
 - **[General Coding Standards](.github/coding-standards/general.md)**: Common standards for all languages including:
+
   - Code organization and file naming
   - Documentation standards (README files, code comments)
   - Configuration management (.env for Python, appsettings.json for C#)
@@ -95,18 +66,21 @@ For detailed coding standards, refer to the following documents in `.github/codi
   - Security best practices
 
 - **[Azure AI Foundry Standards](.github/coding-standards/azure-ai-foundry.md)**: Standards for Azure AI Foundry projects:
+
   - Python: SDK usage, client initialization, async patterns
   - C#: Configuration, Azure AI Inference, async/await patterns
   - RAG implementation patterns
   - Performance and security considerations
 
 - **[MCP Development Standards](.github/coding-standards/mcp-development.md)**: Model Context Protocol server development:
+
   - Python: FastMCP framework, tool definitions, logging
   - C#: MCP server implementation, tool registration
   - Complete server examples
   - Startup scripts and deployment
 
 - **[Agent Service Standards](.github/coding-standards/agent-service.md)**: Azure AI Foundry Agent Service:
+
   - Agent creation and configuration
   - Thread management and conversation handling
   - Function calling and tool integration
@@ -115,6 +89,7 @@ For detailed coding standards, refer to the following documents in `.github/codi
   - Observability and monitoring
 
 - **[Agent Framework Standards](.github/coding-standards/agent-framework.md)**: Microsoft Agent Framework:
+
   - Client initialization and agent creation
   - Chat interactions and streaming
   - Tools, plugins, and structured output
@@ -123,6 +98,7 @@ For detailed coding standards, refer to the following documents in `.github/codi
   - Multi-agent collaboration
 
 - **[Pro Code Agents & SDK Standards](.github/coding-standards/pro-code-agents.md)**: Pro-code extensibility and integration:
+
   - Microsoft 365 Copilot extensibility (declarative agents, API plugins)
   - Custom Engine Agents (Teams bots, C# implementation)
   - Connectors (Node.js/TypeScript message extensions)
@@ -139,28 +115,11 @@ For detailed coding standards, refer to the following documents in `.github/codi
   - Error handling in notebooks
   - Testing and validation
 
-### Quick Reference
+## Programming Languages / Tech Stack
 
-**Python Projects:**
-- Use `.env` files for configuration
-- Type hints for function parameters and returns
-- `requirements.txt` AND `pyproject.toml` for dependencies
-- Follow PEP 8 guidelines
-- Use async/await for Azure SDK operations
-
-**C# Projects:**
-- Use `appsettings.json` for configuration (NOT environment variables or user secrets)
-- XML documentation for public APIs
-- PascalCase for classes/methods, camelCase for parameters
-- async/await patterns for all I/O operations
-- .NET 8.0 target framework
-
-**Jupyter Notebooks:**
-- Clear structure: Title → ToC → Setup → Content → Summary
-- Progressive complexity in examples
-- Comprehensive explanations in markdown cells
-- Interactive examples with user input
-- Checkpoint cells to verify setup
+- [Python Projects](.github/coding-standards/python.md)
+- [C# Projects](.github/coding-standards/csharp.md)
+- [Jupyter Notebooks](.github/coding-standards/jupyter-notebooks.md)
 
 ### Documentation Style
 
@@ -171,13 +130,3 @@ When creating or updating documentation (see `.github/prompts/create-docs.prompt
 - Add architecture diagrams for complex components
 - Follow the bottom-up documentation approach (service → component → project)
 - Use proper markdown code fencing with language identifiers (MD040)
-
-## Custom Prompts
-
-The repository includes custom prompts in `.github/prompts/`:
-
-- `guard.prompt.md`: Basic rules for controlled task execution
-- `create-docs.prompt.md`: Template for generating comprehensive documentation
-- `playwright.prompt.md`: Guidelines for browser automation tasks
-
-Refer to these when working on specific types of tasks.

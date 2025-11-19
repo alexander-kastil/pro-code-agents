@@ -22,7 +22,7 @@ This document provides coding standards for creating educational Jupyter noteboo
 """
 # Prompt Engineering for Agentic AI
 
-This notebook demonstrates prompt engineering techniques for working with 
+This notebook demonstrates prompt engineering techniques for working with
 agentic AI models.
 
 ## Learning Objectives
@@ -49,7 +49,7 @@ agentic AI models.
 
 ### What is Prompt Engineering?
 
-Prompt engineering is the practice of designing and optimizing inputs 
+Prompt engineering is the practice of designing and optimizing inputs
 to AI models to elicit desired responses.
 """
 
@@ -117,7 +117,7 @@ Provide context before and after code cells:
 ```markdown
 ### Creating the Agent
 
-We'll create an agent with specific instructions. The agent will act as 
+We'll create an agent with specific instructions. The agent will act as
 a helpful assistant.
 ```
 
@@ -134,7 +134,7 @@ print(f"Agent ID: {agent.id}")
 ```
 
 ```markdown
-**Output Explanation**: The agent is now created and ready to use. 
+**Output Explanation**: The agent is now created and ready to use.
 Note the agent ID - we'll use this to interact with the agent.
 ```
 
@@ -155,13 +155,13 @@ Use lists for clarity:
 Use markdown quotes for important notes:
 
 ```markdown
-> **Note**: Always store your API keys in environment variables, 
+> **Note**: Always store your API keys in environment variables,
 > never hardcode them in your notebooks.
 
-> **Best Practice**: Create a new thread for each distinct conversation 
+> **Best Practice**: Create a new thread for each distinct conversation
 > to keep context clean.
 
-> **Warning**: Large files may take time to process. 
+> **Warning**: Large files may take time to process.
 > Be patient when uploading documents.
 ```
 
@@ -360,7 +360,7 @@ Include practice exercises:
 ```markdown
 ### Exercise 1: Create Your Own Agent
 
-Try creating an agent with a different persona. 
+Try creating an agent with a different persona.
 Experiment with these instructions:
 
 1. A technical expert who explains concepts with code examples
@@ -398,7 +398,7 @@ try:
         instructions="You are helpful"
     )
     print("✓ Agent created successfully")
-    
+
 except Exception as e:
     print("❌ Error creating agent:")
     print(f"   {str(e)}")
@@ -449,7 +449,7 @@ Use cell tags for organization:
 
 Include dependencies at the top:
 
-```python
+````python
 # Cell tagged as "requirements"
 """
 ## Required Packages
@@ -465,9 +465,11 @@ This notebook requires the following packages:
 Install with:
 ```bash
 pip install -r requirements.txt
-```
+````
+
 """
-```
+
+````
 
 ## Summary Cell Template
 
@@ -503,7 +505,7 @@ In this notebook, we covered:
 - [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-foundry)
 - [Agent Service Guide](https://learn.microsoft.com/azure/ai-foundry/agents)
 - [Best Practices for Agents](https://learn.microsoft.com/azure/ai-foundry/best-practices)
-```
+````
 
 ## Best Practices
 
@@ -540,3 +542,11 @@ Before sharing notebooks:
 4. **Test Examples**: Confirm all code examples run successfully
 5. **Check Formatting**: Ensure markdown renders correctly
 6. **Review Images**: Verify all images display properly
+
+## Quick Reference
+
+- Clear structure: Title → ToC → Setup → Content → Summary
+- Progressive complexity in examples
+- Comprehensive explanations in markdown cells
+- Interactive examples with user input
+- Checkpoint cells to verify setup
