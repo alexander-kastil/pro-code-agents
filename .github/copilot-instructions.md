@@ -54,66 +54,13 @@ This repository uses modular coding standards organized by technology area. All 
 
 For detailed coding standards, refer to the following documents in `.github/coding-standards/`:
 
-- **[General Coding Standards](.github/coding-standards/general.md)**: Common standards for all languages including:
-
-  - Code organization and file naming
-  - Documentation standards (README files, code comments)
-  - Configuration management (.env for Python, appsettings.json for C#)
-  - Error handling patterns
-  - Dependency management
-  - Version control and Git practices
-  - Testing standards
-  - Security best practices
-
-- **[Azure AI Foundry Standards](.github/coding-standards/azure-ai-foundry.md)**: Standards for Azure AI Foundry projects:
-
-  - Python: SDK usage, client initialization, async patterns
-  - C#: Configuration, Azure AI Inference, async/await patterns
-  - RAG implementation patterns
-  - Performance and security considerations
-
-- **[MCP Development Standards](.github/coding-standards/mcp-development.md)**: Model Context Protocol server development:
-
-  - Python: FastMCP framework, tool definitions, logging
-  - C#: MCP server implementation, tool registration
-  - Complete server examples
-  - Startup scripts and deployment
-
-- **[Agent Service Standards](.github/coding-standards/agent-service.md)**: Azure AI Foundry Agent Service:
-
-  - Agent creation and configuration
-  - Thread management and conversation handling
-  - Function calling and tool integration
-  - File handling and knowledge bases
-  - Multi-agent systems and orchestration
-  - Observability and monitoring
-
-- **[Agent Framework Standards](.github/coding-standards/agent-framework.md)**: Microsoft Agent Framework:
-
-  - Client initialization and agent creation
-  - Chat interactions and streaming
-  - Tools, plugins, and structured output
-  - Long-term memory and middleware
-  - Workflows and orchestration patterns
-  - Multi-agent collaboration
-
-- **[Pro Code Agents & SDK Standards](.github/coding-standards/pro-code-agents.md)**: Pro-code extensibility and integration:
-
-  - Microsoft 365 Copilot extensibility (declarative agents, API plugins)
-  - Custom Engine Agents (Teams bots, C# implementation)
-  - Connectors (Node.js/TypeScript message extensions)
-  - Microsoft Agents SDK integration patterns
-  - Service-to-service authentication
-  - Configuration and deployment
-
-- **[Jupyter Notebook Standards](.github/coding-standards/jupyter-notebooks.md)**: Educational notebook guidelines:
-  - Standard notebook structure and organization
-  - Markdown guidelines for explanations
-  - Code cell standards and formatting
-  - Interactive examples and visualizations
-  - Educational best practices
-  - Error handling in notebooks
-  - Testing and validation
+- **[General Coding Standards](.github/coding-standards/general.md)**
+- **[Azure AI Foundry Standards](.github/coding-standards/azure-ai-foundry.md)**
+- **[MCP Development Standards](.github/coding-standards/mcp-development.md)**
+- **[Agent Service Standards](.github/coding-standards/agent-service.md)**
+- **[Agent Framework Standards](.github/coding-standards/agent-framework.md)**
+- **[Pro Code Agents & SDK Standards](.github/coding-standards/pro-code-agents.md)**
+- **[Jupyter Notebook Standards](.github/coding-standards/jupyter-notebooks.md)**
 
 ## Programming Languages / Tech Stack
 
