@@ -1,12 +1,12 @@
-# Building Pro-Code Copilots and Agentic Apps with Azure AI Foundry & Microsoft Agent Framework
+# Building Copilots and Agentic Apps with Microsoft Foundry & Agent Framework
 
 This five-day class is designed for Software Architects & Engineers for Agentic AI Solutions who want to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agents using Microsoft’s latest frameworks and services.
 
-The journey begins with the essentials: you’ll explore the foundations of Copilots, Agents, and the Azure AI Foundry. Learn how to deploy large language models, use the Azure AI Foundry SDK, and evaluate generative AI performance. Early sessions introduce Retrieval Augmented Generation (RAG), prompt and context engineering, and the principles of agentic reasoning and orchestration as well as a good foundation to implement you own MCP Servers.
+The journey begins with the essentials: you'll explore the foundations of Copilots, Agents, and the Microsoft Foundry. Learn how to deploy large language models, use the Microsoft Foundry SDK, and evaluate generative AI performance. Early sessions introduce Retrieval Augmented Generation (RAG), prompt and context engineering, and the principles of agentic reasoning and orchestration as well as a good foundation to implement you own MCP Servers.
 
-Next, you’ll discover how the Azure AI Agent Service provides a scalable, robust platform for hosting agents. You’ll work with threads, runs, and messages, connect action- and knowledge tools, and automate workflows using multi agent solutions connected by agent-to-agent protocols. Security, monitoring, and governance are integrated throughout, ensuring your solutions are enterprise-ready.
+Next, you'll discover how the Foundry Agent Service provides a scalable, robust platform for hosting agents. You'll work with threads, runs, and messages, connect action- and knowledge tools, and automate workflows using multi agent solutions connected by agent-to-agent protocols. Security, monitoring, and governance are integrated throughout, ensuring your solutions are enterprise-ready.
 
-The class then shifts to the Microsoft Agent Framework, where you’ll configure agents, enable multi-modal capabilities, and design complex workflows with branching, checkpoints, and human-in-the-loop patterns. You’ll see how to persistent memory across conversations and enable sophisticated orchestration of Azure AI Foundry Agents.
+The class then shifts to the Microsoft Agent Framework, where you'll configure agents, enable multi-modal capabilities, and design complex workflows with branching, checkpoints, and human-in-the-loop patterns. You'll see how to persistent memory across conversations and enable sophisticated orchestration of Microsoft Foundry Agents.
 
 Moving into pro-code extensibility, you’ll learn about Copilot Connectors as well as Copilot APIs. You will build both declarative and custom engine agents, leverage the Microsoft 365 Agent Toolkit. Finally, you’ll use the Microsoft Agents SDK to bring your agents directly into the Copilot UI, connecting Copilot Studio- and Pro-Code Agents, and deploying your solutions to Copilot Chat, Teams or the channel of your choice.
 
@@ -30,13 +30,13 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 ## Module 1: Copilot & Agent Extensibility Fundamentals
 
-### Azure AI Foundry Essentials
+### Microsoft Foundry Essentials
 
 - Copilots & Agent Frameworks in the Microsoft Ecosystem
 - Hub-Based vs Foundry-Based Projects
-- Deploying LLMs in Azure AI Foundry
+- Deploying LLMs in Microsoft Foundry
 - Model Router: Smart Model Selection
-- Azure AI Foundry SDK & Microsoft.Extensions.AI
+- Microsoft Foundry SDK & Microsoft.Extensions.AI
 - Retrieval-Augmented Generation (RAG) and Azure AI Search
 - Infrastructure as Code (IaC) using Azure Developer CLI
 
@@ -58,9 +58,9 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Authentication & Security Best Practices
 - Hosting MCP in Azure & API Management Integration
 
-## Module 2: Build Agents using Azure AI Foundry Agent Service
+## Module 2: Build Agents using Foundry Agent Service
 
-- Introduction to Azure AI Foundry Agent Service
+- Introduction to Foundry Agent Service
 - Threads, Runs, Messages: Managing Inputs & Outputs
 - Knowledge Integration: Foundry IQ, File Search, Azure AI Search, Bing Grounding ...
 - Executing Actions with Tools: Code Interpreter, Azure Functions, OpenAPI & MCP
@@ -76,7 +76,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Introduction to the Agent Framework
 - Chat Clients vs Agents: Key differences
 - Agent types and configuration essentials
-- Integrating Azure AI Foundry agents
+- Integrating Microsoft Foundry agents
 - Threads, Conversation management & persistence
 - Implementing long-term memory
 - Governance, Middleware & Observability
@@ -136,7 +136,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Copilot is the UI for Agents & AI
 - Overview Microsoft Agents SDK
 - Connecting Copilot Studio Agents using Microsoft Agent SDK
-- Connecting Azure AI Foundry Agents
+- Connecting Microsoft Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
 - Front-End Integration using Agent–User Interaction (AG-UI) Protocol

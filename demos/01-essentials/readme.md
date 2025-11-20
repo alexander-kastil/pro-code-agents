@@ -1,12 +1,12 @@
-# Module 1: Copilot, Agents & Azure AI Foundry Essentials
+# Module 1: Copilot, Agents & Microsoft Foundry Essentials
 
-## Azure AI Foundry Essentials
+## Microsoft Foundry Essentials
 
 - Copilots & Agent Frameworks in the Microsoft Ecosystem
 - Hub-Based vs Foundry-Based Projects
-- Deploying LLMs in Azure AI Foundry
+- Deploying LLMs in Microsoft Foundry
 - Model Router: Smart Model Selection
-- Azure AI Foundry SDK & Microsoft.Extensions.AI
+- Microsoft Foundry SDK & Microsoft.Extensions.AI
 - Retrieval-Augmented Generation (RAG) Basics
 - Rapid Prototyping with Jupyter Notebooks
 - Agentic Infrastructure as Code (IaC) using Azure Developer CLI

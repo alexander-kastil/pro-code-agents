@@ -5,7 +5,7 @@
 - Introduction to the Agent Framework
 - Chat Clients vs Agents: Key differences
 - Agent types and configuration essentials
-- Integrating Azure AI Foundry agents
+- Integrating Microsoft Foundry agents
 - Threads, conversation persistence, and memory
 - Governance, Middleware & Observability
 - Multi-modal capabilities and structured outputs
@@ -32,4 +32,4 @@
 
 - Orchestration Patterns (Sequential, Concurrent, ...)
 - Multi-Agent coordination
-- Orchestrate Azure AI Foundry Agents
+- Orchestrate Microsoft Foundry Agents

@@ -1,6 +1,6 @@
-# Module 2: Implementing Agents using Azure AI Foundry Agent Service
+# Module 2: Implementing Agents using Foundry Agent Service
 
-- Introduction to Azure AI Foundry Agent Service
+- Introduction to Foundry Agent Service
 - Threads, Runs, Messages: Managing Inputs & Outputs
 - Knowledge Integration: File Search, Azure AI Search & Bing Grounding
 - Executing Actions with Tools: Code Interpreter, Azure Functions, OpenAPI & MCP
