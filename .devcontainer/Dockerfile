@@ -1,19 +1,15 @@
-FROM mcr.microsoft.com/devcontainers/base:debian
+FROM mcr.microsoft.com/devcontainers/dotnet:9.0
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG NODE_VERSION="22.18.0"
 
-# Install .NET 9 SDK and all runtimes, then .NET 10 SDK
+# Install .NET 10 SDK on top of .NET 9 base image
 RUN curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh \
     && chmod +x dotnet-install.sh \
-    && ./dotnet-install.sh --channel 9.0 --install-dir /usr/local/dotnet \
-    && ./dotnet-install.sh --channel 9.0 --runtime aspnetcore --install-dir /usr/local/dotnet \
-    && ./dotnet-install.sh --channel 9.0 --runtime dotnet --install-dir /usr/local/dotnet \
     && ./dotnet-install.sh --channel 10.0 --install-dir /usr/local/dotnet \
     && rm dotnet-install.sh \
-    && ln -s /usr/local/dotnet/dotnet /usr/local/bin/dotnet \
     && dotnet --list-sdks \
     && dotnet --list-runtimes
 
