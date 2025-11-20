@@ -67,7 +67,7 @@
   },
   "features": {
     "ghcr.io/devcontainers/features/dotnet:1": {
-      "version": "9.0"
+      "version": "10.0"
     }
   },
   "forwardPorts": [

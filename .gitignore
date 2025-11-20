@@ -1,6 +1,10 @@
 **/.venv/
 **/node_modules
 
+# SQLite database files
+*.db-shm
+*.db-wal
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

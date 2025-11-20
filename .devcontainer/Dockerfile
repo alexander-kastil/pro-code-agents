@@ -1,9 +1,15 @@
-FROM mcr.microsoft.com/devcontainers/dotnet:10.0
+FROM mcr.microsoft.com/devcontainers/dotnet:9.0
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG NODE_VERSION="22.18.0"
+
+# Install .NET 10 SDK explicitly
+RUN curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 10.0 --install-dir /usr/local/dotnet \
+    && ln -sf /usr/local/dotnet/dotnet /usr/local/bin/dotnet \
+    && dotnet --list-sdks \
+    && dotnet --list-runtimes
 
 # Install Node.js 22.18.0, Python 3.11, and GitHub CLI using a single apt transaction
 RUN --mount=type=cache,target=/var/cache/apt \
@@ -111,6 +117,9 @@ WORKDIR /workspace
 # Ensure workspace ownership and permissions for vscode user
 RUN chown -R vscode:vscode /workspace \
     && chmod -R u+rwX,go+rX /workspace
+
+# Clean any existing build artifacts with wrong permissions
+RUN find /workspace -type d \( -name "obj" -o -name "bin" \) -exec rm -rf {} + 2>/dev/null || true
 
 # Set timezone
 ENV TZ=UTC

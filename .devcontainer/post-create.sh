@@ -18,6 +18,10 @@ echo "Ensuring /workspace is owned by ${TARGET_USER}:${TARGET_GROUP}"
 sudo chown -R "${TARGET_USER}:${TARGET_GROUP}" /workspace
 sudo chmod -R u+rwX,go+rX /workspace
 
+# Clean any existing .NET build artifacts to prevent permission issues
+echo "Cleaning existing .NET build artifacts..."
+find /workspace -type d \( -name "obj" -o -name "bin" \) -exec rm -rf {} + 2>/dev/null || true
+
 # Navigate to the workspace root
 cd /workspace
 
