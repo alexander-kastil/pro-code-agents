@@ -56,7 +56,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Transports: STDIO vs HTTP Streaming
 - Debugging with MCP Inspector
 - Authentication & Security Best Practices
-- Hosting MCP in Azure & API Management Integration
+- Hosting MCP's in Azure Functions
 
 ## Module 2: Build Agents using Foundry Agent Service
 
