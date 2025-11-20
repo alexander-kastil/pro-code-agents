@@ -5,9 +5,8 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ARG DEBIAN_FRONTEND=noninteractive
 ARG NODE_VERSION="22.18.0"
 
-# Install .NET 10 SDK explicitly
+# Install .NET 10 SDK alongside .NET 9 (base image has .NET 9 in /usr/local/dotnet)
 RUN curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 10.0 --install-dir /usr/local/dotnet \
-    && ln -sf /usr/local/dotnet/dotnet /usr/local/bin/dotnet \
     && dotnet --list-sdks \
     && dotnet --list-runtimes
 
