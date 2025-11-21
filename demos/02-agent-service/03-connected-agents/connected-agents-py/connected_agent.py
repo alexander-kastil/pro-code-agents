@@ -2,6 +2,8 @@
 import logging
 from dotenv import load_dotenv
 from datetime import datetime
+import io
+import sys
 
 # Add references
 from azure.ai.agents import AgentsClient
@@ -14,15 +16,34 @@ from log_util import LogUtil, vdebug
 # Import diagram generator
 from diagram_generator import MermaidDiagramGenerator
 
+"""Connected Agents triage demo using Azure AI AgentsClient.
+Applies migration guidance from upgrade.md: standalone AgentsClient, updated env handling,
+Windows UTF-8 console configuration, and ticket folder nested under output path.
+"""
+
 # Load environment variables early
 load_dotenv()
+
+# Configure UTF-8 encoding for Windows console (emoji/symbol safety)
+try:
+    if sys.stdout and hasattr(sys.stdout, "buffer"):
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+except Exception:
+    pass  # Non-critical; continue if wrapping fails
 
 # Configuration constants
 
 # Read logging configuration from environment
 verbose_output = os.getenv("VERBOSE_OUTPUT", "false") == "true"
 create_mermaid_diagram = os.getenv("CREATE_MERMAID_DIAGRAM", "false") == "true"
-ticket_folder = os.getenv("TICKET_FOLDER_PATH", "./tickets")
+
+# Derive ticket folder path nested under output path per requirement
+output_path = os.getenv("OUTPUT_PATH", "./output")
+ticket_folder_name = os.getenv("TICKET_FOLDER", "tickets")
+ticket_folder = os.path.join(output_path, ticket_folder_name)
+
+# Ensure base output directory exists early (ticket subfolder created later by generator)
+os.makedirs(output_path, exist_ok=True)
 
 # Setup logging with explicit parameters
 logging_config = LogUtil()
@@ -79,7 +100,7 @@ Base your estimate on the complexity implied by the ticket. Respond with the eff
 """
 
 # Instructions for the primary agent
-triage_agent_instructions = """
+orchestrator_agent_instructions = """
 Triage the given ticket. Use the connected tools to determine the ticket's priority, 
 which team it should be assigned to, and how much effort it may take.
 """
@@ -147,8 +168,8 @@ with agents_client:
     logging.info("Creating triage agent with connected tools ...")
     agent = agents_client.create_agent(
         model=model_deployment,
-        name="triage-agent",
-        instructions=triage_agent_instructions,
+        name="orchestrator-agent",
+        instructions=orchestrator_agent_instructions,
         tools=[
             priority_agent_tool.definitions[0],
             team_agent_tool.definitions[0],
