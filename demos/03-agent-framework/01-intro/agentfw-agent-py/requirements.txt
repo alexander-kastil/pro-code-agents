@@ -1,4 +1,4 @@
 python-dotenv>=1.0.0
 azure-identity>=1.16.0
-agent-framework-azure-ai
+agent-framework-azure-ai==1.0.0b251120
 colorama>=0.4.6
