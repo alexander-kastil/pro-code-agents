@@ -29,7 +29,14 @@ async def main():
     """Interactive demo with automatic serialization after every message."""
     
     print("\n" + "="*70)
-    print("🧵 AUTO-SERIALIZATION DEMO: Thread Save/Restore After Every Message")
+    print("AUTO-SERIALIZATION DEMO: Thread Save/Restore After Every Message")
+    print("="*70)
+    print("Demo Guide:")
+    print("  1. Type a message (e.g. 'I am Alex')")
+    print("  2. Agent responds using current thread context")
+    print("  3. State auto-serializes to 'thread_history.json'")
+    print("  4. File reloads (deserialization) for next turn")
+    print("  5. Type 'quit' to exit the demo")
     print("="*70)
     
     # Create agent
@@ -43,16 +50,16 @@ async def main():
         name="MemoryBot"
     )
     
-    print("\n✅ Agent created")
+    print("\nAgent created")
     
     # Try to load existing thread from file, or create new one
-    print("📋 Checking for existing thread...")
+    print("Checking for existing thread...")
     thread = None
     message_count = 0
     
     if os.path.exists(THREAD_FILE):
         try:
-            print(f"   📂 Found {THREAD_FILE}! Loading previous conversation...")
+            print(f"   Found {THREAD_FILE}. Loading previous conversation...")
             with open(THREAD_FILE, 'r', encoding='utf-8') as f:
                 loaded_data = json.load(f)
             
@@ -71,27 +78,27 @@ async def main():
             thread = await agent.deserialize_thread(thread_data)
             message_count = loaded_data.get('message_number', 0)
             
-            print(f"   ✅ Restored previous session with {message_count} messages!")
-            print(f"   💡 Continuing from where you left off...\n")
+            print(f"   Restored previous session with {message_count} messages.")
+            print(f"   Continuing from where you left off...\n")
         except Exception as e:
-            print(f"   ⚠️  Could not load previous thread: {e}")
-            print(f"   📋 Creating new thread instead...\n")
+            print(f"   Could not load previous thread: {e}")
+            print(f"   Creating new thread instead...\n")
             thread = None
     
     if thread is None:
-        print("   📋 Creating new thread...")
+        print("   Creating new thread...")
         thread = agent.get_new_thread()
-        print("   ✅ New thread created\n")
+        print("   New thread created\n")
     
     print("="*70)
-    print("💬 Interactive Chat with Auto-Serialization")
+    print("Interactive Chat with Auto-Serialization")
     print("="*70)
-    print("💡 After each message:")
+    print("After each message:")
     print("   1. Agent responds")
     print("   2. Thread automatically serializes (saves)")
     print("   3. Thread automatically deserializes (restores)")
     print("   4. Next message uses restored thread")
-    print("\n💡 Type 'quit' to exit")
+    print("\nType 'quit' to exit")
     print("="*70 + "\n")
     
     # message_count already set above when loading thread
@@ -100,13 +107,13 @@ async def main():
         try:
             user_input = input("You: ").strip()
         except (EOFError, KeyboardInterrupt):
-            print("\n👋 See you again soon.")
+            print("\nSee you again soon.")
             break
         
         if user_input.lower() in ['quit', 'exit', 'q']:
-            print("\n👋 Demo completed!")
-            print(f"\n📊 Total messages: {message_count}")
-            print(f"📊 Total serialization cycles: {message_count}")
+            print("\nDemo completed.")
+            print(f"\nTotal messages: {message_count}")
+            print(f"Total serialization cycles: {message_count}")
             break
         
         if not user_input:
@@ -122,13 +129,13 @@ async def main():
         print()
         
         # Step 2: Serialize the thread (save state)
-        print("\n💾 [Auto-Serializing thread state...]")
+        print("\n[Auto-Serializing thread state...]")
         serialized = await thread.serialize()
-        print(f"   ✅ Serialized: {len(str(serialized))} bytes")
-        print(f"   📊 Contains: {list(serialized.keys())}")
+        print(f"   Serialized: {len(str(serialized))} bytes")
+        print(f"   Contains: {list(serialized.keys())}")
         
         # NEW: Save to JSON file (following Microsoft documentation)
-        print(f"\n💾 [Saving to {THREAD_FILE}...]")
+        print(f"\n[Saving to {THREAD_FILE}...]")
         
         # Manually convert the chat_message_store_state which contains ChatMessage objects
         json_serialized = dict(serialized)
@@ -149,15 +156,15 @@ async def main():
         
         with open(THREAD_FILE, 'w', encoding='utf-8') as f:
             json.dump(save_data, f, indent=2)
-        print(f"   ✅ Saved to disk: {THREAD_FILE}")
+        print(f"   Saved to disk: {THREAD_FILE}")
         
         # Step 3: Load from JSON file and deserialize (following Microsoft documentation)
-        print(f"\n📥 [Loading from {THREAD_FILE}...]")
+        print(f"\n[Loading from {THREAD_FILE}...]")
         with open(THREAD_FILE, 'r', encoding='utf-8') as f:
             loaded_data = json.load(f)
-        print(f"   ✅ Loaded from disk (message #{loaded_data['message_number']})")
+        print(f"   Loaded from disk (message #{loaded_data['message_number']})")
         
-        print("\n📥 [Deserializing thread state...]")
+        print("\n[Deserializing thread state...]")
         # Convert dicts back to ChatMessage objects
         from agent_framework._types import ChatMessage
         thread_data = loaded_data['thread_data']
@@ -172,20 +179,20 @@ async def main():
         
         # Deserialize from the restored data
         thread = await agent.deserialize_thread(thread_data)
-        print("   ✅ Thread restored from file")
-        print("   💡 Next message will use this restored thread\n")
+        print("   Thread restored from file")
+        print("   Next message will use this restored thread\n")
         
         print("-" * 70 + "\n")
     
     print("\n" + "="*70)
-    print("✅ DEMO COMPLETE")
+    print("DEMO COMPLETE")
     print("="*70)
-    print("💡 What you saw:")
+    print("What you saw:")
     print("   • Thread automatically saved to JSON file after each message")
     print("   • Thread automatically restored from JSON file")
     print("   • Agent maintained full conversation history")
-    print("   • Each cycle proved file persistence works!")
-    print(f"\n📁 Check the file: {THREAD_FILE}")
+    print("   • Each cycle proved file persistence works")
+    print(f"\nCheck the file: {THREAD_FILE}")
     print("="*70 + "\n")
 
 
@@ -193,4 +200,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 See you again soon.")
+        print("\nSee you again soon.")

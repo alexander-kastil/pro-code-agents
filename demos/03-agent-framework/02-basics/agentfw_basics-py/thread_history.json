@@ -1,0 +1,131 @@
+{
+  "timestamp": "2025-11-21T18:58:36.603579",
+  "message_number": 4,
+  "thread_data": {
+    "service_thread_id": null,
+    "chat_message_store_state": {
+      "messages": [
+        {
+          "type": "chat_message",
+          "role": {
+            "type": "role",
+            "value": "user"
+          },
+          "contents": [
+            {
+              "type": "text",
+              "text": "I am Alex"
+            }
+          ],
+          "additional_properties": {}
+        },
+        {
+          "type": "chat_message",
+          "role": {
+            "type": "role",
+            "value": "assistant"
+          },
+          "contents": [
+            {
+              "type": "text",
+              "text": "Got it, Alex! How can I assist you today?"
+            }
+          ],
+          "author_name": "MemoryBot",
+          "message_id": "chatcmpl-CePgKvVMXNGJo3HaZFxj355zaTvvv",
+          "additional_properties": {}
+        },
+        {
+          "type": "chat_message",
+          "role": {
+            "type": "role",
+            "value": "user"
+          },
+          "contents": [
+            {
+              "type": "text",
+              "text": "My dogs name is Soi"
+            }
+          ],
+          "additional_properties": {}
+        },
+        {
+          "type": "chat_message",
+          "role": {
+            "type": "role",
+            "value": "assistant"
+          },
+          "contents": [
+            {
+              "type": "text",
+              "text": "Thanks for sharing, Alex! Soi sounds adorable. What breed is Soi?"
+            }
+          ],
+          "author_name": "MemoryBot",
+          "message_id": "chatcmpl-CePgVVCzNXNaIvwEAuNlUZ9nbGNYm",
+          "additional_properties": {}
+        },
+        {
+          "type": "chat_message",
+          "role": {
+            "type": "role",
+            "value": "user"
+          },
+          "contents": [
+            {
+              "type": "text",
+              "text": "Her husband was Giro"
+            }
+          ],
+          "additional_properties": {}
+        },
+        {
+          "type": "chat_message",
+          "role": {
+            "type": "role",
+            "value": "assistant"
+          },
+          "contents": [
+            {
+              "type": "text",
+              "text": "That's sweet! Soi and Giro must have been quite the pair. What breed was Giro?"
+            }
+          ],
+          "author_name": "MemoryBot",
+          "message_id": "chatcmpl-CePgiQbXndzdvw1BojmzudmFbEteH",
+          "additional_properties": {}
+        },
+        {
+          "type": "chat_message",
+          "role": {
+            "type": "role",
+            "value": "user"
+          },
+          "contents": [
+            {
+              "type": "text",
+              "text": "let change the threas"
+            }
+          ],
+          "additional_properties": {}
+        },
+        {
+          "type": "chat_message",
+          "role": {
+            "type": "role",
+            "value": "assistant"
+          },
+          "contents": [
+            {
+              "type": "text",
+              "text": "Of course, Alex! What would you like to talk about now?"
+            }
+          ],
+          "author_name": "MemoryBot",
+          "message_id": "chatcmpl-CePgy6Ij2QOKWd6HkRG3P2h7obIjs",
+          "additional_properties": {}
+        }
+      ]
+    }
+  }
+}
