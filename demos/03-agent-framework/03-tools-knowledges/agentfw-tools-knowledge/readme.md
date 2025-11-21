@@ -12,19 +12,21 @@ This project contains 6 demos showcasing Azure Agent Framework tools and knowled
 
 ## Configuration
 
+**IMPORTANT:** Before running the demos, you must update `appsettings.json` with your actual Azure credentials and endpoints.
+
 Update `appsettings.json` with your Azure AI Foundry and Azure OpenAI settings:
 
 ```json
 {
-  "AzureAIProjectEndpoint": "https://your-resource.services.ai.azure.com/api/projects/your-project",
+  "AzureAIProjectEndpoint": "https://YOUR-RESOURCE.services.ai.azure.com/api/projects/YOUR-PROJECT",
   "AzureAIModelDeploymentName": "gpt-4o-mini",
-  "AzureOpenAIEndpoint": "https://your-openai.openai.azure.com",
+  "AzureOpenAIEndpoint": "https://YOUR-RESOURCE.openai.azure.com/",
   "AzureOpenAIChatDeploymentName": "gpt-4o",
-  "AzureOpenAIApiKey": "your-api-key",
+  "AzureOpenAIApiKey": "YOUR-API-KEY-HERE",
   "AzureOpenAIApiVersion": "2025-01-01-preview",
   "DataPath": "./data",
   "OutputPath": "./output",
-  "VectorStoreId": "your-vector-store-id",
+  "VectorStoreId": "YOUR-VECTOR-STORE-ID",
   "RestApiBaseUrl": "https://dummyjson.com"
 }
 ```
@@ -171,6 +173,12 @@ All demos include:
 - Input validation
 - Timeout management for external APIs
 - Graceful degradation when features are unavailable
+
+### Security
+
+- **Safe Calculator**: Uses a custom `SafeCalculator` class that implements a safe mathematical expression parser, preventing code injection vulnerabilities that can occur with `DataTable.Compute()` or `eval()` functions
+- **Input Validation**: All user inputs and API responses are validated before processing
+- **Secret Management**: Configuration values should be stored securely and not committed to source control
 
 ### Resource Management
 
