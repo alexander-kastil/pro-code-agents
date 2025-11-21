@@ -87,4 +87,12 @@ if (app.Environment.IsDevelopment())
 app.UseCors("nocors");
 
 app.MapControllers();
+
+// Ensure database is created and seeded
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<FoodDBContext>();
+    db.Database.EnsureCreated();
+}
+
 app.Run();
