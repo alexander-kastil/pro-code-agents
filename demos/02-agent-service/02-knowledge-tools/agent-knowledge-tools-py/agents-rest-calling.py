@@ -12,13 +12,11 @@ from dotenv import load_dotenv
 # Configure UTF-8 encoding for Windows console (fixes emoji display issues)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# Detailed logging flag
-DETAILED_LOGGING = True
-
 
 def log(message: str) -> None:
     """Print log message if detailed logging is enabled."""
-    if DETAILED_LOGGING:
+    detailed_logging = os.getenv("DETAILED_LOGGING", "false").lower() == "true"
+    if detailed_logging:
         print(f"[LOG] {message}")
 
 
@@ -29,57 +27,80 @@ def main() -> None:
 
         endpoint = os.getenv("PROJECT_ENDPOINT")
         model = os.getenv("MODEL_DEPLOYMENT")
-        rest_url = os.getenv("REST_URL")
+        rest_url = os.getenv("REST_URL", "https://dummyjson.com")
 
         log(f"Using endpoint: {endpoint}")
         log(f"Using model: {model}")
         log(f"REST API URL: {rest_url}")
 
-        # Define the OpenAPI specification for the Food Catalog API
+        # Define the OpenAPI specification for the DummyJSON Todos API
         openapi_spec = {
             "openapi": "3.0.4",
             "info": {
-                "title": "Food-Inventory",
-                "version": "v1"
+                "title": "DummyJSON-Todos",
+                "version": "1.0.0",
+                "description": "A simple REST API for managing todos"
             },
             "servers": [
                 {
-                    "url": f"https://{rest_url}"
+                    "url": rest_url
                 }
             ],
             "paths": {
-                "/Food": {
+                "/todos": {
                     "get": {
-                        "operationId": "getAllFood",
-                        "tags": ["Food"],
-                        "summary": "Get all food items",
+                        "operationId": "getAllTodos",
+                        "tags": ["Todos"],
+                        "summary": "Get all todos",
+                        "description": "Get all todos with optional limit and skip for pagination",
+                        "parameters": [
+                            {
+                                "name": "limit",
+                                "in": "query",
+                                "schema": {"type": "integer", "default": 30},
+                                "description": "Number of todos to return"
+                            },
+                            {
+                                "name": "skip",
+                                "in": "query",
+                                "schema": {"type": "integer", "default": 0},
+                                "description": "Number of todos to skip"
+                            }
+                        ],
                         "responses": {
                             "200": {
                                 "description": "OK",
                                 "content": {
                                     "application/json": {
                                         "schema": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/FoodItem"
+                                            "type": "object",
+                                            "properties": {
+                                                "todos": {
+                                                    "type": "array",
+                                                    "items": {"$ref": "#/components/schemas/Todo"}
+                                                },
+                                                "total": {"type": "integer"},
+                                                "skip": {"type": "integer"},
+                                                "limit": {"type": "integer"}
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    },
+                    }
+                },
+                "/todos/add": {
                     "post": {
-                        "operationId": "addFood",
-                        "tags": ["Food"],
-                        "summary": "Add a new food item",
+                        "operationId": "addTodo",
+                        "tags": ["Todos"],
+                        "summary": "Add a new todo",
+                        "description": "Add a new todo (simulated - not persisted)",
                         "requestBody": {
                             "required": True,
                             "content": {
                                 "application/json": {
-                                    "schema": {
-                                        "$ref": "#/components/schemas/FoodDTO"
-                                    }
+                                    "schema": {"$ref": "#/components/schemas/TodoInput"}
                                 }
                             }
                         },
@@ -88,9 +109,7 @@ def main() -> None:
                                 "description": "OK",
                                 "content": {
                                     "application/json": {
-                                        "schema": {
-                                            "$ref": "#/components/schemas/FoodItem"
-                                        }
+                                        "schema": {"$ref": "#/components/schemas/Todo"}
                                     }
                                 }
                             }
@@ -100,67 +119,23 @@ def main() -> None:
             },
             "components": {
                 "schemas": {
-                    "FoodDTO": {
+                    "TodoInput": {
                         "type": "object",
                         "properties": {
-                            "name": {
-                                "type": "string",
-                                "nullable": True
-                            },
-                            "price": {
-                                "type": "number",
-                                "format": "double"
-                            },
-                            "inStock": {
-                                "type": "integer",
-                                "format": "int32"
-                            },
-                            "minStock": {
-                                "type": "integer",
-                                "format": "int32"
-                            },
-                            "pictureUrl": {
-                                "type": "string",
-                                "nullable": True
-                            },
-                            "description": {
-                                "type": "string",
-                                "nullable": True
-                            }
+                            "todo": {"type": "string"},
+                            "completed": {"type": "boolean"},
+                            "userId": {"type": "integer"}
                         },
+                        "required": ["todo", "completed", "userId"],
                         "additionalProperties": False
                     },
-                    "FoodItem": {
+                    "Todo": {
                         "type": "object",
                         "properties": {
-                            "id": {
-                                "type": "integer",
-                                "format": "int32"
-                            },
-                            "name": {
-                                "type": "string",
-                                "nullable": True
-                            },
-                            "price": {
-                                "type": "number",
-                                "format": "double"
-                            },
-                            "inStock": {
-                                "type": "integer",
-                                "format": "int32"
-                            },
-                            "minStock": {
-                                "type": "integer",
-                                "format": "int32"
-                            },
-                            "pictureUrl": {
-                                "type": "string",
-                                "nullable": True
-                            },
-                            "description": {
-                                "type": "string",
-                                "nullable": True
-                            }
+                            "id": {"type": "integer"},
+                            "todo": {"type": "string"},
+                            "completed": {"type": "boolean"},
+                            "userId": {"type": "integer"}
                         },
                         "additionalProperties": False
                     }
@@ -168,7 +143,7 @@ def main() -> None:
             }
         }
 
-        log("Created OpenAPI specification")
+        log("Created OpenAPI specification for DummyJSON Todos API")
 
         project_client = AIProjectClient(
             endpoint=endpoint,
@@ -185,9 +160,9 @@ def main() -> None:
         # Create OpenAPI tool with anonymous authentication
         auth = OpenApiAnonymousAuthDetails()
         openapi_tool = OpenApiTool(
-            name="food_catalog_api",
+            name="todos_api",
             spec=openapi_spec,
-            description="Access the Food Catalog API to manage food inventory",
+            description="Access the DummyJSON Todos API to manage todo items",
             auth=auth
         )
         log("Created OpenApiTool with anonymous authentication")
@@ -195,29 +170,28 @@ def main() -> None:
         with agents_client:
             agent = agents_client.create_agent(
                 model=model,
-                name="food-catalog-agent",
+                name="todos-agent",
                 instructions=(
-                    "You are a helpful assistant that helps manage a food catalog inventory. "
-                    "You can retrieve food items and add new items to the catalog. "
-                    "When adding food, use realistic data for the fields. "
+                    "You are a helpful assistant that helps manage todo items. "
+                    "You can retrieve todos and add new todos to the list. "
+                    "When adding todos, use realistic task descriptions. "
                     "Always confirm the results of operations to the user."
                 ),
-                description="Demonstrates calling REST APIs using OpenAPI 3.0 specification for food inventory management.",
+                description="Demonstrates calling REST APIs using OpenAPI 3.0 specification for todo management using DummyJSON.",
                 tools=openapi_tool.definitions
             )
             log(f"Created agent: {agent.name} ({agent.id})")
 
             thread = agents_client.threads.create()
             log(f"Created thread: {thread.id}")
-            
+
             print(f"\n{'='*70}")
-            print(f"🍔 Food Catalog Management Agent")
+            print(f"📋 Todos Management Agent (DummyJSON API Demo)")
             print(f"Agent: {agent.name} ({agent.id})")
             print(f"{'='*70}\n")
 
-            # Step 1: Get all food items initially
-            print(f"{'─'*70}")
-            print("📋 Step 1: Retrieving current food inventory...")
+            # Step 1: Get initial todos
+            print(f"📋 Step 1: Getting first 5 todos...")
             print(f"{'─'*70}\n")
             
             input("Press Enter to continue...")
@@ -226,7 +200,7 @@ def main() -> None:
             message = agents_client.messages.create(
                 thread_id=thread.id,
                 role="user",
-                content="Please get all food items from the catalog and show them in a nice format."
+                content="Please get the first 5 todos from the list"
             )
             log(f"Created message: {message['id'] if isinstance(message, dict) else message.id}")
             
@@ -250,15 +224,17 @@ def main() -> None:
                             if message.content[0].get('type') == 'text':
                                 assistant_text = message.content[0]['text']['value']
                                 log(f"Assistant response: {assistant_text}")
-                                print(f"✅ Current Inventory:\n{assistant_text}\n")
+                                print(f"\n{'─'*70}")
+                                print(f"✅ Result:")
+                                print(f"{assistant_text}")
+                                print(f"{'─'*70}\n")
                         else:
                             log(f"Assistant message: {message.content}")
                             print(f"\n✅ Result: {message.content}\n")
                         break
 
-            # Step 2: Add a new food item
-            print(f"\n{'─'*70}")
-            print("➕ Step 2: Adding a new food item to the catalog...")
+            # Step 2: Add a new todo
+            print(f"\n📋 Step 2: Adding a new todo item...")
             print(f"{'─'*70}\n")
             
             input("Press Enter to continue...")
@@ -267,11 +243,7 @@ def main() -> None:
             message = agents_client.messages.create(
                 thread_id=thread.id,
                 role="user",
-                content=(
-                    "Please add a new food item to the catalog. "
-                    "Create a pizza with creative details (name, price around 12.99, "
-                    "stock around 25, minimum stock 5, and an interesting description)."
-                )
+                content="Please add a new todo: 'Test Azure AI Agents with DummyJSON API', not completed, for user ID 1"
             )
             log(f"Created message: {message['id'] if isinstance(message, dict) else message.id}")
             
@@ -295,15 +267,17 @@ def main() -> None:
                             if message.content[0].get('type') == 'text':
                                 assistant_text = message.content[0]['text']['value']
                                 log(f"Assistant response: {assistant_text}")
-                                print(f"✅ Food Item Added:\n{assistant_text}\n")
+                                print(f"\n{'─'*70}")
+                                print(f"✅ Result:")
+                                print(f"{assistant_text}")
+                                print(f"{'─'*70}\n")
                         else:
                             log(f"Assistant message: {message.content}")
                             print(f"\n✅ Result: {message.content}\n")
                         break
 
-            # Step 3: Get all food items again to see the new item
-            print(f"\n{'─'*70}")
-            print("📋 Step 3: Retrieving updated food inventory...")
+            # Step 3: Verify the todo was added (get todos again)
+            print(f"\n📋 Step 3: Verifying the new todo...")
             print(f"{'─'*70}\n")
             
             input("Press Enter to continue...")
@@ -312,7 +286,7 @@ def main() -> None:
             message = agents_client.messages.create(
                 thread_id=thread.id,
                 role="user",
-                content="Please get all food items again to show the updated catalog."
+                content="Can you get the first 3 todos again to show what we have?"
             )
             log(f"Created message: {message['id'] if isinstance(message, dict) else message.id}")
             
@@ -336,12 +310,16 @@ def main() -> None:
                             if message.content[0].get('type') == 'text':
                                 assistant_text = message.content[0]['text']['value']
                                 log(f"Assistant response: {assistant_text}")
-                                print(f"✅ Updated Inventory:\n{assistant_text}\n")
+                                print(f"\n{'─'*70}")
+                                print(f"✅ Result:")
+                                print(f"{assistant_text}")
+                                print(f"{'─'*70}\n")
                         else:
                             log(f"Assistant message: {message.content}")
                             print(f"\n✅ Result: {message.content}\n")
                         break
 
+            # Clean-up
             delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
             if delete_on_exit:
                 agents_client.delete_agent(agent.id)
@@ -357,14 +335,13 @@ def main() -> None:
             
     except KeyboardInterrupt:
         print("\n\n⚠️  Interrupted by user. Exiting gracefully...")
-        log("User interrupted with Ctrl+C")
+        log("User interrupted with Ctrl+C during startup")
     except Exception as e:
         print(f"\n❌ Error: {type(e).__name__}: {e}")
-        if DETAILED_LOGGING:
+        if os.getenv("DETAILED_LOGGING", "false").lower() == "true":
             import traceback
             traceback.print_exc()
 
 
 if __name__ == "__main__":
     main()
-
