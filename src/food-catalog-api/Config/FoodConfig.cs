@@ -6,7 +6,6 @@ namespace FoodApp
     {
         public Azure Azure { get; set; }
         public ApplicationInsights ApplicationInsights { get; set; }
-        public ConnectionStrings ConnectionStrings { get; set; }
         public AppConfig App { get; set; }
         public FeatureManagement FeatureManagement { get; set; }
         public Logging Logging { get; set; }
@@ -34,11 +33,6 @@ namespace FoodApp
     public class ApplicationInsights
     {
         public string ConnectionString { get; set; }
-    }
-
-    public class ConnectionStrings
-    {
-        public string DefaultDatabase { get; set; }
     }
 
     public class FeatureManagement

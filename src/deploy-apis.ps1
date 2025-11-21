@@ -12,11 +12,13 @@ az storage container create -n $container --account-key $key --account-name $acc
 az storage blob upload-batch -d $container -s "assets/images" --account-name $acct --account-key $key
 
 Set-Location food-catalog-api
-az webapp up -n food-catalog-api -g $grp -p pro-code-food-plan -l $loc -r "dotnet:10"
+dotnet publish -c Release -o ./publish
+az webapp deployment source config-zip --src ./publish.zip --name food-catalog-api --resource-group $grp
 az webapp cors add --allowed-origins "*" --name food-catalog-api --resource-group $grp
 Set-Location ..
 
 Set-Location hr-mcp-server
-az webapp up -n hr-mcp-server-$env -g $grp -p copilot-hr-plan-$env -l $loc -r "dotnet:10"
+dotnet publish -c Release -o ./publish
+az webapp deployment source config-zip --src ./publish.zip --name hr-mcp-server-$env --resource-group $grp
 az webapp cors add --allowed-origins "*" --name hr-mcp-server-$env --resource-group $grp
 Set-Location ..

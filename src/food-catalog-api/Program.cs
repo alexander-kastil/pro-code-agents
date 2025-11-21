@@ -34,22 +34,7 @@ if (cfg.FeatureManagement.UseApplicationInsights)
 }
 
 //Database
-var connectionString = cfg.ConnectionStrings?.DefaultDatabase;
-
-
-if (string.IsNullOrWhiteSpace(connectionString))
-{
-    throw new InvalidOperationException("Connection string 'DefaultDatabase' is not configured.");
-}
-
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddDbContext<FoodDBContext>(options => options.UseSqlite("Data Source=foodcatalog.db"));
-}
-else
-{
-    builder.Services.AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString));
-}
+builder.Services.AddDbContext<FoodDBContext>(options => options.UseSqlite("Data Source=foodcatalog.db"));
 
 //Microsoft Identity auth
 var az = Configuration.GetSection("Azure");
