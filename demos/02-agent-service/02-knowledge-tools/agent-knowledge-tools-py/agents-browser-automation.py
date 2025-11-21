@@ -50,7 +50,7 @@ def main():
         # agent = agents_client.update_agent(agent_id, tools=browser_automation.definitions)
         agent = agents_client.create_agent(
             model=model,
-            name="my-agent",
+            name="browser-automation-agent",
             instructions="""
             You are an Agent helping with browser automation tasks. 
             You can answer questions, provide information, and assist with various tasks 

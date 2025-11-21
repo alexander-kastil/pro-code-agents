@@ -1,0 +1,17 @@
+# Environment files
+.env
+
+# Generated diagram files
+tickets/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
