@@ -99,7 +99,7 @@ Use the following scale:
 Base your estimate on the complexity implied by the ticket. Respond with the effort level and a brief justification.
 """
 
-# Instructions for the primary agent
+# Instructions for the orchestrator agent
 orchestrator_agent_instructions = """
 Triage the given ticket. Use the connected tools to determine the ticket's priority, 
 which team it should be assigned to, and how much effort it may take.
