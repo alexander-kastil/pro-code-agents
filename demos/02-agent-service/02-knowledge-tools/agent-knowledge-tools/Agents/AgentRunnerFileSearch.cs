@@ -23,7 +23,7 @@ public sealed class AgentRunnerFileSearch(AppConfig config)
         PersistentAgent agent = await agentsClient.Administration.CreateAgentAsync(
             model: config.Model,
             name: "basic-agent",
-            instructions: "You are helpful agent",
+            instructions: "You are a helpful agent",
             description: "Demonstrates basic agent setup and message interaction without specialized tools - a simple conversational agent."
         );
 
