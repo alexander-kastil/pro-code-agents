@@ -17,10 +17,10 @@ async def main():
     """Interactive demo: Connect to existing agent."""
     
     print("\n" + "="*70)
-    print("🔗 DEMO: Connect to Existing Azure AI Foundry Agent")
+    print("DEMO: Connect to Existing Azure AI Foundry Agent")
     print("="*70)
     
-    print(f"\n📋 Connecting to agent: {AGENT_ID}")
+    print(f"\nConnecting to agent: {AGENT_ID}")
     
     async with (
         AzureCliCredential() as credential,
@@ -32,10 +32,10 @@ async def main():
             )
         ) as agent
     ):
-        print("✅ Connected successfully!")
+        print("Connected successfully!")
         
         print("\n" + "="*70)
-        print("💬 Interactive Chat (Type 'quit' to exit)")
+        print("Interactive Chat (Type 'quit' to exit)")
         print("="*70 + "\n")
         
         while True:
@@ -43,14 +43,14 @@ async def main():
             try:
                 user_input = input("You: ")
             except EOFError:
-                print("\n👋 Received EOF - exiting.")
+                print("\nReceived EOF - exiting.")
                 break
             except KeyboardInterrupt:
-                print("\n👋 Interrupted - exiting.")
+                print("\nInterrupted - exiting.")
                 break
             
             if user_input.lower() in ['quit', 'exit', 'q']:
-                print("\n👋 Goodbye!")
+                print("\nGoodbye!")
                 break
             
             if not user_input.strip():
@@ -68,4 +68,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 See you again soon.")
+        print("\nSee you again soon.")

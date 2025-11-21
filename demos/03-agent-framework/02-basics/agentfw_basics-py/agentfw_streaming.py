@@ -19,7 +19,7 @@ async def main():
     """Interactive demo: Create agent and demonstrate streaming responses."""
     
     print("\n" + "="*70)
-    print("🌊 DEMO: Response Streaming with Agent Framework")
+    print("DEMO: Response Streaming with Agent Framework")
     print("="*70)
     
     async with AzureCliCredential() as credential:
@@ -29,7 +29,7 @@ async def main():
             credential=credential
         ) as project_client:
             
-            print("\n📋 Creating new agent in Azure AI Foundry...")
+            print("\nCreating new agent in Azure AI Foundry...")
             
             async with AgentsClient(endpoint=PROJECT_ENDPOINT, credential=credential) as agents_client:
                 created_agent = await agents_client.create_agent(
@@ -42,7 +42,7 @@ async def main():
                     description="Agent demonstrating streaming capabilities"
                 )
             
-            print(f"✅ Agent created successfully!")
+            print(f"Agent created successfully!")
             print(f"   Agent ID: {created_agent.id}")
             print(f"   Name: {created_agent.name}")
             
@@ -56,11 +56,11 @@ async def main():
             ) as agent:
                 
                 print("\n" + "="*70)
-                print("💬 Interactive Streaming Chat")
+                print("Interactive Streaming Chat")
                 print("="*70)
-                print("\n💡 TIP: Responses will stream in real-time, token by token")
-                print("💡 TIP: Try asking for longer responses to see streaming in action")
-                print("💡 Examples:")
+                print("\nTIP: Responses will stream in real-time, token by token")
+                print("TIP: Try asking for longer responses to see streaming in action")
+                print("Examples:")
                 print("   - 'Explain how neural networks work'")
                 print("   - 'Tell me a creative story about a robot'")
                 print("   - 'Describe the process of photosynthesis'")
@@ -72,14 +72,14 @@ async def main():
                     try:
                         user_input = input("You: ")
                     except EOFError:
-                        print("\n👋 Received EOF - exiting.")
+                        print("\nReceived EOF - exiting.")
                         break
                     except KeyboardInterrupt:
-                        print("\n👋 Interrupted - exiting.")
+                        print("\nInterrupted - exiting.")
                         break
                     
                     if user_input.lower() in ['quit', 'exit', 'q']:
-                        print("\n👋 Goodbye!")
+                        print("\nGoodbye!")
                         break
                     
                     if not user_input.strip():
@@ -97,13 +97,13 @@ async def main():
                         print("\n")
                         
                     except Exception as e:
-                        print(f"\n❌ Error during streaming: {e}\n")
+                        print(f"\nError during streaming: {e}\n")
 
 
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 See you again soon.")
+        print("\nSee you again soon.")
     except Exception as e:
-        print(f"\n❌ Unexpected error: {e}")
+        print(f"\nUnexpected error: {e}")

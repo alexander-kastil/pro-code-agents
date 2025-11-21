@@ -15,7 +15,7 @@ This guide documents the migration from `azure-ai-projects` (`AIProjectClient.ag
 
 ### 1. Client Instantiation Pattern
 
-#### ❌ Old (Deprecated)
+#### Old (Deprecated)
 
 ```python
 from azure.ai.projects import AIProjectClient
@@ -31,7 +31,7 @@ with project_client:
     agent = agents_client.create_agent(...)
 ```
 
-#### ✅ New (Required)
+#### New (Required)
 
 ```python
 from azure.ai.agents import AgentsClient
@@ -64,14 +64,14 @@ with agents_client:
 
 ### 2. Import Changes
 
-#### ❌ Old
+#### Old
 
 ```python
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import MessageRole, FunctionTool, ToolSet
 ```
 
-#### ✅ New
+#### New
 
 ```python
 from azure.ai.agents import AgentsClient
@@ -85,7 +85,7 @@ from azure.ai.agents.models import MessageRole, FunctionTool, ToolSet
 
 All agent operations now go directly through `AgentsClient` instead of `project_client.agents.*`
 
-#### ❌ Old
+#### Old
 
 ```python
 # Creating agent
@@ -108,7 +108,7 @@ project_client.agents.runs.cancel(...)
 project_client.agents.delete_agent(agent.id)
 ```
 
-#### ✅ New
+#### New
 
 ```python
 # Creating agent
@@ -135,7 +135,7 @@ agents_client.delete_agent(agent.id)
 
 ### 4. Auto Function Calling
 
-#### ❌ Old (Incorrect - caused AttributeError)
+#### Old (Incorrect - caused AttributeError)
 
 ```python
 with project_client:
@@ -143,7 +143,7 @@ with project_client:
     agent = project_client.agents.create_agent(...)
 ```
 
-#### ✅ New (Correct)
+#### New (Correct)
 
 ```python
 with agents_client:
@@ -157,7 +157,7 @@ with agents_client:
 
 ### 5. Message Retrieval (Deprecated Method)
 
-#### ❌ Old (No longer available)
+#### Old (No longer available)
 
 ```python
 response_message = agents_client.messages.get_last_message_by_role(
@@ -169,7 +169,7 @@ if response_message:
         print(text_message.text.value)
 ```
 
-#### ✅ New (Manual iteration)
+#### New (Manual iteration)
 
 ```python
 from azure.ai.agents.models import ListSortOrder

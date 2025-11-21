@@ -51,11 +51,11 @@ HISTORY_FILE = os.path.join("output", "chat_history.json")
 # -- Demo: interactive chat with history management -------------------------
 async def main():
     print("\n" + "=" * 70)
-    print("💬 DEMO: Chat History Management with Reducers")
+    print("DEMO: Chat History Management with Reducers")
     print("=" * 70)
 
     if not (ENDPOINT and DEPLOYMENT and API_KEY):
-        print("\n❌ Missing Azure OpenAI configuration. Please set AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_CHAT_DEPLOYMENT_NAME and AZURE_OPENAI_API_KEY in your environment or .env file.")
+        print("\nMissing Azure OpenAI configuration. Please set AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_CHAT_DEPLOYMENT_NAME and AZURE_OPENAI_API_KEY in your environment or .env file.")
         return
 
     # Create primary chat agent
@@ -93,17 +93,17 @@ async def main():
         auto_save_path=HISTORY_FILE
     )
 
-    print("\n✅ Agents created and in-memory message store initialized.")
+    print("\nAgents created and in-memory message store initialized.")
     
     # Prompt user to load previous conversation history
     if Path(HISTORY_FILE).exists():
-        print(f"\n💾 Found existing conversation history: {HISTORY_FILE}")
+        print(f"\nFound existing conversation history: {HISTORY_FILE}")
         try:
             load_choice = input("Do you want to load the conversation history? (y/n): ").strip().lower()
             if load_choice in ['y', 'yes']:
                 store.load_from_file(HISTORY_FILE)
                 messages_loaded = await store.get_messages()
-                print(f"✅ Loaded {len(messages_loaded)} message(s) from history.")
+                print(f"Loaded {len(messages_loaded)} message(s) from history.")
             else:
                 print("Starting with empty history.")
         except (EOFError, KeyboardInterrupt):
@@ -118,11 +118,11 @@ async def main():
         try:
             user_input = input("You: ")
         except (EOFError, KeyboardInterrupt):
-            print("\n👋 Exiting chat demo.")
+            print("\nExiting chat demo.")
             break
 
         if not user_input or user_input.strip().lower() in {"quit", "exit", "q"}:
-            print("\n👋 Goodbye!")
+            print("\nGoodbye!")
             break
 
         # Add user message to the store
@@ -148,7 +148,7 @@ async def main():
             await store.add_message(SimpleMessage(role="assistant", text=assistant_text))
 
         except Exception as e:
-            print(f"\n❌ Error calling agent: {e}")
+            print(f"\nError calling agent: {e}")
 
         # Show current stored messages
         messages_in_store = await store.get_messages()
@@ -165,6 +165,6 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 Demo interrupted.")
+        print("\nDemo interrupted.")
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\nError: {e}")

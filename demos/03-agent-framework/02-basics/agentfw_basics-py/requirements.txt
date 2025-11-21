@@ -9,8 +9,3 @@ azure-ai-projects>=2.0.0b2
 azure-ai-agents==1.2.0b5
 agent-framework==1.0.0b251120
 agent-framework-azure-ai==1.0.0b251120
-
-# Multi-modal support (for PDF processing)
-pdf2image==1.17.0
-pillow==12.0.0
-pymupdf==1.24.14  # Alternative PDF converter (no external dependencies)

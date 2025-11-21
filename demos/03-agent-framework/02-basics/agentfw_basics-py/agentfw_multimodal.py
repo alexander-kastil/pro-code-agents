@@ -1,21 +1,22 @@
 """
-NEW 09: Multimodal Content - PDF Invoice Extraction (Demo)
+NEW 09: Multimodal Content - Image (JPEG) Invoice Extraction (Demo)
 
-This demo shows how to process PDF documents and extract structured data
-using Azure OpenAI's vision capabilities with the Agent Framework.
-The agent converts PDF to images and extracts invoice data as JSON.
+This demo shows how to process a JPEG invoice image and extract structured
+data using Azure OpenAI's vision capabilities with the Agent Framework.
+The agent loads the invoice image directly and extracts invoice data as JSON.
+PDF conversion logic removed; relies solely on `invoice.jpg`.
 """
 
 import asyncio
 import os
 import json
+import base64
 from pathlib import Path
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
 from agent_framework.azure import AzureOpenAIChatClient
 from agent_framework._types import ChatMessage, TextContent, UriContent
-from utils.pdf_converter import PdfConverter
 
 # Load environment variables
 load_dotenv()
@@ -59,26 +60,27 @@ async def main():
     """Demo: Extract structured invoice data from PDF."""
     
     print("\n" + "="*70)
-    print("📄 DEMO: Multimodal PDF Invoice Extraction")
+    print("📄 DEMO: Multimodal JPEG Invoice Extraction")
     print("="*70)
     
     # Ensure output directory exists
     Path(OUTPUT_PATH).mkdir(parents=True, exist_ok=True)
     
-    # Check for invoice PDF
-    invoice_path = os.path.join(DATA_PATH, "invoice.pdf")
-    if not os.path.exists(invoice_path):
-        print(f"\n❌ Error: Invoice file not found at {invoice_path}")
-        print("Please ensure invoice.pdf exists in the data directory.")
+    # Check for invoice JPEG
+    invoice_image_path = os.path.join(DATA_PATH, "invoice.jpg")
+    if not os.path.exists(invoice_image_path):
+        print(f"\n❌ Error: Invoice image not found at {invoice_image_path}")
+        print("Please ensure invoice.jpg exists in the data directory.")
         return
-    
-    print(f"\n📂 Loading invoice: {invoice_path}")
-    
-    # Convert PDF to base64 image using utility class and save to output folder
-    print("🔄 Converting PDF to image...")
-    output_image_path = os.path.join(OUTPUT_PATH, "invoice_converted.png")
-    image_data_url = PdfConverter.pdf_to_data_uri(invoice_path, save_image_path=output_image_path)
-    print(f"✅ PDF converted to image and saved to: {output_image_path}")
+
+    print(f"\n📂 Loading invoice image: {invoice_image_path}")
+
+    # Load JPEG as base64 data URI (no PDF conversion)
+    print("🔄 Preparing JPEG data URI...")
+    with open(invoice_image_path, "rb") as f:
+        b64_image = base64.b64encode(f.read()).decode("utf-8")
+    image_data_url = f"data:image/jpeg;base64,{b64_image}"
+    print("✅ JPEG loaded and encoded to data URI")
     
     # =================================================================
     # OPTION 1: WITH STRUCTURED OUTPUT (Using Pydantic Model)
@@ -109,7 +111,7 @@ async def main():
         ]
     )
     
-    print("\n🔄 Processing with structured output (response_format=InvoiceData)...")
+    print("\n🔄 Processing JPEG with structured output (response_format=InvoiceData)...")
     response_structured = await agent_structured.run(user_message_structured, response_format=InvoiceData)
     
     if response_structured.value:
@@ -198,7 +200,7 @@ async def main():
         ]
     )
     
-    print("\n🔄 Processing without structured output (no response_format)...")
+    print("\n🔄 Processing JPEG without structured output (no response_format)...")
     response_unstructured = await agent_unstructured.run(user_message_unstructured)
     
     if response_unstructured.text:

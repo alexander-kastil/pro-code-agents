@@ -40,12 +40,12 @@ class AIMemoryExtractor(ContextProvider):
                 if self.user_profile:
                     print(f"   🧠 Restored profile: {', '.join([f'{k}={v}' for k, v in self.user_profile.items()])}")
                 else:
-                    print(f"   📋 File exists but profile is empty")
+                    print(f"   File exists but profile is empty")
             except Exception as e:
                 print(f"\n⚠️  [LOAD ERROR] Could not load {self.memory_file}: {e}")
                 self.user_profile = {}
         else:
-            print(f"\n📋 [NEW MEMORY] No existing memory file found")
+            print(f"\n[NEW MEMORY] No existing memory file found")
     
     def _save_profile(self):
         """Save user profile to JSON file."""
@@ -71,7 +71,7 @@ class AIMemoryExtractor(ContextProvider):
             profile_text = "\n".join([f"- {k}: {v}" for k, v in self.user_profile.items()])
             
             print(f"\n   💭 [INJECTING LONG-TERM MEMORY]")
-            print(f"   📋 Profile: {', '.join([f'{k}={v}' for k, v in self.user_profile.items()])}\n")
+            print(f"   Profile: {', '.join([f'{k}={v}' for k, v in self.user_profile.items()])}\n")
             
             instructions = f"""[USER PROFILE - LONG-TERM MEMORY]:
 {profile_text}
@@ -98,7 +98,7 @@ Reference this naturally when relevant, and be enthusiastic when recognizing the
         if not user_message or len(user_message) < 3:
             return
         
-        print(f"   🤖 [AI ANALYZING]: '{user_message}'")
+        print(f"   [AI ANALYZING]: '{user_message}'")
         
         # Ask AI to extract important information
         analysis_prompt = f"""Analyze this user message and extract any personal information worth remembering for future conversations.
@@ -156,7 +156,7 @@ JSON only, no explanation:"""
 
 async def main():
     print("\n" + "="*70)
-    print("🤖 AI-POWERED LONG-TERM MEMORY with FILE PERSISTENCE")
+    print("AI-POWERED LONG-TERM MEMORY with FILE PERSISTENCE")
     print("="*70)
     print("\nConcept: AI intelligently extracts & saves important information!")
     print(f"Memory File: {MEMORY_FILE}")
@@ -173,7 +173,7 @@ async def main():
     
     # Create AI-powered memory provider
     ai_memory = AIMemoryExtractor(chat_client)
-    print("   ✅ AI memory analyzer initialized")
+    print("   AI memory analyzer initialized")
     
     # Create Azure OpenAI agent
     agent_client = AzureOpenAIChatClient(
@@ -195,10 +195,10 @@ When you recognize information about the user from their profile:
 Be conversational and warm!""",
         context_providers=[ai_memory]  # Add AI memory provider to agent
     )
-    print("✅ Agent created with AI-powered memory\n")
+    print("Agent created with AI-powered memory\n")
     
     print("="*70)
-    print("💡 COMMANDS:")
+    print("COMMANDS:")
     print("="*70)
     print("  • Chat naturally - AI extracts & saves info to file")
     print("  • 'new' - Create new thread (test cross-thread memory)")
@@ -222,7 +222,7 @@ Be conversational and warm!""",
             try:
                 user_input = input("You: ").strip()
             except (EOFError, KeyboardInterrupt):
-                print("\n👋 See you again soon.")
+                print("\nSee you again soon.")
                 break
             
             if not user_input:
@@ -230,7 +230,7 @@ Be conversational and warm!""",
             
             # Handle commands
             if user_input.lower() == 'quit':
-                print("\n👋 Demo ended!")
+                print("\nDemo ended!")
                 if ai_memory.user_profile:
                     print("\n📊 Final AI-Learned Profile:")
                     for key, value in ai_memory.user_profile.items():
@@ -244,7 +244,7 @@ Be conversational and warm!""",
                 continue
             
             if user_input.lower() == 'profile':
-                print("\n📋 AI-LEARNED PROFILE:")
+                print("\nAI-LEARNED PROFILE:")
                 if ai_memory.user_profile:
                     for key, value in ai_memory.user_profile.items():
                         print(f"   • {key}: {value}")
@@ -268,4 +268,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 See you again soon.")
+        print("\nSee you again soon.")

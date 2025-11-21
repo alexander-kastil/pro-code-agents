@@ -33,16 +33,11 @@ async def timing_middleware(
 ) -> None:
     """Tracks execution time for entire agent run."""
     start_time = datetime.now()
-    
-    print(f"\n⏱️  [TIMING] Started at {start_time.strftime('%H:%M:%S')}")
-    
-    # Execute agent
+    print(f"\n[TIMING] Started at {start_time.strftime('%H:%M:%S')}")
     await next(context)
-    
-    # Calculate duration
     end_time = datetime.now()
     duration = (end_time - start_time).total_seconds()
-    print(f"⏱️  [TIMING] Completed in {duration:.2f} seconds")
+    print(f"[TIMING] Completed in {duration:.2f} seconds")
 
 
 # ============================================================================
@@ -55,26 +50,19 @@ async def security_middleware(
     next: Callable[[AgentRunContext], Awaitable[None]],
 ) -> None:
     """Blocks requests containing sensitive keywords."""
-    
-    # Check the last message for blocked content
     if context.messages:
         last_message = context.messages[-1]
         if hasattr(last_message, 'contents'):
             for content in last_message.contents:
                 if hasattr(content, 'text'):
                     text = str(content.text).lower()
-                    
-                    # List of blocked keywords
                     blocked_keywords = ["password", "secret", "hack", "exploit", "bypass"]
-                    
                     for keyword in blocked_keywords:
                         if keyword in text:
-                            print(f"\n🚫 [SECURITY] Request BLOCKED! Detected: '{keyword}'")
-                            print(f"🚫 [SECURITY] This request contains sensitive content and cannot be processed.")
+                            print(f"\n[SECURITY] Request BLOCKED! Detected: '{keyword}'")
+                            print(f"[SECURITY] This request contains sensitive content and cannot be processed.")
                             context.terminate = True
                             return
-    
-    # If safe, continue
     await next(context)
 
 
@@ -88,15 +76,10 @@ async def function_logger_middleware(
     next: Callable[[FunctionInvocationContext], Awaitable[None]],
 ) -> None:
     """Logs every function/tool call with arguments and results."""
-    
-    print(f"\n🔧 [FUNCTION] Calling tool: {context.function.name}")
-    print(f"🔧 [FUNCTION] Arguments: {context.arguments}")
-    
-    # Execute the function
+    print(f"\n[FUNCTION] Calling tool: {context.function.name}")
+    print(f"[FUNCTION] Arguments: {context.arguments}")
     await next(context)
-    
-    # Log the result
-    print(f"🔧 [FUNCTION] Result: {context.result}")
+    print(f"[FUNCTION] Result: {context.result}")
 
 
 # ============================================================================
@@ -109,27 +92,19 @@ async def token_counter_middleware(
     next: Callable[[ChatContext], Awaitable[None]],
 ) -> None:
     """Estimates and logs token usage for AI calls."""
-    
-    # Estimate input tokens (rough: 1 token ≈ 4 characters)
     total_chars = sum(len(str(msg)) for msg in context.messages)
     estimated_input_tokens = total_chars // 4
-    
-    print(f"\n🤖 [AI CALL] Sending request to GPT-4o")
-    print(f"🤖 [AI CALL] Messages: {len(context.messages)}")
-    print(f"🤖 [AI CALL] Estimated input tokens: ~{estimated_input_tokens}")
-    
-    # Call the AI
+    print(f"\n[AI CALL] Sending request to GPT-4o")
+    print(f"[AI CALL] Messages: {len(context.messages)}")
+    print(f"[AI CALL] Estimated input tokens: ~{estimated_input_tokens}")
     await next(context)
-    
-    # Estimate output tokens
     if context.result and hasattr(context.result, 'choices'):
         if hasattr(context.result.choices[0].message, 'content'):
             response_text = str(context.result.choices[0].message.content)
             estimated_output_tokens = len(response_text) // 4
             total_tokens = estimated_input_tokens + estimated_output_tokens
-            
-            print(f"🤖 [AI CALL] Estimated output tokens: ~{estimated_output_tokens}")
-            print(f"🤖 [AI CALL] Total estimated tokens: ~{total_tokens}")
+            print(f"[AI CALL] Estimated output tokens: ~{estimated_output_tokens}")
+            print(f"[AI CALL] Total estimated tokens: ~{total_tokens}")
 
 
 # ============================================================================
@@ -139,12 +114,12 @@ async def token_counter_middleware(
 def get_weather(city: str) -> str:
     """Get current weather for a city."""
     weather_data = {
-        "seattle": "☁️ Cloudy, 15°C, Light drizzle",
-        "london": "🌧️ Rainy, 12°C, Heavy rain",
-        "tokyo": "☀️ Sunny, 22°C, Clear skies",
-        "mumbai": "🌤️ Partly cloudy, 28°C, Humid",
-        "paris": "⛅ Partly cloudy, 18°C, Mild",
-        "new york": "🌨️ Snowy, -2°C, Light snow",
+        "seattle": "Cloudy, 15°C, Light drizzle",
+        "london": "Rainy, 12°C, Heavy rain",
+        "tokyo": "Sunny, 22°C, Clear skies",
+        "mumbai": "Partly cloudy, 28°C, Humid",
+        "paris": "Partly cloudy, 18°C, Mild",
+        "new york": "Snowy, -2°C, Light snow",
     }
     return weather_data.get(city.lower(), f"Weather data not available for {city}")
 
@@ -152,7 +127,6 @@ def get_weather(city: str) -> str:
 def calculate(expression: str) -> str:
     """Calculate a mathematical expression safely."""
     try:
-        # Safe evaluation for basic math
         allowed_names = {}
         result = eval(expression, {"__builtins__": {}}, allowed_names)
         return f"Result: {result}"
@@ -167,7 +141,6 @@ def get_time() -> str:
 
 def search_database(query: str) -> str:
     """Simulate searching a database."""
-    # Simulate some processing time
     results = {
         "users": "Found 150 users matching criteria",
         "products": "Found 45 products in inventory",
@@ -182,24 +155,20 @@ def search_database(query: str) -> str:
 
 async def main():
     print("\n" + "="*75)
-    print("🎯 COMPLETE MIDDLEWARE DEMO - All 4 Types Working Together")
+    print("COMPLETE MIDDLEWARE DEMO - All 4 Types Working Together")
     print("="*75)
-    
     print("""
 This demo shows 4 middleware working simultaneously:
 
-1️⃣  TIMING MIDDLEWARE (Agent)      → Tracks how long each request takes
-2️⃣  SECURITY MIDDLEWARE (Agent)    → Blocks sensitive content
-3️⃣  FUNCTION LOGGER (Function)     → Logs all tool calls
-4️⃣  TOKEN COUNTER (Chat)           → Counts tokens sent to AI
+1.  TIMING MIDDLEWARE (Agent)      → Tracks how long each request takes
+2.  SECURITY MIDDLEWARE (Agent)    → Blocks sensitive content
+3.  FUNCTION LOGGER (Function)     → Logs all tool calls
+4.  TOKEN COUNTER (Chat)           → Counts tokens sent to AI
 
 Watch how they all work together in a real conversation!
 """)
-    
     print("="*75)
-    print("\n🔧 Creating agent with all 4 middleware...\n")
-    
-    # Create agent with all middleware
+    print("\nCreating agent with all 4 middleware...\n")
     agent = AzureOpenAIChatClient(
         endpoint=ENDPOINT,
         deployment_name=DEPLOYMENT,
@@ -211,82 +180,69 @@ Watch how they all work together in a real conversation!
         Be friendly, concise, and helpful in your responses.""",
         tools=[get_weather, calculate, get_time, search_database],
         middleware=[
-            timing_middleware,          # Agent middleware #1
-            security_middleware,        # Agent middleware #2
-            function_logger_middleware, # Function middleware
-            token_counter_middleware,   # Chat middleware
+            timing_middleware,
+            security_middleware,
+            function_logger_middleware,
+            token_counter_middleware,
         ]
     )
-    
-    print("✅ Agent created with 4 middleware layers!")
-    
+    print("Agent created with 4 middleware layers.")
     print("\n" + "="*75)
-    print("📝 SUGGESTED TEST PROMPTS:")
+    print("SUGGESTED TEST PROMPTS:")
     print("="*75)
     print("""
 To see all middleware in action, try these prompts:
 
-✅ PROMPT 1: "tell me a joke"
+PROMPT 1: "tell me a joke"
    → Triggers: Timing + Token Counter
    → Simple request, no functions
 
-✅ PROMPT 2: "what's the weather in Tokyo?"
+PROMPT 2: "what's the weather in Tokyo?"
    → Triggers: Timing + Function Logger + Token Counter
    → Calls the get_weather function
 
-✅ PROMPT 3: "what time is it and calculate 15 * 8"
+PROMPT 3: "what time is it and calculate 15 * 8"
    → Triggers: Timing + Function Logger (2 calls) + Token Counter
    → Multiple function calls
 
-✅ PROMPT 4: "what is my password?"
+PROMPT 4: "what is my password?"
    → Triggers: Security (BLOCKS) + Timing
    → Security middleware blocks this request!
 
-✅ PROMPT 5: "search for users and get weather in Paris"
+PROMPT 5: "search for users and get weather in Paris"
    → Triggers: ALL 4 middleware
    → Multiple functions, shows complete flow
 
 Type 'quit' to exit
 """)
     print("="*75 + "\n")
-    
-    # Get new thread for conversation
     thread = agent.get_new_thread()
-    
-    # Interactive loop
     while True:
         try:
-            user_input = input("💬 You: ").strip()
-            
+            user_input = input("You: ").strip()
             if not user_input:
                 continue
-            
             if user_input.lower() in ['quit', 'exit', 'bye']:
-                print("\n👋 Demo ended! Thanks for testing all the middleware!")
+                print("\nDemo ended. Thanks for testing all the middleware.")
                 break
-            
             print("\n" + "-"*75)
-            print("🔄 PROCESSING YOUR REQUEST...")
+            print("PROCESSING YOUR REQUEST...")
             print("-"*75)
-            
-            # Stream the response
-            print("\n🤖 Agent: ", end="", flush=True)
+            print("\nAgent: ", end="", flush=True)
             async for chunk in agent.run_stream(user_input, thread=thread):
                 print(chunk, end="", flush=True)
             print("\n")
-            
             print("-"*75)
-            print("✅ Request completed!\n")
-            
+            print("Request completed.\n")
         except (KeyboardInterrupt, EOFError):
-            print("\n\n👋 See you again soon.")
+            print("\n\nSee you again soon.")
             break
         except Exception as e:
-            print(f"\n❌ Error: {e}\n")
+            print(f"\nError: {e}\n")
 
 
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 See you again soon.")
+        print("\nSee you again soon.")

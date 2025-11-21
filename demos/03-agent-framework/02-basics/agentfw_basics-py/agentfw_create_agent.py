@@ -19,7 +19,7 @@ async def main():
     """Interactive demo: Create agent and chat."""
     
     print("\n" + "="*70)
-    print("🤖 DEMO: Create Azure AI Foundry Agent (Interactive)")
+    print("DEMO: Create Azure AI Foundry Agent (Interactive)")
     print("="*70)
     
     async with AzureCliCredential() as credential:
@@ -29,7 +29,7 @@ async def main():
             credential=credential
         ) as project_client:
             
-            print("\n📋 Creating new agent in Azure AI Foundry...")
+            print("\nCreating new agent in Azure AI Foundry...")
             
             # NOTE: In recent azure-ai-projects previews, the .agents surface may require a different signature.
             # Use azure.ai.agents.AgentsClient for a stable create_agent API.
@@ -41,7 +41,7 @@ async def main():
                 description="Created by "
             )
             
-            print(f"✅ Agent created successfully!")
+            print(f"Agent created successfully!")
             print(f"   Agent ID: {created_agent.id}")
             
             # Now use the agent for chat
@@ -54,7 +54,7 @@ async def main():
             ) as agent:
                 
                 print("\n" + "="*70)
-                print("💬 Interactive Chat (Type 'quit' to exit)")
+                print("Interactive Chat (Type 'quit' to exit)")
                 print("="*70 + "\n")
                 
                 while True:
@@ -62,14 +62,14 @@ async def main():
                     try:
                         user_input = input("You: ")
                     except EOFError:
-                        print("\n👋 Received EOF - exiting.")
+                        print("\nReceived EOF - exiting.")
                         break
                     except KeyboardInterrupt:
-                        print("\n👋 Interrupted - exiting.")
+                        print("\nInterrupted - exiting.")
                         break
                     
                     if user_input.lower() in ['quit', 'exit', 'q']:
-                        print("\n👋 Goodbye!")
+                        print("\nGoodbye!")
                         break
                     
                     if not user_input.strip():
@@ -87,6 +87,6 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 See you again soon.")
+        print("\nSee you again soon.")
     except Exception as e:
-        print(f"\n❌ Unexpected error: {e}")
+        print(f"\nUnexpected error: {e}")

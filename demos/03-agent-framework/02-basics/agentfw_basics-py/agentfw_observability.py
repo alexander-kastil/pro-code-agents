@@ -383,7 +383,7 @@ class CompleteTelemetryCollector(SpanExporter):
             if 'gen_ai.response.model' in attrs:
                 html += f"""
                 <div class="section">
-                    <div class="section-title">🤖 Model Information</div>
+                    <div class="section-title">Model Information</div>
                     <div class="data-grid">
                         <div class="data-row">
                             <div class="data-key">Model</div>
@@ -419,7 +419,7 @@ class CompleteTelemetryCollector(SpanExporter):
             if other_attrs:
                 html += f"""
                 <div class="section">
-                    <div class="section-title">📋 Additional Attributes</div>
+                    <div class="section-title">Additional Attributes</div>
                     <div class="data-grid">
                 """
                 for key, value in other_attrs.items():

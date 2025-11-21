@@ -27,7 +27,7 @@ async def main():
     """Interactive demo: Structured output extraction."""
     
     print("\n" + "="*70)
-    print("📊 DEMO: Structured Output with Pydantic")
+    print("DEMO: Structured Output with Pydantic")
     print("="*70)
     
     # Create agent
@@ -41,44 +41,44 @@ async def main():
         name="ExtractorBot"
     )
     
-    print("\n✅ Agent created with PersonInfo schema")
-    print("📋 Schema: name, age, occupation, city")
+    print("\nAgent created with PersonInfo schema")
+    print("Schema: name, age, occupation, city")
     
     print("\n" + "="*70)
-    print("💬 Interactive Chat (Type 'quit' to exit)")
+    print("Interactive Chat (Type 'quit' to exit)")
     print("="*70)
-    print("\n💡 TIP: Describe a person and see structured extraction\n")
+    print("\nTIP: Describe a person and see structured extraction\n")
     
     while True:
         try:
             user_input = input("You: ")
         except EOFError:
-            print("\n👋 Received EOF - exiting.")
+            print("\nReceived EOF - exiting.")
             break
         except KeyboardInterrupt:
-            print("\n👋 Interrupted - exiting.")
+            print("\nInterrupted - exiting.")
             break
         
         if user_input.lower() in ['quit', 'exit', 'q']:
-            print("\n👋 Goodbye!")
+            print("\nGoodbye!")
             break
         
         if not user_input.strip():
             continue
         
         # Get structured response
-        print("\n🔄 Extracting structured data...")
+        print("\nExtracting structured data...")
         response = await agent.run(user_input, response_format=PersonInfo)
         
         if response.value:
             person = response.value
-            print("\n📊 Extracted Information:")
+            print("\nExtracted Information:")
             print(f"   Name: {person.name}")
             print(f"   Age: {person.age}")
             print(f"   Occupation: {person.occupation}")
             print(f"   City: {person.city}")
         else:
-            print("❌ Could not extract information")
+            print("Could not extract information")
         
         print()
 
@@ -87,4 +87,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 See you again soon.")
+        print("\nSee you again soon.")

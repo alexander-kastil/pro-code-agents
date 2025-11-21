@@ -17,7 +17,7 @@ async def main():
     """Interactive demo: Azure OpenAI direct chat."""
     
     print("\n" + "="*70)
-    print("🤖 DEMO: Direct Azure OpenAI Chat (Not Agent Service)")
+    print("DEMO: Direct Azure OpenAI Chat (Not Agent Service)")
     print("="*70)
     
     # Create agent using direct Azure OpenAI
@@ -31,10 +31,10 @@ async def main():
         name="DirectChatBot"
     )
     
-    print("\n✅ Agent created (temporary, not saved to cloud)")
+    print("\nAgent created (temporary, not saved to cloud)")
     
     print("\n" + "="*70)
-    print("💬 Interactive Chat (Type 'quit' to exit)")
+    print("Interactive Chat (Type 'quit' to exit)")
     print("="*70 + "\n")
     
     while True:
@@ -42,14 +42,14 @@ async def main():
         try:
             user_input = input("You: ")
         except EOFError:
-            print("\n👋 Received EOF - exiting.")
+            print("\nReceived EOF - exiting.")
             break
         except KeyboardInterrupt:
-            print("\n👋 Interrupted - exiting.")
+            print("\nInterrupted - exiting.")
             break
         
         if user_input.lower() in ['quit', 'exit', 'q']:
-            print("\n👋 Goodbye!")
+            print("\nGoodbye!")
             break
         
         if not user_input.strip():
@@ -67,4 +67,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("\n👋 See you again soon.")
+        print("\nSee you again soon.")
