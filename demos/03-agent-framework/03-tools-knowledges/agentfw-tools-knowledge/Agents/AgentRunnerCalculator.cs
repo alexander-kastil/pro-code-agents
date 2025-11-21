@@ -1,6 +1,7 @@
 using Azure;
 using Azure.AI.OpenAI;
 using AgentFwToolsKnowledge.Models;
+using AgentFwToolsKnowledge.Tools;
 using OpenAI.Chat;
 using System.ComponentModel;
 using System.Text.Json;
@@ -129,16 +130,6 @@ public class AgentRunnerCalculator(AppConfig config)
 
     private static string Calculate(string expression)
     {
-        try
-        {
-            // Simple expression evaluator using DataTable.Compute
-            var table = new System.Data.DataTable();
-            var result = table.Compute(expression, string.Empty);
-            return $"Result: {result}";
-        }
-        catch (Exception)
-        {
-            return $"Error: Could not calculate '{expression}'";
-        }
+        return SafeCalculator.Evaluate(expression);
     }
 }

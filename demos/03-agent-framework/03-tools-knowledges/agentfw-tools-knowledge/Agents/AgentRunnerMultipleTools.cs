@@ -1,6 +1,7 @@
 using Azure;
 using Azure.AI.OpenAI;
 using AgentFwToolsKnowledge.Models;
+using AgentFwToolsKnowledge.Tools;
 using OpenAI.Chat;
 using System.Text.Json;
 
@@ -198,16 +199,7 @@ public class AgentRunnerMultipleTools(AppConfig config)
 
     private static string Calculate(string expression)
     {
-        try
-        {
-            var table = new System.Data.DataTable();
-            var result = table.Compute(expression, string.Empty);
-            return $"Result: {result}";
-        }
-        catch
-        {
-            return $"Cannot calculate '{expression}'";
-        }
+        return SafeCalculator.Evaluate(expression);
     }
 
     private static async Task<string> GetTimeAsync(string timezone)
