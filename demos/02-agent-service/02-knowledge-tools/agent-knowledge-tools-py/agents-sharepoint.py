@@ -1,8 +1,14 @@
 import os
+import io
+import sys
 from dotenv import load_dotenv
+from azure.ai.agents import AgentsClient
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import ListSortOrder, MessageRole, SharepointTool
+
+# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def main():
     # Clear the console to keep the output focused on the agent interaction
@@ -23,8 +29,10 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    conn_id = project_client.connections.get(sharepoint_connection_name).id
-    print(f"Connection ID: {conn_id}")
+    agents_client = AgentsClient(
+        endpoint=endpoint,
+        credential=DefaultAzureCredential(),
+    )
 
     conn_id = project_client.connections.get(sharepoint_connection_name).id
     print(f"Connection ID: {conn_id}")
@@ -33,9 +41,7 @@ def main():
     sharepoint = SharepointTool(connection_id=conn_id)
 
     # Create agent with Sharepoint tool and process agent run
-    with project_client:
-        agents_client = project_client.agents
-
+    with agents_client:
         agent = agents_client.create_agent(
             model=model,
             name="my-agent",

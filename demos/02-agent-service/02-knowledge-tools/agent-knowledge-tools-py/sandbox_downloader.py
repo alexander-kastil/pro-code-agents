@@ -1,10 +1,15 @@
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class SandboxDownloader:
     def __init__(self, agents_client):
         self.agents_client = agents_client
-        downloads_folder = "assets/downloads"
-        self.downloads_dir = (Path.cwd() / downloads_folder).resolve()
+        output_path = os.getenv("OUTPUT_PATH", "./output")
+        downloads_folder = os.path.join(output_path, "downloads")
+        self.downloads_dir = Path(downloads_folder).resolve()
         self.downloads_dir.mkdir(parents=True, exist_ok=True)
 
     def download(self, messages):

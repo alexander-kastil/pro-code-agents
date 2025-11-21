@@ -1,11 +1,17 @@
 import os
+import sys
 from dotenv import load_dotenv
-from azure.ai.projects import AIProjectClient
+from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import CodeInterpreterTool
 from azure.ai.agents.models import FilePurpose, MessageAttachment, MessageRole
 from azure.identity import DefaultAzureCredential
 from pathlib import Path
 from sandbox_downloader import SandboxDownloader
+
+# Set UTF-8 encoding for console output
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def main():
     # Clear the console to keep the output focused on the agent interaction
@@ -23,13 +29,12 @@ def main():
         os.path.join(os.path.dirname(__file__), "assets", "quarterly_results.csv")
     )
 
-    project_client = AIProjectClient(
+    agents_client = AgentsClient(
         endpoint=endpoint,
         credential=DefaultAzureCredential(),
     )
 
-    with project_client:
-        agents_client = project_client.agents
+    with agents_client:
         # Upload a file and wait for it to be processed
         # [START upload_file_and_create_agent_with_code_interpreter]
         file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)

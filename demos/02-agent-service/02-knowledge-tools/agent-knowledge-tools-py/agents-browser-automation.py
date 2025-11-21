@@ -1,13 +1,20 @@
 import os
+import io
+import sys
 from dotenv import load_dotenv
+from azure.ai.agents import AgentsClient
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     MessageRole,
     RunStepToolCallDetails,
     BrowserAutomationTool,
     RunStepBrowserAutomationToolCall,
+    ListSortOrder,
 )
 from azure.identity import DefaultAzureCredential
+
+# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def main():
     # Clear the console to keep the output focused on the agent interaction
@@ -28,14 +35,16 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
+    agents_client = AgentsClient(
+        endpoint=endpoint,
+        credential=DefaultAzureCredential(),
+    )
+
     # [START create_agent_with_browser_automation]
     # Initialize Browser Automation tool and add the connection id
     browser_automation = BrowserAutomationTool(connection_id=connection_id)
 
-    with project_client:
-
-        agents_client = project_client.agents
-
+    with agents_client:
         # Create a new Agent that has the Browser Automation tool attached.
         # Note: To add Browser Automation tool to an existing Agent with an `agent_id`, do the following:
         # agent = agents_client.update_agent(agent_id, tools=browser_automation.definitions)
@@ -120,12 +129,14 @@ def main():
             print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
         # Print the Agent's response message with optional citation
-        response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
-        if response_message:
-            for text_message in response_message.text_messages:
-                print(f"Agent response: {text_message.text.value}")
-            for annotation in response_message.url_citation_annotations:
-                print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
+        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.DESCENDING)
+        for message in messages:
+            if message.role == MessageRole.AGENT:
+                for text_message in message.text_messages:
+                    print(f"Agent response: {text_message.text.value}")
+                for annotation in message.url_citation_annotations:
+                    print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
+                break
 
 
 if __name__ == '__main__':

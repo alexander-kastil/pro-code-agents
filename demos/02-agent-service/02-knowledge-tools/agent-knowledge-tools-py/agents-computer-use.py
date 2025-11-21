@@ -1,6 +1,7 @@
-import os, time, base64
+import os, time, base64, io, sys
 from dotenv import load_dotenv
 from typing import List
+from azure.ai.agents import AgentsClient
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     ComputerScreenshot,
@@ -20,6 +21,9 @@ from azure.ai.agents.models import (
     ListSortOrder,
 )
 from azure.identity import DefaultAzureCredential
+
+# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 def image_to_base64(image_path: str) -> str:
@@ -61,12 +65,12 @@ def main():
 
     project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
+    agents_client = AgentsClient(endpoint=endpoint, credential=DefaultAzureCredential())
+
     # Initialize Computer Use tool with a browser-sized viewport
     computer_use = ComputerUseTool(display_width=1026, display_height=769, environment=environment)
 
-    with project_client:
-        agents_client = project_client.agents
-
+    with agents_client:
         # Create a new Agent that has the Computer Use tool attached.
         agent = agents_client.create_agent(
             model=model,
@@ -103,7 +107,7 @@ def main():
         run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
         print(f"Created run, ID: {run.id}")
 
-    # create a fake screenshot showing the text typed in
+        # create a fake screenshot showing the text typed in
         result_image_base64 = image_to_base64(action_result_file_path)
         result_img_url = f"data:image/jpeg;base64,{result_image_base64}"
         computer_screenshot = ComputerScreenshot(image_url=result_img_url)
@@ -154,7 +158,7 @@ def main():
         if run.status == "failed":
             print(f"Run failed: {run.last_error}")
 
-    # Fetch run steps to get the details of the agent run
+        # Fetch run steps to get the details of the agent run
         run_steps = agents_client.run_steps.list(thread_id=thread.id, run_id=run.id)
         for step in run_steps:
             print(f"Step {step.id} status: {step.status}")
@@ -182,14 +186,14 @@ def main():
                 last_text = msg.text_messages[-1]
                 print(f"{msg.role}: {last_text.text.value}")
 
-    # Optional: Delete the agent once the run is finished.
-    # Controlled by DELETE_AGENT_ON_EXIT environment variable
-    delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
-    if delete_on_exit:
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
-    else:
-        print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
+        # Optional: Delete the agent once the run is finished.
+        # Controlled by DELETE_AGENT_ON_EXIT environment variable
+        delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
+        if delete_on_exit:
+            agents_client.delete_agent(agent.id)
+            print("Deleted agent")
+        else:
+            print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
 
 if __name__ == '__main__':

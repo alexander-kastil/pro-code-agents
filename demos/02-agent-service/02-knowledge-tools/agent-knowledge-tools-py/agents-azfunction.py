@@ -1,12 +1,18 @@
 import json
 import os
+import io
+import sys
 from typing import Any, Dict, Optional
 
 import requests
 from azure.ai.agents.models import FunctionTool, ToolSet
+from azure.ai.agents import AgentsClient
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
+
+# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Detailed logging flag
 DETAILED_LOGGING = True
@@ -73,17 +79,23 @@ def main() -> None:
         )
         log("Created AIProjectClient")
 
+        agents_client = AgentsClient(
+            endpoint=endpoint,
+            credential=DefaultAzureCredential(),
+        )
+        log("Created AgentsClient")
+
         functions = FunctionTool([convert_currency_via_function])
         toolset = ToolSet()
         toolset.add(functions)
         log("Created ToolSet with FunctionTool")
 
-        with project_client:
+        with agents_client:
             # Enable automatic function calling
-            project_client.agents.enable_auto_function_calls(toolset)
+            agents_client.enable_auto_function_calls(toolset)
             log("Enabled auto function calls")
 
-            agent = project_client.agents.create_agent(
+            agent = agents_client.create_agent(
                 model=model,
                 name="currency-conversion-agent",
                 instructions=(
@@ -95,7 +107,7 @@ def main() -> None:
             )
             log(f"Created agent: {agent.name} ({agent.id})")
 
-            thread = project_client.agents.threads.create()
+            thread = agents_client.threads.create()
             log(f"Created thread: {thread.id}")
             
             print(f"\n{'='*70}")
@@ -116,7 +128,7 @@ def main() -> None:
 
                     log(f"User input: {user_input}")
 
-                    message = project_client.agents.messages.create(
+                    message = agents_client.messages.create(
                         thread_id=thread.id,
                         role="user",
                         content=user_input
@@ -124,7 +136,7 @@ def main() -> None:
                     log(f"Created message: {message['id'] if isinstance(message, dict) else message.id}")
                     
                     log("Creating and processing run...")
-                    run = project_client.agents.runs.create_and_process(
+                    run = agents_client.runs.create_and_process(
                         thread_id=thread.id, 
                         agent_id=agent.id,
                         toolset=toolset
@@ -136,7 +148,7 @@ def main() -> None:
                         log(f"Run error details: {run.last_error}")
                         continue
 
-                    messages = project_client.agents.messages.list(thread_id=thread.id)
+                    messages = agents_client.messages.list(thread_id=thread.id)
                     log(f"Retrieved messages from thread")
                     
                     for message in messages:
@@ -181,7 +193,7 @@ def main() -> None:
 
             delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
             if delete_on_exit:
-                project_client.agents.delete_agent(agent.id)
+                agents_client.delete_agent(agent.id)
                 log(f"Deleted agent: {agent.id}")
                 print(f"\n{'='*70}")
                 print("🗑️  Agent deleted successfully")

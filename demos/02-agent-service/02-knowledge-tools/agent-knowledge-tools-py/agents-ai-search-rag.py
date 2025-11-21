@@ -1,8 +1,14 @@
 import os
+import io
+import sys
 from dotenv import load_dotenv
+from azure.ai.agents import AgentsClient
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
+
+# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def main():
     # Clear the console to keep the output focused on the agent interaction
@@ -25,9 +31,12 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    with project_client:
-        agents_client = project_client.agents
+    agents_client = AgentsClient(
+        endpoint=endpoint,
+        credential=DefaultAzureCredential(),
+    )
 
+    with agents_client:
         # [START create_agent_with_azure_ai_search_tool]
         if not index_name:
             raise ValueError("AZURE_AI_INDEX_NAME must be set in .env")

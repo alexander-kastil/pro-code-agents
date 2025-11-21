@@ -1,8 +1,14 @@
 import os
+import io
+import sys
 from dotenv import load_dotenv
+from azure.ai.agents import AgentsClient
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import MessageRole, BingGroundingTool
+from azure.ai.agents.models import MessageRole, BingGroundingTool, ListSortOrder
 from azure.identity import DefaultAzureCredential
+
+# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def main():
     # Clear the console to keep the output focused on the agent interaction
@@ -23,6 +29,11 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
+    agents_client = AgentsClient(
+        endpoint=endpoint,
+        credential=DefaultAzureCredential(),
+    )
+
     # [START create_agent_with_bing_grounding_tool]
     conn_id = project_client.connections.get(bing_connection_name).id
     print(f"Connection ID: {conn_id}")
@@ -31,8 +42,7 @@ def main():
     bing = BingGroundingTool(connection_id=conn_id)
 
     # Create agent with the bing tool and process agent run
-    with project_client:
-        agents_client = project_client.agents
+    with agents_client:
         agent = agents_client.create_agent(
             model=model,
             name="bing-grounding-agent",
@@ -91,17 +101,19 @@ def main():
             print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
 
         # Print the Agent's response message with optional citation
-        response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
-        if response_message:
-            responses = []
-            for text_message in response_message.text_messages:
-                responses.append(text_message.text.value)
-            msg_text = " ".join(responses)
-            for annotation in response_message.url_citation_annotations:
-                msg_text = msg_text.replace(
-                    annotation.text, f" [{annotation.url_citation.title}]({annotation.url_citation.url})"
-                )
-            print(f"Agent response: {msg_text}")
+        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.DESCENDING)
+        for message in messages:
+            if message.role == MessageRole.AGENT:
+                responses = []
+                for text_message in message.text_messages:
+                    responses.append(text_message.text.value)
+                msg_text = " ".join(responses)
+                for annotation in message.url_citation_annotations:
+                    msg_text = msg_text.replace(
+                        annotation.text, f" [{annotation.url_citation.title}]({annotation.url_citation.url})"
+                    )
+                print(f"Agent response: {msg_text}")
+                break
 
 
 if __name__ == '__main__':

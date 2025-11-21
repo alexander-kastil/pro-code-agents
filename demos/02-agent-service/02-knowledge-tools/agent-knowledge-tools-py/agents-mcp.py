@@ -1,6 +1,9 @@
 import os
+import io
+import sys
 import time
 from dotenv import load_dotenv
+from azure.ai.agents import AgentsClient
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
@@ -11,6 +14,9 @@ from azure.ai.agents.models import (
     SubmitToolApprovalAction,
     ToolApproval,
 )
+
+# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def main():
     # Clear the console to keep the output focused on the agent interaction
@@ -34,7 +40,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    project_client = AIProjectClient(
+    agents_client = AgentsClient(
         endpoint=endpoint,
         credential=DefaultAzureCredential(),
     )
@@ -53,9 +59,7 @@ def main():
     print(f"Allowed tools: {mcp_tool.allowed_tools}")
 
     # Create agent with MCP tool and process agent run
-    with project_client:
-        agents_client = project_client.agents
-
+    with agents_client:
         # Create a new agent.
         # NOTE: To reuse existing agent, fetch it with get_agent(agent_id)
         agent = agents_client.create_agent(
