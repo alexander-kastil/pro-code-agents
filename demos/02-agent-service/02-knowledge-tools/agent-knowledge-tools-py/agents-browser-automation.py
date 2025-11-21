@@ -121,12 +121,12 @@ def main():
             print(f"\n{'='*80}")
             print(f"Running agent... (this may take a while)")
             print(f"{'='*80}")
-            print(f"\n⏳ Browser automation in progress...")
-            print(f"   This can take up to 60-90 seconds as the agent:")
-            print(f"   - Launches a browser session in Azure Playwright")
-            print(f"   - Navigates to the website")
-            print(f"   - Extracts the requested information")
-            print(f"   Please wait...\n")
+            print(f"\n⏳ Browser automation in progress...", flush=True)
+            print(f"   This can take up to 60-90 seconds as the agent:", flush=True)
+            print(f"   - Launches a browser session in Azure Playwright", flush=True)
+            print(f"   - Navigates to the website", flush=True)
+            print(f"   - Extracts the requested information", flush=True)
+            print(f"   Please wait...\n", flush=True)
             if detailed_logging:
                 logging.info("Starting agent run...")
             run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
@@ -225,7 +225,8 @@ def main():
         print(f"\n\n{'='*80}")
         print("❌ Interrupted by user (Ctrl+C)")
         print(f"{'='*80}")
-        logging.warning("Process interrupted by user")
+        if detailed_logging:
+            logging.warning("Process interrupted by user")
         
         # Clean up resources if they were created
         try:
@@ -238,14 +239,17 @@ def main():
                 else:
                     print(f"⚠ Agent {agent.id} preserved for examination in Azure AI Foundry")
         except Exception as cleanup_error:
-            logging.error(f"Error during cleanup: {cleanup_error}")
+            if detailed_logging:
+                logging.error(f"Error during cleanup: {cleanup_error}")
             print(f"⚠ Could not clean up resources: {cleanup_error}")
     
     except Exception as e:
         print(f"\n\n{'='*80}")
-        print(f"❌ Error occurred: {str(e)}")
+        print(f"❌ Error occurred: {type(e).__name__}")
+        print(f"   {str(e)}")
         print(f"{'='*80}")
-        logging.error(f"Error occurred: {e}", exc_info=True)
+        if detailed_logging:
+            logging.error(f"Error occurred: {e}", exc_info=True)
         
         # Clean up resources if they were created
         try:
@@ -256,7 +260,8 @@ def main():
                     agents_client.delete_agent(agent.id)
                     print("✓ Agent deleted")
         except Exception as cleanup_error:
-            logging.error(f"Error during cleanup: {cleanup_error}")
+            if detailed_logging:
+                logging.error(f"Error during cleanup: {cleanup_error}")
 
 
 if __name__ == '__main__':
