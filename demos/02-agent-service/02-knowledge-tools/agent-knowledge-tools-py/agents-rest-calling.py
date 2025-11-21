@@ -5,7 +5,6 @@ import sys
 
 from azure.ai.agents.models import OpenApiAnonymousAuthDetails, OpenApiTool
 from azure.ai.agents import AgentsClient
-from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 
@@ -144,12 +143,6 @@ def main() -> None:
         }
 
         log("Created OpenAPI specification for DummyJSON Todos API")
-
-        project_client = AIProjectClient(
-            endpoint=endpoint,
-            credential=DefaultAzureCredential(),
-        )
-        log("Created AIProjectClient")
 
         agents_client = AgentsClient(
             endpoint=endpoint,

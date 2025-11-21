@@ -2,7 +2,6 @@ import os, time, base64, io, sys
 from dotenv import load_dotenv
 from typing import List
 from azure.ai.agents import AgentsClient
-from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     ComputerScreenshot,
     TypeAction,
@@ -62,8 +61,6 @@ def main():
 
     asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/cua_screenshot.jpg"))
     action_result_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/cua_screenshot_next.jpg"))
-
-    project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     agents_client = AgentsClient(endpoint=endpoint, credential=DefaultAzureCredential())
 

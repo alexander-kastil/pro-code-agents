@@ -3,7 +3,6 @@ import io
 import sys
 from dotenv import load_dotenv
 from azure.ai.agents import AgentsClient
-from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     MessageRole,
     RunStepToolCallDetails,
@@ -29,11 +28,6 @@ def main():
     print(f"Using endpoint: {endpoint}")
     print(f"Using model: {model}")
     print(f"Using connection_id: {connection_id}")
-
-    project_client = AIProjectClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(),
-    )
 
     agents_client = AgentsClient(
         endpoint=endpoint,

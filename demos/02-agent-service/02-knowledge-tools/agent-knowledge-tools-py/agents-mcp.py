@@ -4,7 +4,6 @@ import sys
 import time
 from dotenv import load_dotenv
 from azure.ai.agents import AgentsClient
-from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     ListSortOrder,
@@ -34,11 +33,6 @@ def main():
     print(f"Using endpoint: {endpoint}")
     print(f"Using model: {model}")
     print(f"MCP Server: {mcp_server_label} at {mcp_server_url}")
-
-    project_client = AIProjectClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential(),
-    )
 
     agents_client = AgentsClient(
         endpoint=endpoint,

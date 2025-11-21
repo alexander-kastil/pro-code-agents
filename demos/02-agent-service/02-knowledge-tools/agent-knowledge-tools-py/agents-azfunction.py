@@ -7,7 +7,6 @@ from typing import Any, Dict, Optional
 import requests
 from azure.ai.agents.models import FunctionTool, ToolSet
 from azure.ai.agents import AgentsClient
-from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 
@@ -70,12 +69,6 @@ def main() -> None:
         log(f"Using endpoint: {endpoint}")
         log(f"Using model: {model}")
         log(f"Azure Function endpoint: {os.getenv('FUNCTION_DEPLOYMENT_URL')}")
-
-        project_client = AIProjectClient(
-            endpoint=endpoint,
-            credential=DefaultAzureCredential(),
-        )
-        log("Created AIProjectClient")
 
         agents_client = AgentsClient(
             endpoint=endpoint,
