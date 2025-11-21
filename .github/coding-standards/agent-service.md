@@ -129,18 +129,18 @@ class EventHandler:
         self.client = agents_client
         self.thread_id = thread_id
         self.run_id = run_id
-    
+
     def on_message_delta(self, delta):
         """Handle streaming message deltas."""
         if delta.content:
             for content in delta.content:
                 if hasattr(content, 'text') and content.text:
                     print(content.text.value, end='', flush=True)
-    
+
     def on_run_step_created(self, step):
         """Handle new run step creation."""
         print(f"\n[Step Created: {step.type}]")
-    
+
     def on_run_completed(self, run):
         """Handle run completion."""
         print("\n[Run Completed]")
@@ -166,29 +166,29 @@ while run.status == "requires_action":
     if run.required_action.type == "submit_tool_outputs":
         tool_calls = run.required_action.submit_tool_outputs.tool_calls
         tool_outputs = []
-        
+
         for tool_call in tool_calls:
             if tool_call.function.name == "get_weather":
                 # Parse arguments
                 import json
                 args = json.loads(tool_call.function.arguments)
-                
+
                 # Call the function
                 result = get_weather(args["location"])
-                
+
                 # Add output
                 tool_outputs.append({
                     "tool_call_id": tool_call.id,
                     "output": result
                 })
-        
+
         # Submit outputs
         run = agents_client.agents.runs.submit_tool_outputs(
             thread_id=thread.id,
             run_id=run.id,
             tool_outputs=tool_outputs
         )
-    
+
     # Wait and check again
     time.sleep(1)
     run = agents_client.agents.runs.retrieve(
@@ -277,7 +277,7 @@ agent = agents_client.agents.create_agent(
 triage_agent = agents_client.agents.create_agent(
     model=model,
     name="triage-agent",
-    instructions="""You are a triage agent. 
+    instructions="""You are a triage agent.
     Analyze user requests and determine which specialist agent should handle them.
     Route to:
     - weather-agent for weather queries
@@ -307,12 +307,12 @@ def route_to_agent(user_query: str):
         role="user",
         content=f"Which agent should handle this: {user_query}"
     )
-    
+
     run = agents_client.agents.runs.create(
         thread_id=thread.id,
         agent_id=triage_agent.id
     )
-    
+
     # Wait for response
     while run.status in ["queued", "in_progress"]:
         time.sleep(1)
@@ -320,11 +320,11 @@ def route_to_agent(user_query: str):
             thread_id=thread.id,
             run_id=run.id
         )
-    
+
     # Get triage decision
     messages = agents_client.agents.messages.list(thread_id=thread.id)
     decision = messages.data[0].content[0].text.value
-    
+
     # Route to appropriate agent
     if "weather" in decision.lower():
         return weather_agent.id
@@ -394,6 +394,85 @@ agents_client.agents.threads.delete(thread_id=thread.id)
 2. **Content Filtering**: Use Azure AI Content Safety for filtering
 3. **Access Control**: Implement proper authentication and authorization
 4. **Data Privacy**: Handle sensitive data according to compliance requirements
+
+## Versioning & SDK Conventions (Agent Service)
+
+To ensure reproducible training environments and reduce breaking changes, we pin specific preview/GA SDK versions and follow updated API usage patterns.
+
+### Pinned SDK Versions
+
+| Component      | Package           | Version | Rationale                                               |
+| -------------- | ----------------- | ------- | ------------------------------------------------------- |
+| Project Client | azure-ai-projects | 2.0.0b1 | Adopt preview features while standardizing across demos |
+| Agents Service | azure-ai-agents   | 1.2.0b6 | Required for BrowserAutomationTool & ComputerUseTool    |
+| Identity       | azure-identity    | 1.16.0  | Stable credential flow for training labs                |
+
+All requirements are pinned with `==` (no ranges) in each demo `requirements.txt` to avoid inadvertent API drift.
+
+### Environment Variables
+
+Required variables (must exist in `.env`):
+
+- `PROJECT_ENDPOINT` – Azure AI Foundry Project endpoint (not connection string)
+- `MODEL_DEPLOYMENT_NAME` – Model deployment name (e.g. `gpt-4o-mini`) used by `create_agent` (legacy `MODEL_DEPLOYMENT` still accepted for backward compatibility)
+- Optional: `AUTO_TEST_PROMPT` – Enables non-interactive smoke testing of agent scripts.
+
+### Updated API Usage (2.x project client + 1.2.x agents)
+
+Use the nested resource groups under `project_client.agents`:
+
+Correct patterns:
+
+```python
+thread = project_client.agents.threads.create()
+project_client.agents.messages.create(thread_id=thread.id, role="user", content="Hello")
+run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
+messages = project_client.agents.messages.list(thread_id=thread.id)
+last = messages.get_last_text_message_by_role("assistant")
+```
+
+Deprecated / incorrect (do NOT use):
+
+```python
+# project_client.agents.create_message(...)  # OLD pattern
+# project_client.agents.list_messages(...)   # OLD pattern
+```
+
+### Common Pitfalls & Fixes
+
+| Pitfall                     | Symptom                                                                   | Fix                                                                                            |
+| --------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Using old message APIs      | `AttributeError: 'AgentsClient' object has no attribute 'create_message'` | Replace with `project_client.agents.messages.create`                                           |
+| Unpinned dependencies       | Random AttributeErrors after `pip install -U`                             | Pin versions with `==` as listed above                                                         |
+| Missing endpoint var        | `KeyError: 'PROJECT_ENDPOINT'` or auth failure                            | Ensure `.env` has `PROJECT_ENDPOINT` and loaded via `dotenv`                                   |
+| Function tool not executing | No tool call despite definitions                                          | Call `enable_auto_function_calls(toolset)` before `create_agent` (when auto execution desired) |
+
+### Migration Notes (1.0.0 -> 2.0.0b1)
+
+1. Retain `AIProjectClient` construction; endpoint & credential parameters unchanged.
+2. Message and thread operations remain under `project_client.agents.messages` / `threads` groups.
+3. Replace any helper wrappers referencing removed convenience methods with explicit nested resource calls.
+4. Re-test function calling flows (auto vs manual) after upgrade—ensure toolset passed into `create_agent` when relying on auto execution.
+
+### Smoke Test Convention
+
+Each agent demo may define `AUTO_TEST_PROMPT` to allow headless CI verification:
+
+```powershell
+$env:AUTO_TEST_PROMPT = 'Smoke test prompt'; python .\agents-function-calling.py
+```
+
+Scripts should branch on presence of this variable to avoid interactive waits.
+
+### Documentation Updates
+
+Whenever SDK version changes, update:
+
+1. `requirements.txt`
+2. This Versioning & SDK Conventions section (table + migration notes)
+3. Any code snippets showing deprecated calls.
+
+---
 
 ## Educational Focus
 
