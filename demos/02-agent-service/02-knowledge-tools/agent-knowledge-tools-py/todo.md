@@ -50,42 +50,32 @@ All 10 agent files have been successfully migrated from deprecated `AIProjectCli
 **Note**: Interactive agent - requires user input at runtime  
 **Action Required**: None - Ready to use
 
+### 7. ✅ agents-rest-calling.py
+
+**Test Result**: Successfully called Food Catalog API, retrieved menu items  
+**Dependencies**: Food Catalog API deployed and running  
+**Note**: Fixed SQLite seeding issue with `EnsureCreated()` in Program.cs  
+**Action Required**: None - Ready to use
+
+### 8. ✅ agents-sharepoint.py
+
+**Test Result**: Successfully configured and tested with SharePoint connection  
+**Dependencies**: SharePoint connection configured in Azure AI Foundry  
+**Action Required**: None - Ready to use
+
 ---
 
-## ⚠️ NEEDS CONFIGURATION - ACTION REQUIRED (4/10)
+## ⚠️ NEEDS CONFIGURATION - ACTION REQUIRED (2/10)
 
 **These agents are code-complete and syntax-validated but require external services/connections to be configured before testing.**
 
-### 7. ⚠️ agents-rest-calling.py
-
-**Blocker**: Food Catalog API returning HTTP 500 errors (backend issue)  
-**Action Required**:
-
-1. Fix Food Catalog API backend at `food-catalog-api-dev.azurewebsites.net`
-2. Verify `REST_URL` in `.env` is correct
-
-**Note**: Agent code is correct - this is a backend service issue
-
----
-
-### 8. ⚠️ agents-bing-grounding.py
+### 9. ⚠️ agents-bing-grounding.py
 
 **Blocker**: Bing Search connection not configured  
 **Action Required**:
 
 1. Create Bing Search connection in Azure AI Foundry
 2. Update `BING_CONNECTION` in `.env` with connection name
-
----
-
-### 9. ⚠️ agents-sharepoint.py
-
-**Blocker**: SharePoint connection not configured  
-**Action Required**:
-
-1. Create SharePoint connection in Azure AI Foundry
-2. Update `SHAREPOINT_CONNECTION` in `.env` with connection name
-3. Replace `<sharepoint_resource_document>` placeholder with actual document reference
 
 ---
 
@@ -118,12 +108,12 @@ All 10 agent files have been successfully migrated from deprecated `AIProjectCli
 | **Total Agent Files**      | 10    | 100%   |
 | **API Migration Complete** | 10/10 | ✅     |
 | **Syntax Validated**       | 10/10 | ✅     |
-| **Fully Tested & Working** | 6/10  | ✅     |
-| **Needs Configuration**    | 4/10  | ⚠️     |
+| **Fully Tested & Working** | 8/10  | ✅     |
+| **Needs Configuration**    | 2/10  | ⚠️     |
 
 ### Next Steps
 
-1. ✅ **Ready to use now**: 6 agents
+1. ✅ **Ready to use now**: 8 agents
 
    - `agents-file-search.py`
    - `agents-code-interpreter.py`
@@ -131,12 +121,12 @@ All 10 agent files have been successfully migrated from deprecated `AIProjectCli
    - `agents-mcp.py`
    - `agents-function-calling.py`
    - `agents-azfunction.py`
+   - `agents-rest-calling.py`
+   - `agents-sharepoint.py`
 
-2. ⚠️ **Configure external services**: 4 agents
+2. ⚠️ **Configure external services**: 2 agents
 
-   - `agents-rest-calling.py` - Fix Food API backend
    - `agents-bing-grounding.py` - Configure Bing connection
-   - `agents-sharepoint.py` - Configure SharePoint connection
    - `agents-browser-automation.py` - Configure Playwright connection
    - `agents-computer-use.py` - Request model access
 
