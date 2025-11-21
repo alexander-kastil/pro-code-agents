@@ -61,9 +61,11 @@ public class AgentRunnerThreading(AppConfig config)
                     if (!string.IsNullOrEmpty(threadId))
                     {
                         thread = await client.Threads.GetThreadAsync(threadId);
-                        messageCount = data.TryGetValue("message_count", out var countObj)
-                            ? int.Parse(countObj.ToString() ?? "0")
-                            : 0;
+                        if (data.TryGetValue("message_count", out var countObj) && 
+                            int.TryParse(countObj.ToString(), out var count))
+                        {
+                            messageCount = count;
+                        }
                         Console.WriteLine($"   Restored thread with {messageCount} messages.");
                     }
                     else

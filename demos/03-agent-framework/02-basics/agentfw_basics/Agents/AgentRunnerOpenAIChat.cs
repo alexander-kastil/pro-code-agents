@@ -26,6 +26,9 @@ public class AgentRunnerOpenAIChat(AppConfig config)
         );
 
         var chatClient = client.GetChatClient(config.AzureOpenAIChatDeploymentName);
+        
+        // Limit message history to prevent memory issues
+        const int MaxHistoryMessages = 20;
         var messages = new List<ChatMessage>
         {
             new SystemChatMessage("You are a helpful assistant. Be concise and clear.")
@@ -51,6 +54,15 @@ public class AgentRunnerOpenAIChat(AppConfig config)
             }
 
             messages.Add(new UserChatMessage(userInput));
+
+            // Keep only the last MaxHistoryMessages to prevent memory issues
+            if (messages.Count > MaxHistoryMessages)
+            {
+                // Keep system message and most recent messages
+                messages = new List<ChatMessage> { messages[0] }
+                    .Concat(messages.Skip(messages.Count - MaxHistoryMessages + 1))
+                    .ToList();
+            }
 
             Console.Write("Agent: ");
 

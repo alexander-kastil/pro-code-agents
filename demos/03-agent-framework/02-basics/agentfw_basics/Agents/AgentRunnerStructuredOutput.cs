@@ -84,7 +84,7 @@ public class AgentRunnerStructuredOutput(AppConfig config)
                 }
                 else
                 {
-                    Console.WriteLine("Could not extract information");
+                    Console.WriteLine("Could not extract information. Please try rephrasing your request with clearer person information (name, age, occupation, city).");
                 }
             }
             catch (JsonException)

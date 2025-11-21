@@ -119,7 +119,7 @@ public class AgentRunnerLongTermMemory(AppConfig config)
 
             if (userInput.Trim().ToLower().StartsWith("remember "))
             {
-                var parts = userInput.Substring(9).Split('=');
+                var parts = userInput.Substring(9).Split('=', 2);
                 if (parts.Length == 2)
                 {
                     var key = parts[0].Trim();
