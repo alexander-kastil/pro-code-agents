@@ -68,6 +68,7 @@ async def main():
     ):
         print("\n✅ Agent created with File Search Tool")
         print("💡 TIP: Ask questions about documents in your vector store")
+        print("📝 Example: Tell me about Equinox Stock")
         
         print("\n" + "="*70)
         print("💬 Interactive Chat (Type 'quit' to exit)")

@@ -1,7 +1,7 @@
-# Core packages (exact versions)
+# Core packages
 azure-identity==1.25.1
-python-dotenv==1.2.1  # For .env file support
-requests>=2.31.0  # For REST API demos
+python-dotenv>=1.0.0  # Provides `from dotenv import load_dotenv`
+requests>=2.31.0      # For REST API demos
 
 # Azure AI Foundry Agents SDKs used directly in code
 azure-ai-projects>=2.0.0b2

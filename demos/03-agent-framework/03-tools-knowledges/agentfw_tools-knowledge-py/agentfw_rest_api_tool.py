@@ -1,11 +1,10 @@
 """
-REST API Tool Demo - Food Catalog API
+REST API Tool Demo - DummyJSON Todos API
 
 This demo shows how to create custom tools that call external REST APIs.
-We'll use the Food Catalog API to demonstrate querying food items.
+We'll use the DummyJSON Todos API to demonstrate querying and managing todo items.
 
-API: https://food-catalog-api-dev.azurewebsites.net
-Swagger: https://food-catalog-api-dev.azurewebsites.net/swagger/v1/swagger.json
+API: https://dummyjson.com/docs/todos
 """
 
 import asyncio
@@ -25,43 +24,40 @@ DEPLOYMENT = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME")
 API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
 API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "2024-07-01-preview")
 
-# Food Catalog API base URL
-FOOD_API_BASE = "https://food-catalog-api-dev.azurewebsites.net"
+# DummyJSON API base URL from environment
+REST_API_BASE = os.getenv("REST_URL", "https://dummyjson.com")
 
 
 # Define REST API tools
-def get_food_items(
-    category: Annotated[Optional[str], Field(description="Food category to filter by (e.g., 'fruits', 'vegetables', 'dairy')")] = None,
-    search: Annotated[Optional[str], Field(description="Search term to find food items")] = None
+def get_todos(
+    limit: Annotated[Optional[int], Field(description="Number of todos to retrieve (default 10)")] = 10,
+    skip: Annotated[Optional[int], Field(description="Number of todos to skip for pagination")] = 0
 ) -> str:
-    """Get food items from the catalog, optionally filtered by category or search term."""
+    """Get all todos with optional pagination."""
     try:
-        params = {}
-        if category:
-            params['category'] = category
-        if search:
-            params['search'] = search
+        params = {'limit': limit, 'skip': skip}
         
         response = requests.get(
-            f"{FOOD_API_BASE}/api/foods",
+            f"{REST_API_BASE}/todos",
             params=params,
             timeout=10
         )
         
         if response.status_code == 200:
-            items = response.json()
-            if not items:
-                return "No food items found."
+            data = response.json()
+            todos = data.get('todos', [])
+            total = data.get('total', 0)
             
-            result = "Food Items:\n"
-            for item in items[:10]:  # Limit to 10 items
-                name = item.get('name', 'Unknown')
-                cat = item.get('category', 'N/A')
-                price = item.get('price', 'N/A')
-                result += f"- {name} ({cat}) - ${price}\n"
+            if not todos:
+                return "No todos found."
             
-            if len(items) > 10:
-                result += f"\n... and {len(items) - 10} more items"
+            result = f"Todos (showing {len(todos)} of {total}):\n"
+            for todo in todos:
+                todo_id = todo.get('id', 'N/A')
+                task = todo.get('todo', 'Unknown')
+                completed = '✓' if todo.get('completed') else '✗'
+                user_id = todo.get('userId', 'N/A')
+                result += f"- [{completed}] #{todo_id}: {task} (User: {user_id})\n"
             
             return result
         else:
@@ -69,86 +65,93 @@ def get_food_items(
     except requests.exceptions.Timeout:
         return "Error: Request timed out. The API might be unavailable."
     except requests.exceptions.RequestException as e:
-        return f"Error: Could not connect to Food Catalog API - {str(e)}"
+        return f"Error: Could not connect to DummyJSON API - {str(e)}"
 
 
-def get_food_details(
-    food_id: Annotated[int, Field(description="The ID of the food item to get details for")]
+def get_todo_by_id(
+    todo_id: Annotated[int, Field(description="The ID of the todo item to get")]
 ) -> str:
-    """Get detailed information about a specific food item by ID."""
+    """Get a specific todo by its ID."""
     try:
         response = requests.get(
-            f"{FOOD_API_BASE}/api/foods/{food_id}",
+            f"{REST_API_BASE}/todos/{todo_id}",
             timeout=10
         )
         
         if response.status_code == 200:
-            item = response.json()
-            result = f"Food Details:\n"
-            result += f"Name: {item.get('name', 'Unknown')}\n"
-            result += f"Category: {item.get('category', 'N/A')}\n"
-            result += f"Price: ${item.get('price', 'N/A')}\n"
-            result += f"Description: {item.get('description', 'No description')}\n"
-            result += f"Calories: {item.get('calories', 'N/A')}\n"
-            result += f"In Stock: {item.get('inStock', 'Unknown')}\n"
+            todo = response.json()
+            completed = '✓ Completed' if todo.get('completed') else '✗ Not completed'
+            result = f"Todo Details:\n"
+            result += f"ID: {todo.get('id', 'N/A')}\n"
+            result += f"Task: {todo.get('todo', 'Unknown')}\n"
+            result += f"Status: {completed}\n"
+            result += f"User ID: {todo.get('userId', 'N/A')}\n"
             return result
         elif response.status_code == 404:
-            return f"Food item with ID {food_id} not found."
+            return f"Todo with ID {todo_id} not found."
         else:
             return f"Error: API returned status {response.status_code}"
     except requests.exceptions.Timeout:
         return "Error: Request timed out. The API might be unavailable."
     except requests.exceptions.RequestException as e:
-        return f"Error: Could not connect to Food Catalog API - {str(e)}"
+        return f"Error: Could not connect to DummyJSON API - {str(e)}"
 
 
-def get_food_categories() -> str:
-    """Get all available food categories from the catalog."""
+def get_todos_by_user(
+    user_id: Annotated[int, Field(description="The user ID to get todos for")]
+) -> str:
+    """Get all todos for a specific user."""
     try:
         response = requests.get(
-            f"{FOOD_API_BASE}/api/categories",
+            f"{REST_API_BASE}/todos/user/{user_id}",
             timeout=10
         )
         
         if response.status_code == 200:
-            categories = response.json()
-            if not categories:
-                return "No categories found."
+            data = response.json()
+            todos = data.get('todos', [])
+            total = data.get('total', 0)
             
-            result = "Available Food Categories:\n"
-            for cat in categories:
-                result += f"- {cat}\n"
+            if not todos:
+                return f"No todos found for user {user_id}."
+            
+            result = f"Todos for User {user_id} ({total} total):\n"
+            for todo in todos:
+                todo_id = todo.get('id', 'N/A')
+                task = todo.get('todo', 'Unknown')
+                completed = '✓' if todo.get('completed') else '✗'
+                result += f"- [{completed}] #{todo_id}: {task}\n"
             return result
         else:
             return f"Error: API returned status {response.status_code}"
     except requests.exceptions.Timeout:
         return "Error: Request timed out. The API might be unavailable."
     except requests.exceptions.RequestException as e:
-        return f"Error: Could not connect to Food Catalog API - {str(e)}"
+        return f"Error: Could not connect to DummyJSON API - {str(e)}"
 
 
 async def main():
     """Interactive demo: Agent with REST API tools."""
     
     print("\n" + "="*70)
-    print("🍎 DEMO: REST API Tools - Food Catalog")
+    print("✅ DEMO: REST API Tools - DummyJSON Todos")
     print("="*70)
     print(f"""
 This demo shows how to create custom tools that call REST APIs.
 
-API: {FOOD_API_BASE}
+API: {REST_API_BASE}/todos
 
 Available Tools:
-1. get_food_items - Browse food catalog with optional filters
-2. get_food_details - Get detailed info about a food item
-3. get_food_categories - List all food categories
+1. get_todos - Get all todos with pagination
+2. get_todo_by_id - Get a specific todo by ID
+3. get_todos_by_user - Get all todos for a specific user
 
 Example queries:
-- "Show me all fruits"
-- "What vegetables are available?"
-- "Get details for food item 5"
-- "What categories are available?"
-- "Find food items with 'apple' in the name"
+- "Show me the first 5 todos"
+- "Get todo with ID 10"
+- "Show me all todos for user 5"
+- "List todos from 10 to 20"
+- "What's in todo number 1?"
     """)
     
     # Create agent with REST API tools
@@ -159,13 +162,13 @@ Example queries:
         api_version=API_VERSION
     ).create_agent(
         instructions=(
-            "You are a helpful assistant with access to a food catalog API. "
-            "Use the tools to help users find food items, get details, and browse categories. "
+            "You are a helpful assistant with access to a todos API. "
+            "Use the tools to help users browse todos, get specific todo details, and find todos by user. "
             "Always provide clear and helpful responses. "
             "If the API is unavailable, inform the user politely and suggest trying again later."
         ),
-        name="FoodCatalogBot",
-        tools=[get_food_items, get_food_details, get_food_categories]
+        name="TodoBot",
+        tools=[get_todos, get_todo_by_id, get_todos_by_user]
     )
     
     print("\n✅ Agent created with REST API tools")
