@@ -43,23 +43,18 @@ All 10 agent files have been successfully migrated from deprecated `AIProjectCli
 **Note**: Interactive agent - requires user input at runtime  
 **Action Required**: None - Ready to use
 
+### 6. ✅ agents-azfunction.py
+
+**Test Result**: Successfully called Azure Function, converted 100 EUR to 3742.94 THB  
+**Dependencies**: Azure Function deployed at `FUNCTION_DEPLOYMENT_URL`  
+**Note**: Interactive agent - requires user input at runtime  
+**Action Required**: None - Ready to use
+
 ---
 
-## ⚠️ NEEDS CONFIGURATION - ACTION REQUIRED (5/10)
+## ⚠️ NEEDS CONFIGURATION - ACTION REQUIRED (4/10)
 
 **These agents are code-complete and syntax-validated but require external services/connections to be configured before testing.**
-
-### 6. ⚠️ agents-azfunction.py
-
-**Blocker**: Azure Function not deployed  
-**Action Required**:
-
-1. Deploy Azure Function for currency conversion
-2. Set `FUNCTION_DEPLOYMENT_URL` in `.env`
-
-**Note**: Interactive agent - requires user input at runtime
-
----
 
 ### 7. ⚠️ agents-rest-calling.py
 
@@ -123,22 +118,22 @@ All 10 agent files have been successfully migrated from deprecated `AIProjectCli
 | **Total Agent Files**      | 10    | 100%   |
 | **API Migration Complete** | 10/10 | ✅     |
 | **Syntax Validated**       | 10/10 | ✅     |
-| **Fully Tested & Working** | 5/10  | ✅     |
-| **Needs Configuration**    | 5/10  | ⚠️     |
+| **Fully Tested & Working** | 6/10  | ✅     |
+| **Needs Configuration**    | 4/10  | ⚠️     |
 
 ### Next Steps
 
-1. ✅ **Ready to use now**: 5 agents
+1. ✅ **Ready to use now**: 6 agents
 
    - `agents-file-search.py`
    - `agents-code-interpreter.py`
    - `agents-ai-search-rag.py`
    - `agents-mcp.py`
    - `agents-function-calling.py`
+   - `agents-azfunction.py`
 
-2. ⚠️ **Configure external services**: 5 agents
+2. ⚠️ **Configure external services**: 4 agents
 
-   - `agents-azfunction.py` - Deploy Azure Function
    - `agents-rest-calling.py` - Fix Food API backend
    - `agents-bing-grounding.py` - Configure Bing connection
    - `agents-sharepoint.py` - Configure SharePoint connection

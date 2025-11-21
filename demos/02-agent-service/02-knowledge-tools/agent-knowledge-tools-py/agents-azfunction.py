@@ -14,13 +14,11 @@ from dotenv import load_dotenv
 # Configure UTF-8 encoding for Windows console (fixes emoji display issues)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# Detailed logging flag
-DETAILED_LOGGING = True
-
 
 def log(message: str) -> None:
     """Print log message if detailed logging is enabled."""
-    if DETAILED_LOGGING:
+    detailed_logging = os.getenv("DETAILED_LOGGING", "false").lower() == "true"
+    if detailed_logging:
         print(f"[LOG] {message}")
 
 
@@ -209,7 +207,7 @@ def main() -> None:
         log("User interrupted with Ctrl+C during startup")
     except Exception as e:
         print(f"\n❌ Error: {type(e).__name__}: {e}")
-        if DETAILED_LOGGING:
+        if os.getenv("DETAILED_LOGGING", "false").lower() == "true":
             import traceback
             traceback.print_exc()
 
