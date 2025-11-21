@@ -1,13 +1,17 @@
 import os
 import time
+import io
+import sys
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import ListSortOrder
 import qrcode
-import io
 from datetime import datetime
 from azure.storage.blob import BlobServiceClient
+
+# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def main():
 

@@ -1,6 +1,8 @@
 import os
+import io
+import sys
 from dotenv import load_dotenv
-from azure.ai.projects import AIProjectClient
+from azure.ai.agents import AgentsClient
 from azure.identity import DefaultAzureCredential
 from typing import Any, Optional
 from azure.ai.agents.models import (
@@ -12,6 +14,9 @@ from azure.ai.agents.models import (
     RunStep,
 )
 
+# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 # Clear the console to keep the output focused on the agent interaction
 os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -20,7 +25,7 @@ load_dotenv()
 endpoint = os.getenv("PROJECT_ENDPOINT")
 model = os.getenv("MODEL_DEPLOYMENT")
 
-agents_client = AIProjectClient(
+agents_client = AgentsClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(),
 )
@@ -58,22 +63,22 @@ class MyEventHandler(AgentEventHandler[str]):
 with agents_client:
 
     # Create an agent and run stream with event handler
-    agent = agents_client.agents.create_agent(
+    agent = agents_client.create_agent(
         model=model, name="event-handler-agent", instructions="You are a helpful agent"
     )
     print(f"Created agent: {agent.name}, ID: {agent.id}")
 
     # Create a thread for the conversation
-    thread = agents_client.agents.threads.create()
+    thread = agents_client.threads.create()
     print(f"Created thread, thread ID {thread.id}")
 
-    message = agents_client.agents.messages.create(
+    message = agents_client.messages.create(
         thread_id=thread.id, role="user", content="Hello, tell me a joke"
     )
     print(f"Created message, message ID {message.id}")
 
     # [START create_stream]
-    with agents_client.agents.runs.stream(
+    with agents_client.runs.stream(
         thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
     ) as stream:
         for event_type, event_data, func_return in stream:
@@ -83,10 +88,10 @@ with agents_client:
             print(f"Event Function return: {func_return}\n")
     # [END create_stream]
 
-    agents_client.agents.delete_agent(agent.id)
+    agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.agents.messages.list(
+    messages = agents_client.messages.list(
         thread_id=thread.id, order=ListSortOrder.ASCENDING
     )
     for msg in messages:
