@@ -91,7 +91,6 @@ Demos and Labs are available in Python as well as C#.
 - Using vector stores for memory and retrieval
 - Adding custom tools and calling them from agents
 - Integrating OpenAPI and MCP tools
-- Human-in-the-loop strategies for tool calls
 - Function-calling middleware for advanced workflows
 
 ### Orchestration & Workflows
@@ -138,4 +137,5 @@ Demos and Labs are available in Python as well as C#.
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
 - Front-End Integration using Agent–User Interaction (AG-UI) Protocol
+
 
