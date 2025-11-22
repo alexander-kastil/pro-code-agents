@@ -34,11 +34,9 @@ Throughout, hands-on labs and demos in Python and C# ensure practical experience
 ### Microsoft Foundry Essentials
 
 - Copilots & Agent Frameworks in the Microsoft Ecosystem
-- Hub-Based vs Foundry-Based Projects
 - Deploying LLMs in Microsoft Foundry
 - Model Router: Smart Model Selection
 - Microsoft Foundry SDK & Microsoft.Extensions.AI
-- Retrieval-Augmented Generation (RAG) and Azure AI Search
 - Infrastructure as Code (IaC) using Azure Developer CLI
 
 ### Agentic AI Fundamentals
