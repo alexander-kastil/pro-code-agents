@@ -12,6 +12,8 @@ Moving into pro-code extensibility, you’ll learn about Copilot Connectors as w
 
 By the end, you’ll have hands-on experience implementing, orchestrating, and integrating intelligent Pro Code Agents across the Microsoft ecosystem empowering you to deliver scalable, enterprise-grade AI solutions with seamless end-to-end integration into the Microsoft Copilot ecosystem.
 
+Demos and Labs are available in Python as well as C#.
+
 ## Duration
 
 5 Days
@@ -25,6 +27,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 - Python, C#, Typescript
 - Microsoft 365 Development & Azure Development Skills helpful
+- GitHub Account
 
 ## Modules
 
@@ -135,6 +138,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
 - Front-End Integration using Agent–User Interaction (AG-UI) Protocol
+
 
 
 
