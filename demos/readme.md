@@ -1,18 +1,16 @@
 # Building Copilots and Agentic Apps with Microsoft Foundry & Microsoft Agent Framework
 
-This five-day class is designed for Software Architects & Engineers for Agentic AI Solutions who want to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agents using Microsoft’s latest frameworks and services.
+This five-day class is crafted for software architects and engineers eager to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agentic applications using Microsoft’s latest frameworks and services.
 
-The journey begins with the essentials: you'll explore the foundations of Copilots, Agents, and the Microsoft Foundry. Learn how to deploy large language models, use the Microsoft Foundry SDK, and evaluate generative AI performance. Early sessions introduce Retrieval Augmented Generation (RAG), prompt and context engineering, and the principles of agentic reasoning and orchestration as well as a good foundation to implement you own MCP Servers.
+The class begins by establishing a strong foundation in Copilots, Agents, and the Microsoft Foundry platform. You’ll gain hands-on experience deploying large language models, working with the Foundry SDK, and developing robust agentic solutions through prompt engineering and Retrieval-Augmented Generation.
 
-Next, you'll discover how the Foundry Agent Service provides a scalable, robust platform for hosting agents. You'll work with threads, runs, and messages, connect action- and knowledge tools, and automate workflows using multi agent solutions connected by agent-to-agent protocols. Security, monitoring, and governance are integrated throughout, ensuring your solutions are enterprise-ready.
+As we dive deeper, you’ll explore the Foundry Agent Service—a fully managed, scalable environment for hosting agents—learning to connect knowledge sources, automate workflows, and leverage features like contextual knowledge graphs and Work IQ for enterprise-ready deployments.
 
-The class then shifts to the Microsoft Agent Framework, where you'll configure agents, enable multi-modal capabilities, and design complex workflows with branching, checkpoints, and human-in-the-loop patterns. You'll see how to persistent memory across conversations and enable sophisticated orchestration of Microsoft Foundry Agents.
+The journey continues with a focus on orchestration and workflow design, as you work extensively with the Microsoft Agent Framework. Here, you’ll configure agents for complex, multi-modal scenarios, implement persistent memory, and design sophisticated orchestration patterns with advanced observability and governance. Conversation management, middleware integration, and security are emphasized throughout, ensuring your solutions are both powerful and maintainable.
 
-Moving into pro-code extensibility, you’ll learn about Copilot Connectors as well as Copilot APIs. You will build both declarative and custom engine agents, leverage the Microsoft 365 Agent Toolkit. Finally, you’ll use the Microsoft Agents SDK to bring your agents directly into the Copilot UI, connecting Copilot Studio- and Pro-Code Agents, and deploying your solutions to Copilot Chat, Teams or the channel of your choice.
+As the class progresses, you’ll move into pro-code extensibility, building both declarative and custom agents, and preparing your solutions for seamless integration into Copilot Chat, Teams, or the channel of your choice. Everything comes together with the Microsoft Agents SDK, enabling you to connect Copilot Studio and Foundry agents, orchestrate multi-agent solutions, and publish intelligent agents across the Microsoft ecosystem.
 
-By the end, you’ll have hands-on experience implementing, orchestrating, and integrating intelligent Pro Code Agents across the Microsoft ecosystem empowering you to deliver scalable, enterprise-grade AI solutions with seamless end-to-end integration into the Microsoft Copilot ecosystem.
-
-Demos and Labs are available in Python as well as C#.
+Throughout, hands-on labs and demos in Python and C# ensure practical experience at every step. By the end, you’ll be ready to implement, orchestrate, and integrate intelligent pro-code agents—empowering you to deliver scalable, enterprise-grade AI solutions with deep integration into the Microsoft Copilot ecosystem
 
 ## Duration
 
@@ -26,8 +24,8 @@ Demos and Labs are available in Python as well as C#.
 ## Prerequisites & Requirements
 
 - Python, C#, Typescript
-- Microsoft 365 Development & Azure Development Skills helpful
 - GitHub Account
+- Microsoft 365 Development & Azure Development Skills helpful
 
 ## Modules
 
@@ -98,7 +96,7 @@ Demos and Labs are available in Python as well as C#.
 - Introduction to Multi-Agent Orchestration
 - Orchestration Patterns (Sequential, Concurrent, ...)
 - Executor, Edges, Checkpoints
-- Branching & Human-in-the-loop 
+- Branching & Human-in-the-loop
 - Observability & Workflow Visualization
 - Use Agents inside workflows
 
@@ -127,8 +125,8 @@ Demos and Labs are available in Python as well as C#.
 
 - Use Cases for Custom Engine Agents
 - Microsoft Agent SDK & Teams AI Library
-- Exploring Microsoft Agents Playground
-- Tools, Knowledge Integration 
+- Exploring Microsoft Agents Toolkit Playground
+- Tools, Knowledge Integration
 
 ## Module 5: Agent Integration using Microsoft Agents SDK
 
@@ -137,5 +135,3 @@ Demos and Labs are available in Python as well as C#.
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
 - Front-End Integration using Agent–User Interaction (AG-UI) Protocol
-
-
