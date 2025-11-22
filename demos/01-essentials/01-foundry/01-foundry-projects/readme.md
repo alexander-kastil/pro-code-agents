@@ -1,8 +1,8 @@
-# Getting Started with Azure AI Foundry Projects
+# Getting Started with Microsoft Foundry Projects
 
-This guide demonstrates how to deploy and manage AI applications using Microsoft Azure AI Foundry and the Azure Developer CLI (azd).
+This guide demonstrates how to deploy and manage AI applications using Microsoft Foundry and the Azure Developer CLI (azd).
 
-## What is Azure AI Foundry?
+## What is Microsoft Foundry?
 
 [Microsoft Foundry](https://learn.microsoft.com/azure/ai-foundry/what-is-azure-ai-foundry) is a unified platform for developing and deploying generative AI applications and agents. It provides:
 
@@ -14,7 +14,7 @@ This guide demonstrates how to deploy and manage AI applications using Microsoft
 
 ## Getting Started with AI Agents Template
 
-The [Get Started with AI Agents](https://github.com/Azure-Samples/get-started-with-ai-agents) template provides a complete solution for building conversational AI agents using Azure AI Foundry Agent Service.
+The [Get Started with AI Agents](https://github.com/Azure-Samples/get-started-with-ai-agents) template provides a complete solution for building conversational AI agents using Microsoft Foundry Agent Service.
 
 ### Prerequisites
 
@@ -42,7 +42,7 @@ This template creates a complete Azure AI solution:
 
 | Resource                                                                                                         | Description                                                       |
 | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [Azure AI Foundry Project](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects)                  | Workspace for AI development with agents, models, and evaluations |
+| [Microsoft Foundry Project](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects)                 | Workspace for AI development with agents, models, and evaluations |
 | [Azure OpenAI Service](https://learn.microsoft.com/azure/ai-services/openai/)                                    | Powers the AI agents with GPT models (default: gpt-4o-mini)       |
 | [Azure Container Apps](https://learn.microsoft.com/azure/container-apps/)                                        | Hosts the web application with serverless containers              |
 | [Azure Container Registry](https://learn.microsoft.com/azure/container-registry/)                                | Stores and manages container images                               |
@@ -110,11 +110,11 @@ azd config set AZURE_STORAGE_ACCOUNT_NAME <your-storage-name>
 
 ## Understanding Foundry Projects
 
-Azure AI Foundry supports two types of projects:
+Microsoft Foundry supports two types of projects:
 
 - **Foundry Projects** (Recommended) - New resource type with full agent capabilities, Foundry SDK, and unified model access
 - **Hub-based Projects** - Legacy projects for specific scenarios like open-source model deployments
 
-For most scenarios, use a **Foundry project** to access the latest features including Azure AI Foundry Agent Service (GA) and the Foundry API.
+For most scenarios, use a **Foundry project** to access the latest features including Microsoft Foundry Agent Service (GA) and the Foundry API.
 
 Learn more: [Choose an Azure resource type for AI Foundry](https://learn.microsoft.com/azure/ai-foundry/concepts/resource-types)
