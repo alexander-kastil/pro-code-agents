@@ -96,7 +96,7 @@ resource searchService 'Microsoft.Search/searchServices@2023-11-01' = {
   name: searchServiceName
   location: location
   sku: {
-    name: 'basic'
+    name: 'free'
   }
   properties: {
     hostingMode: 'default'
@@ -146,6 +146,7 @@ resource gpt4MiniDeployment 'Microsoft.CognitiveServices/accounts/deployments@20
   name: 'gpt-4o-mini'
   parent: aiFoundry
   sku: {
+    // Default quota capacity per reference subscription image
     capacity: 100
     name: 'GlobalStandard'
   }
@@ -157,10 +158,28 @@ resource gpt4MiniDeployment 'Microsoft.CognitiveServices/accounts/deployments@20
   }
 }
 
+// Added full GPT-4o deployment for demos referencing "gpt-4o"
+resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  name: 'gpt-4o'
+  parent: aiFoundry
+  sku: {
+    // Default quota capacity (image shows 50)
+    capacity: 50
+    name: 'GlobalStandard'
+  }
+  properties: {
+    model: {
+      name: 'gpt-4o'
+      format: 'OpenAI'
+    }
+  }
+}
+
 resource embeddingDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
   name: 'text-embedding-ada-002'
   parent: aiFoundry
   sku: {
+    // Default quota capacity (image shows 150)
     capacity: 150
     name: 'GlobalStandard'
   }
@@ -172,6 +191,29 @@ resource embeddingDeployment 'Microsoft.CognitiveServices/accounts/deployments@2
   }
   dependsOn: [
     gpt4MiniDeployment
+    gpt4oDeployment
+  ]
+}
+
+// Added model-router deployment per request
+resource modelRouterDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  name: 'model-router'
+  parent: aiFoundry
+  sku: {
+    // Default quota capacity (image shows 250)
+    capacity: 250
+    name: 'GlobalStandard'
+  }
+  properties: {
+    model: {
+      name: 'model-router'
+      format: 'OpenAI'
+    }
+  }
+  dependsOn: [
+    gpt4MiniDeployment
+    gpt4oDeployment
+    embeddingDeployment
   ]
 }
 
@@ -249,6 +291,25 @@ resource searchConnection 'Microsoft.CognitiveServices/accounts/connections@2025
     metadata: {
       ApiType: 'Azure'
       ResourceId: searchService.id
+      location: location
+    }
+  }
+}
+
+resource storageConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
+  name: '${aiFoundry.name}-storage'
+  parent: aiFoundry
+  properties: {
+    category: 'AzureBlobStorage'
+    target: storageAccount.properties.primaryEndpoints.blob
+    authType: 'ApiKey'
+    isSharedToAll: true
+    credentials: {
+      key: storageAccount.listKeys().keys[0].value
+    }
+    metadata: {
+      ApiType: 'Azure'
+      ResourceId: storageAccount.id
       location: location
     }
   }
