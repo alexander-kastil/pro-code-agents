@@ -119,8 +119,7 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 
 - Instructions & Conversation Starters
 - Knowledge Sources: Web Search, SharePoint, Teams & Copilot Connectors
-- Built-in Skills: Image Generation & Code Interpreter
-- Extending Agent Actions with API Plugins
+- Image Generation, Code Interpreter & API Plugins
 - Enhancing UI with Adaptive Cards
 
 ### Introduction to Custom Engine Agents
@@ -128,15 +127,14 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Use Cases for Custom Engine Agents
 - Microsoft Agent SDK & Teams AI Library
 - Exploring Microsoft Agents Playground
-- Tools, Knowledge Integration & Azure AI Search (RAG)
+- Tools, Knowledge Integration 
 
 ## Module 5: Agent Integration using Microsoft Agents SDK
 
-- Copilot is the UI for Agents & AI
 - Overview Microsoft Agents SDK
-- Connecting Copilot Studio Agents using Microsoft Agent SDK
-- Connecting Microsoft Foundry Agents
+- Connecting Copilot Studio- & Microsoft Foundry Agents
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
 - Front-End Integration using Agent–User Interaction (AG-UI) Protocol
+
 
