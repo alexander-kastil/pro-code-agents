@@ -24,8 +24,8 @@ load_dotenv('.env03')
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 OUTPUT_DIR = BASE_DIR / "output"
-ARCHIVE_DIR = BASE_DIR / "archive"
-LOGS_DIR = BASE_DIR / "logs"
+ARCHIVE_DIR = OUTPUT_DIR / "archive"
+LOGS_DIR = OUTPUT_DIR / "logs"
 
 
 # ============================================================================
@@ -342,7 +342,7 @@ def visualize_workflow(workflow, title: str, pattern_type: str):
     print("-" * 80)
     
     # Save to files
-    viz_dir = BASE_DIR / "visualizations"
+    viz_dir = OUTPUT_DIR / "visualizations"
     viz_dir.mkdir(exist_ok=True)
     
     filename_base = pattern_type.lower()

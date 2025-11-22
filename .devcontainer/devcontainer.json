@@ -44,7 +44,9 @@
         "teamsdevapp.ms-teams-vscode-extension",
         "teamsdevapp.vscode-ai-foundry",
         "ms-graph.kiota",
-        "TeamsDevApp.vscode-adaptive-cards"
+        "TeamsDevApp.vscode-adaptive-cards",
+        "vstirbu.vscode-mermaid-preview",
+        "digitarald.agent-memory"
       ],
       "settings": {
         "editor.formatOnSave": true,

@@ -28,7 +28,7 @@ load_dotenv('.env01')
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 OUTPUT_DIR = BASE_DIR / "output"
-LOGS_DIR = BASE_DIR / "logs"
+LOGS_DIR = OUTPUT_DIR / "logs"
 
 # Azure AI configuration
 PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT")

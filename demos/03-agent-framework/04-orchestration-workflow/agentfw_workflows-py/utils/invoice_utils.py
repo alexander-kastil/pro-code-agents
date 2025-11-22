@@ -148,9 +148,13 @@ def render_invoice_text(invoice: InvoiceData, totals: dict, config: InvoiceConfi
 
 
 def save_invoice_file(invoice_id: str, content: str, output_dir: str) -> str:
-    """Save invoice to output directory."""
+    """Save invoice to output directory in invoices subfolder."""
+    # Create invoices subfolder under output directory
+    invoices_dir = os.path.join(output_dir, "invoices")
+    Path(invoices_dir).mkdir(parents=True, exist_ok=True)
+    
     filename = f"{invoice_id}.txt"
-    filepath = os.path.join(output_dir, filename)
+    filepath = os.path.join(invoices_dir, filename)
     
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)
@@ -176,6 +180,9 @@ def archive_old_invoice(invoice_id: str, output_dir: str, archive_dir: str) -> b
 
 def log_action(message: str, log_dir: str, log_file: str = "invoice_workflow.log"):
     """Log action to log file."""
+    # Ensure log directory exists
+    Path(log_dir).mkdir(parents=True, exist_ok=True)
+    
     log_path = os.path.join(log_dir, log_file)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     

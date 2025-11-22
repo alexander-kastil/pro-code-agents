@@ -4,11 +4,12 @@ version = "0.1.0"
 description = "Microsoft Agent Framework demos with Azure AI Foundry and Azure OpenAI"
 requires-python = ">=3.12"
 dependencies = [
-    "agent-framework==1.0.0b251111",
     "azure-identity==1.25.1",
     "python-dotenv==1.2.1",
-    "azure-ai-projects==2.0.0b1",
+    "azure-ai-projects>=2.0.0b2",
     "azure-ai-agents==1.2.0b5",
+    "agent-framework==1.0.0b251120",
+    "agent-framework-azure-ai==1.0.0b251120",
 ]
 
 [build-system]
