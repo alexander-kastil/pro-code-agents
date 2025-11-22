@@ -157,6 +157,68 @@ resource gpt4MiniDeployment 'Microsoft.CognitiveServices/accounts/deployments@20
   }
 }
 
+// Additional model deployments referenced across demos
+resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  name: 'gpt-4o'
+  parent: aiFoundry
+  sku: {
+    capacity: 100
+    name: 'GlobalStandard'
+  }
+  properties: {
+    model: {
+      name: 'gpt-4o'
+      format: 'OpenAI'
+    }
+  }
+}
+
+resource gpt41Deployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  name: 'gpt-4.1'
+  parent: aiFoundry
+  sku: {
+    capacity: 100
+    name: 'GlobalStandard'
+  }
+  properties: {
+    model: {
+      name: 'gpt-4.1'
+      format: 'OpenAI'
+    }
+  }
+}
+
+resource gpt41MiniDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  name: 'gpt-4.1-mini'
+  parent: aiFoundry
+  sku: {
+    capacity: 100
+    name: 'GlobalStandard'
+  }
+  properties: {
+    model: {
+      name: 'gpt-4.1-mini'
+      format: 'OpenAI'
+    }
+  }
+}
+
+// Model router deployment (aggregates routing across models in demos)
+resource modelRouterDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  name: 'model-router'
+  parent: aiFoundry
+  sku: {
+    capacity: 100
+    name: 'GlobalStandard'
+  }
+  properties: {
+    model: {
+      name: 'model-router'
+      format: 'OpenAI'
+    }
+  }
+}
+
 resource embeddingDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
   name: 'text-embedding-ada-002'
   parent: aiFoundry
@@ -263,3 +325,9 @@ output applicationInsightsName string = applicationInsightsName
 output searchServiceEndpoint string = 'https://${searchServiceName}.search.windows.net/'
 output aiFoundryHubEndpoint string = 'https://ml.azure.com/home?wsid=${aiFoundry.id}'
 output aiFoundryProjectEndpoint string = 'https://ai.azure.com/build/overview?wsid=${aiProject.id}'
+output gpt4oMiniDeploymentName string = gpt4MiniDeployment.name
+output gpt4oDeploymentName string = gpt4oDeployment.name
+output gpt41DeploymentName string = gpt41Deployment.name
+output gpt41MiniDeploymentName string = gpt41MiniDeployment.name
+output embeddingDeploymentName string = embeddingDeployment.name
+output modelRouterDeploymentName string = modelRouterDeployment.name

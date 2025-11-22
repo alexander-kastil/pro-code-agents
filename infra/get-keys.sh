@@ -56,8 +56,6 @@ logAnalyticsWorkspaceId=$(az monitor log-analytics workspace show --resource-gro
 searchServiceName=$(az deployment group show --resource-group $resourceGroupName --name $deploymentName --query "properties.outputs.searchServiceName.value" -o tsv 2>/dev/null || echo "")
 aiFoundryHubName=$(az deployment group show --resource-group $resourceGroupName --name $deploymentName --query "properties.outputs.aiFoundryHubName.value" -o tsv 2>/dev/null || echo "")
 aiFoundryProjectName=$(az deployment group show --resource-group $resourceGroupName --name $deploymentName --query "properties.outputs.aiFoundryProjectName.value" -o tsv 2>/dev/null || echo "")
-keyVaultName=$(az deployment group show --resource-group $resourceGroupName --name $deploymentName --query "properties.outputs.keyVaultName.value" -o tsv 2>/dev/null || echo "")
-containerRegistryName=$(az deployment group show --resource-group $resourceGroupName --name $deploymentName --query "properties.outputs.containerRegistryName.value" -o tsv 2>/dev/null || echo "")
 applicationInsightsName=$(az deployment group show --resource-group $resourceGroupName --name $deploymentName --query "properties.outputs.applicationInsightsName.value" -o tsv 2>/dev/null || echo "")
 
 # Extract endpoint URLs
@@ -67,8 +65,8 @@ aiFoundryProjectEndpoint=$(az deployment group show --resource-group $resourceGr
 
 
 
-# If deployment outputs are empty, try to discover resources by type
-if [ -z "$storageAccountName" ] || [ -z "$logAnalyticsWorkspaceName" ] || [ -z "$keyVaultName" ] || [ -z "$containerRegistryName" ]; then
+# If deployment outputs are empty, try to discover resources by type (only those provisioned in bicep)
+if [ -z "$storageAccountName" ] || [ -z "$logAnalyticsWorkspaceName" ]; then
     echo "Some deployment outputs not found, discovering missing resources by type..."
     
     if [ -z "$storageAccountName" ]; then
@@ -87,42 +85,11 @@ if [ -z "$storageAccountName" ] || [ -z "$logAnalyticsWorkspaceName" ] || [ -z "
         aiFoundryHubName=$(az cognitiveservices account list --resource-group $resourceGroupName --query "[?kind=='AIServices'].name | [0]" -o tsv 2>/dev/null || echo "")
     fi
     
-    if [ -z "$keyVaultName" ]; then
-        keyVaultName=$(az keyvault list --resource-group $resourceGroupName --query "[0].name" -o tsv 2>/dev/null || echo "")
-    fi
-    
-    if [ -z "$containerRegistryName" ]; then
-        containerRegistryName=$(az acr list --resource-group $resourceGroupName --query "[0].name" -o tsv 2>/dev/null || echo "")
-    fi
-    
     if [ -z "$applicationInsightsName" ]; then
         applicationInsightsName=$(az resource list --resource-group $resourceGroupName --resource-type "Microsoft.Insights/components" --query "[0].name" -o tsv 2>/dev/null || echo "")
     fi
 fi
 
-# Get Cosmos DB service information (better retrieval)
-echo "Getting Cosmos DB service information..."
-cosmosDbAccountName=$(az deployment group show --resource-group $resourceGroupName --name $deploymentName --query "properties.outputs.cosmosDbAccountName.value" -o tsv 2>/dev/null || echo "")
-if [ -z "$cosmosDbAccountName" ]; then
-    cosmosDbAccountName=$(az cosmosdb list --resource-group $resourceGroupName --query "[0].name" -o tsv 2>/dev/null || echo "")
-fi
-
-if [ -n "$cosmosDbAccountName" ]; then
-    cosmosDbEndpoint=$(az cosmosdb show --name $cosmosDbAccountName --resource-group $resourceGroupName --query documentEndpoint -o tsv 2>/dev/null || echo "")
-    cosmosDbKey=$(az cosmosdb keys list --name $cosmosDbAccountName --resource-group $resourceGroupName --query primaryMasterKey -o tsv 2>/dev/null || echo "")
-    
-    # Construct the connection string properly
-    if [ -n "$cosmosDbEndpoint" ] && [ -n "$cosmosDbKey" ]; then
-        cosmosDbConnectionString="AccountEndpoint=${cosmosDbEndpoint};AccountKey=${cosmosDbKey};"
-    else
-        cosmosDbConnectionString=""
-    fi
-else
-    echo "Warning: No Cosmos DB account found in resource group. You may need to deploy one."
-    cosmosDbEndpoint=""
-    cosmosDbKey=""
-    cosmosDbConnectionString=""
-fi
 
 # Get the keys from the resources
 echo "Getting the keys from the resources..."
@@ -252,13 +219,6 @@ echo "AI_FOUNDRY_PROJECT_NAME=\"$aiFoundryProjectName\"" >> "$SCRIPT_DIR/.env"
 echo "AI_FOUNDRY_ENDPOINT=\"$aiFoundryEndpoint\"" >> "$SCRIPT_DIR/.env"
 echo "AI_FOUNDRY_KEY=\"$aiFoundryKey\"" >> "$SCRIPT_DIR/.env"
 
-if [ -n "$containerRegistryName" ]; then
-    acr_username=$(az acr credential show --name $containerRegistryName --query username -o tsv 2>/dev/null || echo "")
-    acr_password=$(az acr credential show --name $containerRegistryName --query passwords[0].value -o tsv 2>/dev/null || echo "")
-else
-    acr_username=""
-    acr_password=""
-fi
 # Construct AI Foundry Hub Endpoint if missing
 if [ -z "$aiFoundryHubEndpoint" ] && [ -n "$aiFoundryHubName" ]; then
     echo "Constructing AI Foundry Hub Endpoint..."
@@ -273,10 +233,6 @@ echo "AI_FOUNDRY_HUB_ENDPOINT=\"$aiFoundryHubEndpoint\"" >> "$SCRIPT_DIR/.env"
 echo "AI_FOUNDRY_PROJECT_ENDPOINT=\"$aiFoundryProjectEndpoint\"" >> "$SCRIPT_DIR/.env"
 echo "AZURE_AI_CONNECTION_ID=\"$azureAIConnectionId\"" >> "$SCRIPT_DIR/.env"
 
-# Azure Cosmos DB
-echo "COSMOS_ENDPOINT=\"$cosmosDbEndpoint\"" >> "$SCRIPT_DIR/.env"
-echo "COSMOS_KEY=\"$cosmosDbKey\"" >> "$SCRIPT_DIR/.env"
-echo "COSMOS_CONNECTION_STRING=\"$cosmosDbConnectionString\"" >> "$SCRIPT_DIR/.env"
 
 # For backward compatibility, also set OpenAI-style variables pointing to AI Foundry
 echo "AZURE_OPENAI_SERVICE_NAME=\"$aiFoundryHubName\"" >> "$SCRIPT_DIR/.env"
@@ -284,6 +240,15 @@ echo "AZURE_OPENAI_ENDPOINT=\"$aiFoundryEndpoint\"" >> "$SCRIPT_DIR/.env"
 echo "AZURE_OPENAI_KEY=\"$aiFoundryKey\"" >> "$SCRIPT_DIR/.env"
 echo "AZURE_OPENAI_DEPLOYMENT_NAME=\"gpt-4o-mini\"" >> "$SCRIPT_DIR/.env"
 echo "MODEL_DEPLOYMENT_NAME=\"gpt-4o-mini\"" >> "$SCRIPT_DIR/.env"
+echo "MODEL_DEPLOYMENT=\"gpt-4o-mini\"" >> "$SCRIPT_DIR/.env"
+echo "AZURE_AI_MODEL_DEPLOYMENT_NAME=\"gpt-4o-mini\"" >> "$SCRIPT_DIR/.env"
+echo "FOUNDRY_MODEL_DEPLOYMENT_NAME=\"gpt-4o-mini\"" >> "$SCRIPT_DIR/.env"
+echo "MODEL=\"gpt-4o-mini\"" >> "$SCRIPT_DIR/.env"
+
+# Additional optional model aliases for demos (uncomment if deployed)
+echo "GPT4O_MODEL_DEPLOYMENT=\"gpt-4o\"" >> "$SCRIPT_DIR/.env"
+echo "GPT41_MODEL_DEPLOYMENT=\"gpt-4.1\"" >> "$SCRIPT_DIR/.env"
+echo "GPT41_MINI_MODEL_DEPLOYMENT=\"gpt-4.1-mini\"" >> "$SCRIPT_DIR/.env"
 
 # Additional variables for Python projects
 echo "AZURE_AI_MODELS_ENDPOINT=\"$aiFoundryEndpoint\"" >> "$SCRIPT_DIR/.env"
@@ -304,18 +269,7 @@ echo "Log Analytics Workspace: $logAnalyticsWorkspaceName"
 echo "Search Service: $searchServiceName"
 echo "AI Foundry Hub: $aiFoundryHubName"
 echo "AI Foundry Project: $aiFoundryProjectName"
-echo "Key Vault: $keyVaultName"
-echo "Container Registry: $containerRegistryName"
 echo "Application Insights: $applicationInsightsName"
-echo "ACR_NAME=\"$containerRegistryName\"" >> "$SCRIPT_DIR/.env"
-echo "ACR_USERNAME=\"$acr_username\"" >> "$SCRIPT_DIR/.env"
-echo "ACR_PASSWORD=\"$acr_password\"" >> "$SCRIPT_DIR/.env"
-
-if [ -n "$cosmosDbAccountName" ]; then
-    echo "Cosmos DB: $cosmosDbAccountName"
-else
-    echo "Cosmos DB: NOT FOUND - You may need to deploy this service"
-fi
 echo "Environment file created: $SCRIPT_DIR/.env"
 
 # Show what needs to be deployed
