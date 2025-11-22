@@ -97,9 +97,8 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Orchestration Patterns (Sequential, Concurrent, ...)
 - Workflow types and visualization
 - Executor, edges, checkpoints
-- Branching in Workflows
+- Branching & Human-in-the-loop 
 - Observability & Workflow Visualization
-- Human-in-the-loop branching
 - Use Agents inside workflows
 
 ## Module 4: Microsoft Copilot Pro-Code Extensibility
@@ -140,3 +139,4 @@ By the end, you’ll have hands-on experience implementing, orchestrating, and i
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
 - Front-End Integration using Agent–User Interaction (AG-UI) Protocol
+
