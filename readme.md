@@ -8,27 +8,6 @@ Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin
 - [Module 4: Pro-Code Extensibility using Microsoft 365 Agent Toolkit & Custom Engine Agents](./demos/04-copilot-extensibility/)
 - [Module 5: Agent & Copilot Integration using the Microsoft Agents SDK](./demos/05-integration)
 
-## Pending .NET 10 Migration
-
-The following projects still target .NET versions below 10 and need migration:
-
-- [ ] [demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj](demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj)
-- [ ] [demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj](demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj)
-
-## Cloning the Repository
-
-This repository uses Git submodules. To clone the repository and automatically download all submodules, use:
-
-```bash
-git clone --recursive https://github.com/alexander-kastil/pro-code-agents.git
-```
-
-If you have already cloned the repository without `--recursive`, you can initialize and update the submodules with:
-
-```bash
-git submodule update --init --recursive
-```
-
 ## Contributing
 
 Feel free to contribute. When contribute implement your changes / additions on a feature branch in your fork and issue a pull request after completion. An introduction video into forks and pull requests can be found [here](https://www.youtube.com/watch?v=nT8KGYVurIU)
