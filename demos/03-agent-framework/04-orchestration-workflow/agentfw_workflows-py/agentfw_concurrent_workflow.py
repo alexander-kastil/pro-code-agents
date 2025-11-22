@@ -15,7 +15,7 @@ from utils.invoice_utils import (
 )
 
 # Load environment
-load_dotenv('.env03')
+load_dotenv('.env')
 
 # Directories
 BASE_DIR = Path(__file__).parent

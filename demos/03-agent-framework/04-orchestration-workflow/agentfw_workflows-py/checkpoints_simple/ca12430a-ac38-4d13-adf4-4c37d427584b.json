@@ -1,0 +1,18 @@
+{
+  "checkpoint_id": "ca12430a-ac38-4d13-adf4-4c37d427584b",
+  "workflow_id": "b18140da-5d9d-4ee5-9df6-7e310508060d",
+  "timestamp": "2025-11-22T07:23:12.323411+00:00",
+  "messages": {},
+  "shared_state": {
+    "current_invoice_id": "INV-002",
+    "processing_stage": "preparation"
+  },
+  "pending_request_info_events": {},
+  "iteration_count": 1,
+  "metadata": {
+    "superstep": 1,
+    "checkpoint_type": "superstep",
+    "graph_signature": "db93324f37ebb3dc0fa12efa0d8f1cdc729a838b66a14a4f6790bb2046f1de20"
+  },
+  "version": "1.0"
+}

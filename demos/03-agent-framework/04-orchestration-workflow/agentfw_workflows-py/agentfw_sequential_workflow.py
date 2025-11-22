@@ -11,11 +11,11 @@ from agent_framework import WorkflowBuilder, WorkflowContext, WorkflowOutputEven
 from utils.invoice_utils import (
     InvoiceConfig, InvoiceData, read_invoices_csv, calculate_invoice_totals,
     render_invoice_text, save_invoice_file, log_action, ensure_directories,
-    print_step, print_invoice_summary
+    print_step
 )
 
 # Load environment
-load_dotenv('.env03')
+load_dotenv('.env')
 
 # Directories
 BASE_DIR = Path(__file__).parent

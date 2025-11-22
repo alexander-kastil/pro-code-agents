@@ -1,9 +1,6 @@
-
 import asyncio
-import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 from agent_framework import (
     WorkflowBuilder,
@@ -11,15 +8,13 @@ from agent_framework import (
     handler,
     WorkflowContext,
     WorkflowOutputEvent,
-    WorkflowStatusEvent,
-    WorkflowRunState,
     FileCheckpointStorage,
 )
 
 # Import invoice utilities
 from utils.invoice_utils import (
     InvoiceConfig, InvoiceData, read_invoices_csv, calculate_invoice_totals,
-    save_invoice_file, log_action, ensure_directories
+    log_action, ensure_directories
 )
 
 # Directories
@@ -109,13 +104,8 @@ class InvoicePreparation(Executor):
         print(f"   Calculated Tax: ${tax_amount:.2f}")
         print(f"   Discount: ${discount_amount:.2f}")
         
-        # Persist state for checkpointing
-        await ctx.set_state({
-            "step": "preparation",
-            "invoice_id": invoice_id,
-            "subtotal": subtotal,
-            "timestamp": "2025-10-21T12:00:00Z"
-        })
+        # Persist state for checkpointing - removed ctx.set_state() as it doesn't exist
+        # State is already managed through set_shared_state() and InvoiceState objects
         
         await ctx.set_shared_state("current_invoice_id", invoice_id)
         await ctx.set_shared_state("processing_stage", "preparation")
@@ -150,13 +140,7 @@ class TaxConfirmationRequester(Executor):
             options="Type 'yes' to confirm or 'no' to skip"
         )
         
-        # Persist state for checkpointing
-        await ctx.set_state({
-            "step": "tax_request",
-            "invoice_id": state.invoice_id,
-            "tax_amount": state.tax_amount,
-            "timestamp": "2025-10-21T12:00:00Z"
-        })
+        # Persist state for checkpointing - removed ctx.set_state() as it doesn't exist
         
         await ctx.set_shared_state("current_invoice_id", state.invoice_id)
         await ctx.set_shared_state("processing_stage", "tax_confirmation")
@@ -200,14 +184,7 @@ class TaxConfirmationProcessor(Executor):
             print(f"Tax skipped")
             state.tax_amount = 0.0
         
-        # Persist state for checkpointing
-        await ctx.set_state({
-            "step": "tax_processed",
-            "invoice_id": state.invoice_id,
-            "tax_confirmed": state.tax_confirmed,
-            "tax_amount": state.tax_amount,
-            "timestamp": "2025-10-21T12:00:00Z"
-        })
+        # Persist state for checkpointing - removed ctx.set_state() as it doesn't exist
         
         await ctx.set_shared_state("processing_stage", "tax_processed")
         await ctx.set_shared_state("tax_confirmed", state.tax_confirmed)
@@ -241,13 +218,7 @@ class DiscountConfirmationRequester(Executor):
                 options="Type 'yes' to apply or 'no' to skip"
             )
             
-            # Persist state for checkpointing
-            await ctx.set_state({
-                "step": "discount_request",
-                "invoice_id": state.invoice_id,
-                "discount_amount": state.discount_amount,
-                "timestamp": "2025-10-21T12:00:00Z"
-            })
+            # Persist state for checkpointing - removed ctx.set_state() as it doesn't exist
             
             await ctx.set_shared_state("processing_stage", "discount_confirmation")
             
@@ -257,12 +228,6 @@ class DiscountConfirmationRequester(Executor):
             print(f"No discount applicable for {state.invoice_id}")
             state.discount_confirmed = True
             state.processing_stage = "discount_skipped"
-            
-            await ctx.set_state({
-                "step": "discount_skipped",
-                "invoice_id": state.invoice_id,
-                "timestamp": "2025-10-21T12:00:00Z"
-            })
             
             return state
 
@@ -304,14 +269,7 @@ class DiscountConfirmationProcessor(Executor):
             print(f"Discount skipped")
             state.discount_amount = 0.0
         
-        # Persist state for checkpointing
-        await ctx.set_state({
-            "step": "discount_processed",
-            "invoice_id": state.invoice_id,
-            "discount_confirmed": state.discount_confirmed,
-            "discount_amount": state.discount_amount,
-            "timestamp": "2025-10-21T12:00:00Z"
-        })
+        # Persist state for checkpointing - removed ctx.set_state() as it doesn't exist
         
         await ctx.set_shared_state("processing_stage", "discount_processed")
         await ctx.set_shared_state("discount_confirmed", state.discount_confirmed)
@@ -362,15 +320,7 @@ class InvoiceFinalizer(Executor):
         
         print(f"Output file created: {output_file}")
         
-        # Persist final state
-        await ctx.set_state({
-            "step": "completed",
-            "invoice_id": state.invoice_id,
-            "final_total": final_total,
-            "tax_confirmed": state.tax_confirmed,
-            "discount_confirmed": state.discount_confirmed,
-            "timestamp": "2025-10-21T12:00:00Z"
-        })
+        # Persist final state - removed ctx.set_state() as it doesn't exist
         
         await ctx.set_shared_state("processing_stage", "completed")
         await ctx.set_shared_state("final_total", final_total)
@@ -386,6 +336,14 @@ async def run_interactive_workflow(workflow, checkpoint_storage, selected_invoic
     completed = False
     loop_count = 0
     max_loops = 10
+    
+    print("\n" + "="*80)
+    print("SIMPLE INTERACTIVE INVOICE APPROVAL WORKFLOW")
+    print("="*80)
+    print("This demo combines:")
+    print("  - Manual human-in-the-loop interaction")
+    print("  - Automatic checkpointing at each pause point")
+    print("  - Request/response correlation with typed payloads")
     
     print("\n" + "="*80)
     print("SIMPLE INTERACTIVE INVOICE APPROVAL WORKFLOW")
