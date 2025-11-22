@@ -48,9 +48,9 @@ Demos and Labs are available in Python as well as C#.
 - What Are Agents & Agentic AI?
 - Prompt Engineering vs Context Engineering
 - Knowledge Integration & Agentic RAG
+- Deep Reasoning & ReAct (Reasoning and Acting)
 - Function Calling, REST APIs & MCP Servers
 - Evaluating Generative AI Performance
-- Multi-Agent Solutions & Orchestration Patterns
 - Governance & Guardrails for Responsible Agents
 
 ### Implementing Model Context Protocol Servers (MCP)
@@ -138,6 +138,7 @@ Demos and Labs are available in Python as well as C#.
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
 - Front-End Integration using Agent–User Interaction (AG-UI) Protocol
+
 
 
 
