@@ -1,17 +1,20 @@
 {
-  "name": "Agentic AI (Prebuilt Image)",
-  "image": "ghcr.io/alexander-kastil/pro-code-agents-dev:latest",
+  "name": "Agentic AI",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
   "remoteUser": "vscode",
   "workspaceFolder": "/workspace",
   "customizations": {
     "vscode": {
       "extensions": [
+        // .NET extensions
         "ms-dotnettools.csharp",
         "ms-dotnettools.csdevkit",
         "ms-dotnettools.vscode-dotnet-runtime",
         "ms-dotnettools.vscodeintellicode-csharp",
         "aliasadidev.nugetpackagemanagergui",
         "docker.docker",
+        // General development extensions
         "mdickin.markdown-shortcuts",
         "esbenp.prettier-vscode",
         "github.copilot",

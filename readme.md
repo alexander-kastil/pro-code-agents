@@ -1,6 +1,6 @@
-# Building Copilots and Agentic Apps with Microsoft Foundry & Microsoft Agent Framework
+# Building Pro-Code Copilots and Agentic Apps with Azure AI Foundry & Microsoft Agent Framework
 
-Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil/) containing:
+Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) containing:
 
 - [Module 1: Copilot & Agent Extensibility Fundamentals](./demos/01-essentials/)
 - [Module 2: Building Agents using Azure AI Foundry Agent Service](./demos/02-agent-service)
@@ -8,9 +8,30 @@ Companion Material for Class Delivery by [Alexander Kastil](https://www.linkedin
 - [Module 4: Pro-Code Extensibility using Microsoft 365 Agent Toolkit & Custom Engine Agents](./demos/04-copilot-extensibility/)
 - [Module 5: Agent & Copilot Integration using the Microsoft Agents SDK](./demos/05-integration)
 
+## Pending .NET 10 Migration
+
+The following projects still target .NET versions below 10 and need migration:
+
+- [ ] [demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj](demos/05-integration/02-m365-agents-sdk/weather-agent-vs-sk/weather-agent-vs.csproj)
+- [ ] [demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj](demos/05-integration/03-agent-framework/hr-agent-vs/ContosoHRAgent.csproj)
+
+## Cloning the Repository
+
+This repository uses Git submodules. To clone the repository and automatically download all submodules, use:
+
+```bash
+git clone --recursive https://github.com/alexander-kastil/pro-code-agents.git
+```
+
+If you have already cloned the repository without `--recursive`, you can initialize and update the submodules with:
+
+```bash
+git submodule update --init --recursive
+```
+
 ## Contributing
 
-Feel free to contribute. When contribute implement your changes / additions on a feature branch in your fork and issue a pull request after completion.
+Feel free to contribute. When contribute implement your changes / additions on a feature branch in your fork and issue a pull request after completion. An introduction video into forks and pull requests can be found [here](https://www.youtube.com/watch?v=nT8KGYVurIU)
 
 ## License & Re-Use
 
@@ -24,4 +45,4 @@ Permission is hereby granted to to use, modify, and distribute the workshop mate
 - Attribution: Users must give appropriate credit to the author and include a link to the original materials.
 - Share-Alike: Any derivative works based on these materials must be shared under the same license terms.
 
-For commercial use please contact the author via [LinkedIn](https://www.linkedin.com/in/alexander-kastil) or [email](mailto:alexander.kastil@integrations.at)
+For commercial use please contact the author via [LinkedIn](https://www.linkedin.com/in/alexander-kastil-3bb26511a/) or [email](mailto:alexander.kastil@integrations.at)

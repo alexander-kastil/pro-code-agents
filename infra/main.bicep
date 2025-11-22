@@ -96,7 +96,7 @@ resource searchService 'Microsoft.Search/searchServices@2023-11-01' = {
   name: searchServiceName
   location: location
   sku: {
-    name: 'free'
+    name: 'basic'
   }
   properties: {
     hostingMode: 'default'
@@ -152,68 +152,6 @@ resource gpt4MiniDeployment 'Microsoft.CognitiveServices/accounts/deployments@20
   properties: {
     model: {
       name: 'gpt-4o-mini'
-      format: 'OpenAI'
-    }
-  }
-}
-
-// Additional model deployments referenced across demos
-resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
-  name: 'gpt-4o'
-  parent: aiFoundry
-  sku: {
-    capacity: 100
-    name: 'GlobalStandard'
-  }
-  properties: {
-    model: {
-      name: 'gpt-4o'
-      format: 'OpenAI'
-    }
-  }
-}
-
-resource gpt41Deployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
-  name: 'gpt-4.1'
-  parent: aiFoundry
-  sku: {
-    capacity: 100
-    name: 'GlobalStandard'
-  }
-  properties: {
-    model: {
-      name: 'gpt-4.1'
-      format: 'OpenAI'
-    }
-  }
-}
-
-resource gpt41MiniDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
-  name: 'gpt-4.1-mini'
-  parent: aiFoundry
-  sku: {
-    capacity: 100
-    name: 'GlobalStandard'
-  }
-  properties: {
-    model: {
-      name: 'gpt-4.1-mini'
-      format: 'OpenAI'
-    }
-  }
-}
-
-// Model router deployment (aggregates routing across models in demos)
-resource modelRouterDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
-  name: 'model-router'
-  parent: aiFoundry
-  sku: {
-    capacity: 100
-    name: 'GlobalStandard'
-  }
-  properties: {
-    model: {
-      name: 'model-router'
       format: 'OpenAI'
     }
   }
@@ -316,58 +254,12 @@ resource searchConnection 'Microsoft.CognitiveServices/accounts/connections@2025
   }
 }
 
-resource applicationInsightsConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
-  name: '${aiFoundry.name}-appinsights'
-  parent: aiFoundry
-  properties: {
-    category: 'ApplicationInsights'
-    target: applicationInsights.properties.ConnectionString
-    authType: 'ApiKey'
-    isSharedToAll: true
-    credentials: {
-      key: applicationInsights.properties.InstrumentationKey
-    }
-    metadata: {
-      ResourceId: applicationInsights.id
-      location: location
-    }
-  }
-}
-
-resource storageConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
-  name: '${aiFoundry.name}-storage'
-  parent: aiFoundry
-  properties: {
-    category: 'AzureBlob'
-    target: 'https://${storageAccountName}.blob.${environment().suffixes.storage}'
-    authType: 'ApiKey'
-    isSharedToAll: true
-    credentials: {
-      key: storageAccount.listKeys().keys[0].value
-    }
-    metadata: {
-      ResourceId: storageAccount.id
-      location: location
-    }
-  }
-}
-
 output storageAccountName string = storageAccountName
 output logAnalyticsWorkspaceName string = logAnalyticsWorkspaceName
 output searchServiceName string = searchServiceName
 output aiFoundryHubName string = aiFoundryName
 output aiFoundryProjectName string = aiProjectName
 output applicationInsightsName string = applicationInsightsName
-output applicationInsightsConnectionString string = applicationInsights.properties.ConnectionString
-output applicationInsightsInstrumentationKey string = applicationInsights.properties.InstrumentationKey
-output applicationInsightsId string = applicationInsights.id
-output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id
 output searchServiceEndpoint string = 'https://${searchServiceName}.search.windows.net/'
 output aiFoundryHubEndpoint string = 'https://ml.azure.com/home?wsid=${aiFoundry.id}'
 output aiFoundryProjectEndpoint string = 'https://ai.azure.com/build/overview?wsid=${aiProject.id}'
-output gpt4oMiniDeploymentName string = gpt4MiniDeployment.name
-output gpt4oDeploymentName string = gpt4oDeployment.name
-output gpt41DeploymentName string = gpt41Deployment.name
-output gpt41MiniDeploymentName string = gpt41MiniDeployment.name
-output embeddingDeploymentName string = embeddingDeployment.name
-output modelRouterDeploymentName string = modelRouterDeployment.name
