@@ -43,3 +43,13 @@ Thumbs.db
 # Project specific
 demo_files/
 *.pdf
+
+# Output folders - track structure but not contents
+output/invoices/*
+!output/invoices/.gitkeep
+output/logs/*
+!output/logs/.gitkeep
+output/visualizations/*
+!output/visualizations/.gitkeep
+output/archive/*
+!output/archive/.gitkeep
