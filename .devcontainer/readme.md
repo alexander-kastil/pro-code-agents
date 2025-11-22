@@ -147,6 +147,7 @@ The devcontainer includes full support for Jupyter notebooks in both Python and 
 - **VS Code Extensions**: Jupyter extensions for notebook authoring, debugging, and rendering
 
 To use:
+
 - Create a new `.ipynb` file
 - Select the appropriate kernel (Python 3 or .NET Interactive)
 - Start coding in your preferred language
@@ -210,6 +211,7 @@ The devcontainer includes full support for Jupyter notebooks in both Python and 
 ### Testing the Setup
 
 Sample test notebooks are provided:
+
 - `.devcontainer/test-python-notebook.ipynb` - Tests Python kernel functionality
 - `.devcontainer/test-csharp-notebook.ipynb` - Tests C# (.NET Interactive) kernel functionality
 
@@ -224,12 +226,14 @@ Sample test notebooks are provided:
 ### Features Available
 
 **Python Notebooks:**
+
 - Full Python 3.11 support
 - Access to pip-installed packages
 - Standard library access
 - IPython features
 
 **C# Notebooks:**
+
 - Full C# language support (latest version with .NET 9)
 - Async/await support
 - LINQ, records, pattern matching
@@ -334,6 +338,7 @@ If you need to modify the Dockerfile:
 ### Forcing a Fresh Pull
 
 If the cached image is used and you want the latest:
+
 ```bash
 docker pull ghcr.io/alexander-kastil/pro-code-agents-dev:latest
 # Then reopen in container (VS Code will use updated local cache).
@@ -366,4 +371,3 @@ docker push ghcr.io/alexander-kastil/pro-code-agents-dev:latest
 ```
 
 Use this only when testing changes before committing the workflow adjustments.
-
