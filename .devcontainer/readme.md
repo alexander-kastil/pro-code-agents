@@ -290,3 +290,80 @@ You should see both `python3` and `.net-csharp` kernels listed.
 ---
 
 Happy building intelligent experiences for Microsoft 365!
+
+---
+
+## Prebuilt Devcontainer Image (Performance Optimization)
+
+To reduce Codespaces / local rebuild time, this repo now publishes a prebuilt devcontainer image to GitHub Container Registry (GHCR).
+
+### Image Coordinates
+
+```
+ghcr.io/alexander-kastil/pro-code-agents-dev:latest
+```
+
+Additional tags are published per commit SHA and git tags.
+
+### GitHub Action
+
+Workflow: `.github/workflows/devcontainer-image.yml` automatically builds & pushes on changes to `.devcontainer/**`.
+
+### Using the Prebuilt Image (Default)
+
+The default `.devcontainer/devcontainer.json` now references the prebuilt image with the same tooling baked in. Simply open in Codespaces or "Reopen in Container" locally—no build step required beyond pulling the image.
+
+### Switching to Source Build
+
+If you need to modify the Dockerfile:
+
+1. Rename (or move) current `devcontainer.json` to `devcontainer-image.json` (optional backup).
+2. Copy `devcontainer-source.json` to `devcontainer.json` (or just rename it):
+   ```bash
+   mv .devcontainer/devcontainer.json .devcontainer/devcontainer-image.json
+   cp .devcontainer/devcontainer-source.json .devcontainer/devcontainer.json
+   ```
+3. Rebuild:
+   ```bash
+   # VS Code Command Palette: Dev Containers: Rebuild Container
+   # OR Codespaces: Full rebuild
+   ```
+4. Make your Dockerfile changes, commit, and push. The Action will publish a new image tag.
+5. Switch back to the prebuilt image by restoring the original `devcontainer.json` (pointing at `image:`) and rebuilding.
+
+### Forcing a Fresh Pull
+
+If the cached image is used and you want the latest:
+```bash
+docker pull ghcr.io/alexander-kastil/pro-code-agents-dev:latest
+# Then reopen in container (VS Code will use updated local cache).
+```
+
+### Pinning a Specific Version
+
+Replace `latest` with a commit tag (e.g., `image": "ghcr.io/alexander-kastil/pro-code-agents-dev:3a1f2c7"`) for reproducible classrooms or workshops.
+
+### Troubleshooting
+
+- If the image fails to pull: ensure `packages: write` permissions exist and the repo visibility allows GHCR access.
+- If extensions differ: the image may be outdated—trigger a manual workflow dispatch.
+- Permission issues after switching: run `bash .devcontainer/post-create.sh` manually.
+
+---
+
+## Manual Local Build & Push (Optional)
+
+```bash
+# Build
+docker build -t ghcr.io/alexander-kastil/pro-code-agents-dev:local -f .devcontainer/Dockerfile .
+
+# Login
+echo $GITHUB_TOKEN | docker login ghcr.io -u alexander-kastil --password-stdin
+
+# Tag & push
+docker tag ghcr.io/alexander-kastil/pro-code-agents-dev:local ghcr.io/alexander-kastil/pro-code-agents-dev:latest
+docker push ghcr.io/alexander-kastil/pro-code-agents-dev:latest
+```
+
+Use this only when testing changes before committing the workflow adjustments.
+
