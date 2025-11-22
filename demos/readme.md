@@ -2,7 +2,7 @@
 
 This five-day class is crafted for software architects and engineers eager to master the end-to-end process of building, orchestrating, and integrating advanced copilots and agentic applications using Microsoft’s latest frameworks and services.
 
-The class begins by establishing a strong foundation in Copilots, Agents, and the Microsoft Foundry platform. You’ll gain hands-on experience deploying large language models, working with the Foundry SDK, and developing robust agentic solutions through prompt engineering and Retrieval-Augmented Generation.
+The class begins by establishing a strong foundation in Copilots, Agents, and the Microsoft Foundry platform. You’ll gain hands-on experience deploying large language models, working with the Foundry SDK, and developing robust agentic solutions through prompt-, context engineering, Agentic RAG and ReAct (Reasoning and Acting)
 
 As we dive deeper, you’ll explore the Foundry Agent Service—a fully managed, scalable environment for hosting agents—learning to connect knowledge sources, automate workflows, and leverage features like contextual knowledge graphs and Work IQ for enterprise-ready deployments.
 
@@ -44,7 +44,7 @@ Throughout, hands-on labs and demos in Python and C# ensure practical experience
 - What Are Agents & Agentic AI?
 - Prompt Engineering vs Context Engineering
 - Knowledge Integration & Agentic RAG
-- Deep Reasoning & ReAct (Reasoning and Acting)
+- Deep Reasoning &  (Reasoning and Acting)
 - Function Calling, REST APIs & MCP Servers
 - Evaluating Generative AI Performance
 - Governance & Guardrails for Responsible Agents
@@ -133,3 +133,4 @@ Throughout, hands-on labs and demos in Python and C# ensure practical experience
 - Orchestrate Multi-Agent-Solutions using Microsoft Agent Framework
 - Publishing Agentic AI Solutions to Copilot Chat and Teams
 - Front-End Integration using Agent–User Interaction (AG-UI) Protocol
+
