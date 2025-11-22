@@ -96,7 +96,7 @@ resource searchService 'Microsoft.Search/searchServices@2023-11-01' = {
   name: searchServiceName
   location: location
   sku: {
-    name: 'basic'
+    name: 'free'
   }
   properties: {
     hostingMode: 'default'
@@ -316,12 +316,52 @@ resource searchConnection 'Microsoft.CognitiveServices/accounts/connections@2025
   }
 }
 
+resource applicationInsightsConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
+  name: '${aiFoundry.name}-appinsights'
+  parent: aiFoundry
+  properties: {
+    category: 'ApplicationInsights'
+    target: applicationInsights.properties.ConnectionString
+    authType: 'ApiKey'
+    isSharedToAll: true
+    credentials: {
+      key: applicationInsights.properties.InstrumentationKey
+    }
+    metadata: {
+      ResourceId: applicationInsights.id
+      location: location
+    }
+  }
+}
+
+resource storageConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
+  name: '${aiFoundry.name}-storage'
+  parent: aiFoundry
+  properties: {
+    category: 'AzureBlob'
+    target: 'https://${storageAccountName}.blob.${environment().suffixes.storage}'
+    authType: 'ApiKey'
+    isSharedToAll: true
+    credentials: {
+      key: storageAccount.listKeys().keys[0].value
+    }
+    metadata: {
+      ResourceId: storageAccount.id
+      location: location
+    }
+  }
+}
+
 output storageAccountName string = storageAccountName
 output logAnalyticsWorkspaceName string = logAnalyticsWorkspaceName
 output searchServiceName string = searchServiceName
 output aiFoundryHubName string = aiFoundryName
 output aiFoundryProjectName string = aiProjectName
 output applicationInsightsName string = applicationInsightsName
+output applicationInsightsConnectionString string = applicationInsights.properties.ConnectionString
+output applicationInsightsInstrumentationKey string = applicationInsights.properties.InstrumentationKey
+output applicationInsightsId string = applicationInsights.id
+output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id
 output searchServiceEndpoint string = 'https://${searchServiceName}.search.windows.net/'
 output aiFoundryHubEndpoint string = 'https://ml.azure.com/home?wsid=${aiFoundry.id}'
 output aiFoundryProjectEndpoint string = 'https://ai.azure.com/build/overview?wsid=${aiProject.id}'
