@@ -10,6 +10,7 @@ dependencies = [
     "azure-ai-agents==1.2.0b5",
     "agent-framework==1.0.0b251120",
     "agent-framework-azure-ai==1.0.0b251120",
+    "agent-framework-devui==1.0.0b251120",
 ]
 
 [build-system]

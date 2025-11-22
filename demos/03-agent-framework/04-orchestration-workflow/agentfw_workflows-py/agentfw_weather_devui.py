@@ -16,8 +16,13 @@ from agent_framework import (
     function_middleware,
     ai_function
 )
-from agent_framework.azure import AzureOpenAIChatClient
+from agent_framework_azure_ai import AzureAIAgentClient
+from azure.identity.aio import DefaultAzureCredential
 from agent_framework_devui import register_cleanup
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv('.env')
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +33,16 @@ def cleanup_resources():
     logger.info(" Cleaning up resources...")
     logger.info("   (In production, this would close credentials, sessions, etc.)")
     logger.info("=" * 60)
+
+
+# Create the credential that will be closed during cleanup
+credential = DefaultAzureCredential()
+
+
+async def cleanup_credential():
+    """Async cleanup for the credential."""
+    await credential.close()
+    cleanup_resources()
 
 
 @chat_middleware
@@ -129,6 +144,7 @@ def send_email(
     return f"Email sent to {recipient} with subject '{subject}'."
 
 # Agent instance following Agent Framework conventions
+# Using Azure AI Agents from Microsoft Foundry (agent service)
 agent = ChatAgent(
     name="AzureWeatherAgent",
     description="A helpful agent that provides weather information and forecasts",
@@ -137,15 +153,18 @@ agent = ChatAgent(
     and forecasts for any location. Always be helpful and provide detailed
     weather information when asked.
     """,
-    chat_client=AzureOpenAIChatClient(
-        api_key=os.environ.get("AZURE_OPENAI_API_KEY", ""),
+    chat_client=AzureAIAgentClient(
+        project_endpoint=os.environ.get("AZURE_AI_PROJECT_ENDPOINT", ""),
+        model_deployment_name=os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o"),
+        async_credential=credential,
+        agent_name="AzureWeatherAgent",
     ),
     tools=[get_weather, get_forecast, send_email],
     middleware=[security_filter_middleware, atlantis_location_filter_middleware],
 )
 
 # Register cleanup hook - demonstrates resource cleanup on shutdown
-register_cleanup(agent, cleanup_resources)
+register_cleanup(agent, cleanup_credential)
 
 
 def main():
