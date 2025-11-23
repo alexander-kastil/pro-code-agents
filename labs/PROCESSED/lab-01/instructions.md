@@ -36,7 +36,7 @@ Now you're ready to build an AI agent. In this exercise, you'll build a simple a
 
 > **Note**: To avoid naming conflicts with other students, append the first three letters of your first name to agent names. For example, if your name is Alice, name your agent `ExpensesAgent-ali`.
 
-1. Locate the **Expenses_Policy.docx** file in the `labs/PROCESSED/lab-01/labfiles/` folder in your development environment. This document contains details of the expenses policy for the fictional Contoso corporation.
+1. Locate the **Expenses_Policy.docx** file in the `labfiles/` folder in your development environment. This document contains details of the expenses policy for the fictional Contoso corporation.
 1. In the Foundry Agents playground, find the **Setup** pane (it may be to the side or below the chat window).
 1. Set the **Agent name** to `ExpensesAgent-xxx` (where `xxx` is the first three letters of your first name), ensure that the **gpt-4o** model deployment is selected, and set the **Instructions** to:
 

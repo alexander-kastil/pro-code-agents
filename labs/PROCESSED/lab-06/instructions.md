@@ -50,7 +50,7 @@ Open a terminal in your chosen environment and navigate to the lab files.
 1. Change to the working directory containing the code files for this lab:
 
    ```
-   cd /workspaces/pro-code-agents/labs/PROCESSED/lab-06/labfiles/python
+   cd labfiles/python
    ls -a -l
    ```
 

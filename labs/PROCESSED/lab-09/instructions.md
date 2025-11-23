@@ -50,7 +50,7 @@ Open a terminal in your chosen environment and navigate to the lab files.
 1. Change to the working directory containing the code files for this lab:
 
    ```
-   cd /workspaces/pro-code-agents/labs/PROCESSED/lab-09/labfiles/python
+   cd labfiles/python
    ls -a -l
    ```
 
@@ -73,7 +73,7 @@ Open a terminal in your chosen environment and navigate to the lab files.
    └── run_all.py
    ```
 
-   Each agent folder contains the Azure AI agent code and a server to host the agent. The **routing agen**t is responsible for discovering and communicating with the **title** and **outline** agents. The **client** allows users to submit prompts to the routing agent. `run_all.py` launches all the servers and runs the client.
+   Each agent folder contains the Azure AI agent code and a server to host the agent. The **routing agent** is responsible for discovering and communicating with the **title** and **outline** agents. The **client** allows users to submit prompts to the routing agent. `run_all.py` launches all the servers and runs the client.
 
 ### Configure the application settings
 

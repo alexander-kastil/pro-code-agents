@@ -47,11 +47,9 @@ Open a terminal in your chosen environment and navigate to the lab files.
 1. Change to the working directory containing the code files for this lab:
 
    ```
-   cd /workspaces/pro-code-agents/labs/PROCESSED/lab-07/labfiles/python
+   cd labfiles/python
    ls -a -l
    ```
-
-   > **Note**: The path `/workspaces/pro-code-agents` is the default workspace path in GitHub Codespaces and Dev Containers. If using a different environment, adjust the path accordingly to where the repository is cloned.
 
    The provided files include application code a file for configuration settings, and a file containing expenses data.
 
