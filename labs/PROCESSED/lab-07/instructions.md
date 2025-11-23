@@ -38,6 +38,7 @@ Now you're ready to create a client app that defines an agent and a custom funct
 ### Prepare your development environment
 
 You have three options for your development environment:
+
 - **GitHub Codespaces**: A cloud-based development environment
 - **Local Development in Dev Containers**: Using Docker and VS Code
 - **Fallback VM**: Provided by your instructor if the above options are not available

@@ -18,7 +18,7 @@ You'll use an existing Foundry project that has been pre-configured for this lab
 
 1. In a web browser, open the [Foundry portal](https://ai.azure.com) at `https://ai.azure.com` and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in, and if necessary use the **Foundry** logo at the top left to navigate to the home page, which looks similar to the following image (close the **Help** pane if it's open):
 
-    ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)
+   ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)
 
    > **Important**: Make sure the **New Foundry** toggle is _Off_ for this lab.
 
@@ -26,7 +26,7 @@ You'll use an existing Foundry project that has been pre-configured for this lab
 1. Locate and select the project named **pro-code-agents-student**.
 1. In the left navigation menu, select **Agents**, then select **Create an agent** to open the Agents playground.
 
-    ![Screenshot of a Foundry project Agents playground.](./_images/ai-foundry-agents-playground.png)
+   ![Screenshot of a Foundry project Agents playground.](./_images/ai-foundry-agents-playground.png)
 
 The project has several pre-deployed models available for use, including **gpt-4o**, **gpt-4o-mini**, **gpt-4.1-mini**, **gpt-5-mini**, and **text-embedding-ada-002**.
 
@@ -46,7 +46,7 @@ Now you're ready to build an AI agent. In this exercise, you'll build a simple a
    If a user wants to submit an expense claim, you get their email address, a description of the claim, and the amount to be claimed and write the claim details to a text file that the user can download.
    ```
 
-    ![Screenshot of the AI agent setup page in Foundry portal.](./_images/ai-agent-setup.png)
+   ![Screenshot of the AI agent setup page in Foundry portal.](./_images/ai-agent-setup.png)
 
 1. Further down in the **Setup** pane, next to the **Knowledge** header, select **+ Add**. Then in the **Add knowledge** dialog box, select **Files**.
 1. In the **Adding files** dialog box, create a new vector store named `Expenses_Vector_Store`, uploading and saving the **Expenses_policy.docx** file from the labfiles folder.
@@ -68,6 +68,6 @@ Now that you've created an agent, you can test it in the playground chat.
 1. Submit a prompt that describes the claim and the amount; for example, `Breakfast cost me $20`.
 1. The agent should use the code interpreter to prepare the expense claim text file, and provide a link so you can download it.
 
-    ![Screenshot of the Agent Playground in Foundry portal.](./_images/ai-agent-playground.png)
+   ![Screenshot of the Agent Playground in Foundry portal.](./_images/ai-agent-playground.png)
 
 1. Download and open the text document to see the expense claim details.

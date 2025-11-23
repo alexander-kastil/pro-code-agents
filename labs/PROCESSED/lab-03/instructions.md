@@ -20,7 +20,7 @@ You'll use an existing Foundry project that has been pre-configured for this lab
 
 1. In a web browser, open the [Foundry portal](https://ai.azure.com) at `https://ai.azure.com` and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in, and if necessary use the **Foundry** logo at the top left to navigate to the home page, which looks similar to the following image (close the **Help** pane if it's open):
 
-    ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)
+   ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)
 
    > **Important**: Make sure the **New Foundry** toggle is _Off_ for this lab.
 
@@ -28,7 +28,7 @@ You'll use an existing Foundry project that has been pre-configured for this lab
 1. Locate and select the project named **pro-code-agents-student**.
 1. In the navigation pane on the left, select **Overview** to see the main page for your project; which looks like this:
 
-    ![Screenshot of a Foundry project overview page.](./_images/ai-foundry-project.png)
+   ![Screenshot of a Foundry project overview page.](./_images/ai-foundry-project.png)
 
 1. Copy the **Foundry project endpoint** values to a notepad, as you'll use them to connect to your project in a client application.
 
@@ -41,6 +41,7 @@ Now that you've accessed your project in AI Foundry, let's develop an app that i
 ### Prepare your development environment
 
 You have three options for your development environment:
+
 - **GitHub Codespaces**: A cloud-based development environment
 - **Local Development in Dev Containers**: Using Docker and VS Code
 - **Fallback VM**: Provided by your instructor if the above options are not available
