@@ -1,0 +1,338 @@
+{
+    "openapi": "3.0.4",
+    "info": {
+        "title": "PurchasingService",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/Purchasing/offer": {
+            "post": {
+                "tags": [
+                    "Purchasing"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OfferRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OfferRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OfferRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OfferResponse"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OfferResponse"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OfferResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/Suppliers": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Supplier"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Supplier"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Supplier"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/Suppliers/{id}": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Supplier"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Supplier"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Supplier"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/Suppliers/by-name/{name}": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Supplier"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Supplier"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Supplier"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OfferProductRequest": {
+                "required": [
+                    "productName"
+                ],
+                "type": "object",
+                "properties": {
+                    "productName": {
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "requestedAmount": {
+                        "maximum": 2147483647,
+                        "minimum": 1,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "OfferProductResponse": {
+                "type": "object",
+                "properties": {
+                    "productName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "basePrice": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "offeredPrice": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "requestedAmount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "offeredAmount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "deliveryDurationDays": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "isAvailable": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "OfferRequest": {
+                "required": [
+                    "offerRequestId",
+                    "products",
+                    "supplierId"
+                ],
+                "type": "object",
+                "properties": {
+                    "supplierId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "offerRequestId": {
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "products": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OfferProductRequest"
+                        }
+                    }
+                },
+                "additionalProperties": false
+            },
+            "OfferResponse": {
+                "type": "object",
+                "properties": {
+                    "offerRequestId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "supplier": {
+                        "$ref": "#/components/schemas/Supplier"
+                    },
+                    "transportationCost": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "generatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "products": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OfferProductResponse"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "Supplier": {
+                "type": "object",
+                "properties": {
+                    "supplierId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "companyName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "contactName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "contactTitle": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "city": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "region": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "postalCode": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "country": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "eMail": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "homePage": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            }
+        }
+    }
+}

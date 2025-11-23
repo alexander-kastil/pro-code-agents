@@ -1,0 +1,20 @@
+### take current date
+POST  https://pro-code-currency-converter.azurewebsites.net/api/convertto HTTP/1.1
+content-type: application/json
+
+{
+    "from": "EUR",
+    "to": "THB",
+    "amount": 100
+}
+
+### specify the date
+POST  http://localhost:7071/api/convertTo HTTP/1.1
+content-type: application/json
+
+{
+    "from": "EUR",
+    "to": "THB",
+    "amount": 1000,
+    "date": "2023-10-01"
+}

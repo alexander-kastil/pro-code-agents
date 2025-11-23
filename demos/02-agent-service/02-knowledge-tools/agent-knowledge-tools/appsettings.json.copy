@@ -1,0 +1,18 @@
+{
+  "ProjectConnectionString": "REPLACE_WITH_YOUR_VALUE",
+  "Model": "gpt-4o",
+  "FunctionDeploymentUrl": "REPLACE_WITH_YOUR_VALUE",
+  "BingConnection": "bing-connection",
+  "SharePointConnection": "sp_demo_office",
+  "AzurePlaywrightConnectionId": "REPLACE_WITH_YOUR_VALUE",
+  "ComputerUseEnvironment": "",
+  "RestUrl": "https://dummyjson.com",
+  "McpServerUrl": "REPLACE_WITH_YOUR_VALUE",
+  "McpServerLabel": "github",
+  "AzureAiSearchConnection": "procodeaisearch",
+  "AzureAiIndexName": "insurance-documents-index",
+  "OnVistaUrl": "REPLACE_WITH_YOUR_VALUE",
+  "OutputPath": "./output",
+  "DetailedLogging": false,
+  "DeleteAgentOnExit": false
+}

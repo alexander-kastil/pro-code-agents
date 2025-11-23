@@ -1,0 +1,30 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "Model": "gpt-4o-mini",
+  "ProjectConnectionString": "REPLACE_WITH_YOUR_VALUE",
+  "AgentName": "EMailAgent",
+  "ModelParams": {
+    "MaxCompletionTokens": 4096,
+    "MaxPromptTokens": 10240,
+    "Temperature": 0.1,
+    "TopP": 0.1
+  },
+  "GraphCfg": {
+    "TenantId": "REPLACE_WITH_YOUR_VALUE",
+    "ClientId": "REPLACE_WITH_YOUR_VALUE",
+    "ClientSecret": "REPLACE_WITH_YOUR_VALUE",
+    "CacheLocation": "localStorage",
+    "Endpoints": {
+      "GraphApiUri": "https://graph.microsoft.com"
+    },
+    "ReturnUrl": "https://localhost:5001/",
+    "MailSender": "REPLACE_WITH_YOUR_VALUE"
+  },
+  "AllowedHosts": "*"
+}

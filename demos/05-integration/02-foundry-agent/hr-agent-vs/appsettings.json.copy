@@ -1,0 +1,43 @@
+{
+  "AgentApplicationOptions": {
+    "StartTypingTimer": false,
+    "RemoveRecipientMention": false,
+    "NormalizeMentions": false
+  },
+  "TokenValidation": {
+    "Audiences": [
+      "{{ClientId}}"
+    ]
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.Agents": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "Connections": {
+    "BotServiceConnection": {
+      "Settings": {
+        "AuthType": "UserManagedIdentity",
+        "ClientId": "{{BOT_ID}}",
+        "TenantId": "{{BOT_TENANT_ID}}",
+        "Scopes": [
+          "https://api.botframework.com/.default"
+        ]
+      }
+    }
+  },
+  "ConnectionsMap": [
+    {
+      "ServiceUrl": "*",
+      "Connection": "BotServiceConnection"
+    }
+  ],
+  "AIServices": {
+    "AgentID": "REPLACE_WITH_YOUR_VALUE",
+    "ProjectEndpoint": "REPLACE_WITH_YOUR_VALUE"
+  }
+}

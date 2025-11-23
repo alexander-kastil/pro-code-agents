@@ -1,0 +1,15 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Error",
+      "Microsoft.Hosting.Lifetime": "Warning"
+    }
+  },
+  "CopilotStudioClientSettings": {
+    "DirectConnectUrl": "",
+    "SchemaName": "",
+    "TenantId": "REPLACE_WITH_YOUR_VALUE",
+    "AppClientId": "REPLACE_WITH_YOUR_VALUE",
+    "AppClientSecret": "REPLACE_WITH_YOUR_VALUE"
+  }
+}

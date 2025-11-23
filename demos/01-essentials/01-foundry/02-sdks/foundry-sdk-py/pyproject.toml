@@ -1,0 +1,13 @@
+[project]
+name = "foundry-sdk-py"
+version = "0.1.0"
+description = "Azure AI Foundry SDK Python Demo"
+readme = "readme.md"
+requires-python = ">=3.9"
+dependencies = [
+    "azure-ai-projects",
+    "azure-ai-inference",
+    "azure-identity",
+    "python-dotenv",
+    "openai",
+]

@@ -1,0 +1,11 @@
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "AllowedHosts": "*",
+    "AzureOpenAIEndpoint": "REPLACE_WITH_YOUR_VALUE",
+    "Model": "gpt-4.1"
+}

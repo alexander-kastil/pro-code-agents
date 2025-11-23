@@ -1,0 +1,26 @@
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "AllowedHosts": "*",
+    "AzureConfig": {
+        "ProjectEndpoint": "REPLACE_WITH_YOUR_VALUE",
+        "EmbeddingsModel": "text-embedding-ada-002",
+        "AzureAIModelsEndpoint": "REPLACE_WITH_YOUR_VALUE",
+        "AzureAIModelsKey": "",
+        "AssetsDir": "./assets/policies",
+        "StorageAccountName": "REPLACE_WITH_YOUR_VALUE",
+        "StorageContainerName": "policy-uploads",
+        "StorageConnectionString": "REPLACE_WITH_YOUR_VALUE",
+        "ProcessedBlobName": "processed_documents_for_vectorization.json",
+        "SearchServiceName": "REPLACE_WITH_YOUR_VALUE",
+        "SearchServiceEndpoint": "REPLACE_WITH_YOUR_VALUE",
+        "SearchAdminKey": "REPLACE_WITH_YOUR_VALUE",
+        "SearchIndexName": "policies-index",
+        "ChunkSize": 1000,
+        "ChunkOverlap": 200
+    }
+}

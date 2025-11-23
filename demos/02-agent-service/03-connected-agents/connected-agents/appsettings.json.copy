@@ -1,0 +1,8 @@
+{
+  "ProjectConnectionString": "REPLACE_WITH_YOUR_VALUE",
+  "Model": "gpt-4o-mini",
+  "VerboseOutput": false,
+  "CreateMermaidDiagram": true,
+  "TicketFolderPath": "./tickets",
+  "OUTPUT_PATH": "output"
+}

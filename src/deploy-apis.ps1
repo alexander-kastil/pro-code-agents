@@ -1,0 +1,22 @@
+$grp = "rg-pro-code-agents"
+$loc = "swedencentral"
+$acct = "procodestorageacct"
+$container = "food"
+
+az group create -n $grp -l $loc
+
+az storage account create -l $loc -n $acct -g $grp --sku Standard_LRS
+$key = az storage account keys list -n $acct -g $grp --query "[0].value" -o tsv
+az storage container create -n $container --account-key $key --account-name $acct
+
+az storage blob upload-batch -d $container -s "assets/images" --account-name $acct --account-key $key
+
+Set-Location food-catalog-api
+az webapp up -n food-catalog-api -g $grp -p pro-code-food-plan -l $loc -r "dotnet:10"
+az webapp cors add --allowed-origins "*" --name food-catalog-api --resource-group $grp
+Set-Location ..
+
+Set-Location hr-mcp-server
+az webapp up -n hr-mcp-server-$env -g $grp -p copilot-hr-plan-$env -l $loc -r "dotnet:10"
+az webapp cors add --allowed-origins "*" --name hr-mcp-server-$env --resource-group $grp
+Set-Location ..

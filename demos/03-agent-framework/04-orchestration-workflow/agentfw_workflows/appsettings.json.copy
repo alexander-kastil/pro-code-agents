@@ -1,0 +1,6 @@
+{
+  "AzureAIProjectEndpoint": "REPLACE_WITH_YOUR_VALUE",
+  "AzureAIModelDeploymentName": "gpt-4o-mini",
+  "DataPath": "./data",
+  "OutputPath": "./output"
+}

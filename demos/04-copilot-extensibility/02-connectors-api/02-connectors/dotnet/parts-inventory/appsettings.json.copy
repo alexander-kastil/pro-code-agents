@@ -1,0 +1,7 @@
+{
+  "Settings": {
+    "ClientId": "REPLACE_WITH_YOUR_VALUE",
+    "ClientSecret": "REPLACE_WITH_YOUR_VALUE",
+    "TenantId": "REPLACE_WITH_YOUR_VALUE"
+  }
+}

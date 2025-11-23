@@ -1,0 +1,45 @@
+{
+  "AgentApplicationOptions": {
+    "StartTypingTimer": true,
+    "RemoveRecipientMention": false,
+    "NormalizeMentions": false
+  },
+  "TokenValidation": {
+    "Audiences": [
+      "{{BOT_ID}}"
+    ]
+  },
+  "Connections": {
+    "BotServiceConnection": {
+      "Assembly": "Microsoft.Agents.Authentication.Msal",
+      "Type": "MsalAuth",
+      "Settings": {
+        "AuthType": "UserManagedIdentity",
+        "ClientId": "{{BOT_ID}}",
+        "TenantId": "{{BOT_TENANT_ID}}",
+        "Scopes": [
+          "https://api.botframework.com/.default"
+        ]
+      }
+    }
+  },
+  "ConnectionsMap": [
+    {
+      "ServiceUrl": "*",
+      "Connection": "BotServiceConnection"
+    }
+  ],
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.Agents": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "Azure": {
+    "OpenAIApiKey": "",
+    "OpenAIEndpoint": "",
+    "OpenAIDeploymentName": ""
+  }
+}

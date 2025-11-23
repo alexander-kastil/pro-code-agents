@@ -1,0 +1,15 @@
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "AllowedHosts": "*",
+    "ProjectEndpoint": "REPLACE_WITH_YOUR_VALUE",
+    "AzureSubscriptionId": "REPLACE_WITH_YOUR_VALUE",
+    "AzureResourceGroup": "rg-pro-code-agents",
+    "AzureProjectName": "pro-code-agents",
+    "EvalModel": "gpt-4o-mini",
+    "AzureOpenAIEndpoint": "REPLACE_WITH_YOUR_VALUE"
+}

@@ -1,0 +1,13 @@
+[project]
+name = "evaluations-py"
+version = "0.1.0"
+description = "Azure AI Foundry Evaluations Demo"
+readme = "readme.md"
+requires-python = ">=3.9"
+dependencies = [
+    "azure-identity",
+    "openai",
+    "python-dotenv",
+    "azure-ai-evaluation",
+    "azure-ai-projects",
+]

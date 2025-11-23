@@ -1,0 +1,11 @@
+azure-ai-projects
+azure-ai-inference
+azure-ai-evaluation
+azure-identity
+python-dotenv
+agent-framework
+ipykernel
+\n+# Multimodal PDF/image processing for invoice extraction demo
+pymupdf
+pillow
+pdf2image

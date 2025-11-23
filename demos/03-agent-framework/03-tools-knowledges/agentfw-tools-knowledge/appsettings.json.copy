@@ -1,0 +1,13 @@
+{
+  "AzureAIProjectEndpoint": "REPLACE_WITH_YOUR_VALUE",
+  "AzureAIModelDeploymentName": "gpt-4o-mini",
+  "AzureOpenAIEndpoint": "REPLACE_WITH_YOUR_VALUE",
+  "AzureOpenAIChatDeploymentName": "gpt-4o",
+  "AzureOpenAIApiKey": "REPLACE_WITH_YOUR_VALUE",
+  "AzureOpenAIApiVersion": "2025-01-01-preview",
+  "DataPath": "./data",
+  "OutputPath": "./output",
+  "AzureAIAgentId": "REPLACE_WITH_YOUR_VALUE",
+  "VectorStoreId": "REPLACE_WITH_YOUR_VALUE",
+  "RestApiBaseUrl": "https://dummyjson.com"
+}
