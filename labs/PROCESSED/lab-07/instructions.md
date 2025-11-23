@@ -51,15 +51,17 @@ Open a terminal in your chosen environment and navigate to the lab files.
    ls -a -l
    ```
 
+   > **Note**: The path `/workspaces/pro-code-agents` is the default workspace path in GitHub Codespaces and Dev Containers. If using a different environment, adjust the path accordingly to where the repository is cloned.
+
    The provided files include application code a file for configuration settings, and a file containing expenses data.
 
 ### Configure the application settings
 
-1. In the cloud shell command-line pane, enter the following command to install the libraries you'll use:
+1. In the terminal, enter the following command to install the libraries you'll use:
 
    ```
    python -m venv labenv
-   ./labenv/bin/Activate.ps1
+   source labenv/bin/activate  # On Windows: labenv\Scripts\activate
    pip install azure-identity agent-framework
    ```
 

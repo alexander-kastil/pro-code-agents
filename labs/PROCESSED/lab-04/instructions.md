@@ -225,7 +225,7 @@ Now you're ready to create the agents for your multi-agent solution! Let's get s
 
    ```python
    # Create an agent to triage support ticket processing by using connected agents
-   triage_agent_name = "triage-agent-xxx"
+   triage_agent_name = "triage_agent-xxx"
    triage_agent_instructions = """
    Triage the given ticket. Use the connected tools to determine the ticket's priority,
    which team it should be assigned to, and how much effort it may take.

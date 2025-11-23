@@ -24,7 +24,7 @@ You'll use an existing Foundry project that has been pre-configured for this lab
 
 1. In the home page, select **All resources** from the left navigation pane.
 1. Locate and select the project named **pro-code-agents-student**.
-1. In the project, navigate to the **Agents** page and select **Create an agent** to open the Agents playground.
+1. In the left navigation menu, select **Agents**, then select **Create an agent** to open the Agents playground.
 
     ![Screenshot of a Foundry project Agents playground.](./_images/ai-foundry-agents-playground.png)
 
