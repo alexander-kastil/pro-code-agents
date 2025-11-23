@@ -14,49 +14,38 @@ This exercise should take approximately **30** minutes to complete.
 
 > **Note**: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.
 
-## Create a Foundry project
+## Access the existing Foundry project
 
-Let's start by creating a Foundry project.
+You'll use an existing Foundry project that has been pre-configured for this lab.
 
 1. In a web browser, open the [Foundry portal](https://ai.azure.com) at `https://ai.azure.com` and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in, and if necessary use the **Foundry** logo at the top left to navigate to the home page, which looks similar to the following image (close the **Help** pane if it's open):
 
-    ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)   > **Important**: Make sure the **New Foundry** toggle is _Off_ for this lab.
+    ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)
 
-1. In the home page, select **Create an agent**.
-1. When prompted to create a project, enter a valid name for your project and expand **Advanced options**.
-1. Confirm the following settings for your project:
+   > **Important**: Make sure the **New Foundry** toggle is _Off_ for this lab.
 
-   - **Foundry resource**: _A valid name for your Foundry resource_
-   - **Subscription**: _Your Azure subscription_
-   - **Resource group**: _Create or select a resource group_
-   - **Region**: \*Select any **AI Foundry recommended\***\*
-
-   > \* Some Azure AI resources are constrained by regional model quotas. In the event of a quota limit being exceeded later in the exercise, there's a possibility you may need to create another resource in a different region.
-
-1. Select **Create** and wait for your project to be created.
-1. If prompted, deploy a **gpt-4o** model using either the _Global Standard_ or _Standard_ deployment option (depending on your quota availability).
-
-   > **Note**: If quota is available, a GPT-4o base model may be deployed automatically when creating your Agent and project.
-
-1. When your project is created, the Agents playground will be opened.
-
+1. In the home page, select **All resources** from the left navigation pane.
+1. Locate and select the project named **pro-code-agents-student**.
 1. In the navigation pane on the left, select **Overview** to see the main page for your project; which looks like this:
 
-    ![Screenshot of a Foundry project overview page.](./_images/ai-foundry-project.png)1. Copy the **Foundry project endpoint** values to a notepad, as you'll use them to connect to your project in a client application.
+    ![Screenshot of a Foundry project overview page.](./_images/ai-foundry-project.png)
+
+1. Copy the **Foundry project endpoint** values to a notepad, as you'll use them to connect to your project in a client application.
+
+The project has several pre-deployed models available for use, including **gpt-4o**, **gpt-4o-mini**, **gpt-4.1-mini**, **gpt-5-mini**, and **text-embedding-ada-002**.
 
 ## Create an A2A application
 
-Now you're ready to create a client app that uses an agent. Some code has been provided for you in a GitHub repository.
+Now you're ready to create a client app that uses an agent. The code files are provided in the labfiles folder.
 
-### Clone the repo containing the application code
+### Prepare your development environment
 
-1. Open a new browser tab (keeping the Foundry portal open in the existing tab). Then in the new tab, browse to the [Azure portal](https://portal.azure.com) at `https://portal.azure.com`; signing in with your Azure credentials if prompted.
+You have three options for your development environment:
+- **GitHub Codespaces**: A cloud-based development environment
+- **Local Development in Dev Containers**: Using Docker and VS Code
+- **Fallback VM**: Provided by your instructor if the above options are not available
 
-   Close any welcome notifications to see the Azure portal home page.
-
-1. Use the **[\>_]** button to the right of the search bar at the top of the page to create a new Cloud Shell in the Azure portal, selecting a **_PowerShell_** environment with no storage in your subscription.
-
-   The cloud shell provides a command-line interface in a pane at the bottom of the Azure portal. You can resize or maximize this pane to make it easier to work in.
+Open a terminal in your chosen environment and navigate to the lab files.
 
    > **Note**: If you have previously created a cloud shell that uses a _Bash_ environment, switch it to **_PowerShell_**.
 
