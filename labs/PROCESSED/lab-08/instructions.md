@@ -105,7 +105,7 @@ Now you're ready to create a client app that defines an agent and a custom funct
 
 1. In the code file, replace the **your_openai_endpoint** placeholder with the endpoint for your project (copied from the project **Overview** page in the Foundry portal). Replace the **your_model_deployment** placeholder with the name you assigned to your gpt-4o model deployment.
 
-1. After you've replaced the placeholders, use the **CTRL+S** command to save your changes and then use the **CTRL+Q** command to close the code editor while keeping the cloud shell command line open.
+1. After you've replaced the placeholders, save your changes and then close the code editor.
 
 ### Create AI agents
 
@@ -212,7 +212,7 @@ Now you're ready to create the agents for your multi-agent solution! Let's get s
 
    This code formats and displays the messages from the workflow outputs you collected from the orchestration.
 
-1. Use the **CTRL+S** command to save your changes to the code file. You can keep it open (in case you need to edit the code to fix any errors) or use the **CTRL+Q** command to close the code editor while keeping the cloud shell command line open.
+1. Use the **CTRL+S** command to save your changes to the code file. You can keep it open (in case you need to edit the code to fix any errors) or close the code editor.
 
 ### Sign into Azure and run the app
 

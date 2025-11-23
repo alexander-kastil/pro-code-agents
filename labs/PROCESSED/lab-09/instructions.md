@@ -120,7 +120,7 @@ Now you're ready to create a client app that uses an agent. Some code has been p
    The file is opened in a code editor.
 
 1. In the code file, replace the **your_project_endpoint** placeholder with the endpoint for your project (copied from the project **Overview** page in the Foundry portal) and ensure that the MODEL_DEPLOYMENT_NAME variable is set to your model deployment name (which should be _gpt-4o_).
-1. After you've replaced the placeholder, use the **CTRL+S** command to save your changes and then use the **CTRL+Q** command to close the code editor while keeping the cloud shell command line open.
+1. After you've replaced the placeholder, save your changes and then close the code editor.
 
 ### Create a discoverable agent
 
@@ -192,7 +192,7 @@ In this task, you create the title agent that helps writers create trendy headli
 
    The code provided in the rest of the file will process and return the agent's response.
 
-1. Save the code file (_CTRL+S_). Now you're ready to share the agent's skills and card with the A2A protocol.
+1. Save the code file. Now you're ready to share the agent's skills and card with the A2A protocol.
 
 1. Enter the following command to edit the title agent's `server.py` file
 
@@ -263,7 +263,7 @@ In this task, you create the title agent that helps writers create trendy headli
 
    This code creates an A2A server that will share the title agent's information and handle incoming requests for this agent using the title agent executor.
 
-1. Save the code file (_CTRL+S_) when you have finished.
+1. Save the code file when you have finished.
 
 ### Enable messages between the agents
 
@@ -328,7 +328,7 @@ In this task, you use the A2A protocol to enable the routing agent to send messa
    send_response: SendMessageResponse = await client.send_message(message_request=message_request)
    ```
 
-1. Save the code file (_CTRL+S_) when you have finished. Now the routing agent is able to discover and send messages to the title agent. Let's create the agent executor code to handle those incoming messages from the routing agent.
+1. Save the code file when you have finished. Now the routing agent is able to discover and send messages to the title agent. Let's create the agent executor code to handle those incoming messages from the routing agent.
 
 1. Navigate to the `title_agent` directory:
 
