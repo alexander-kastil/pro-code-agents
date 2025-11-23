@@ -1,25 +1,30 @@
-import os
-import sys
-from typing import List, Dict
+"""
+Multi-turn Interactive Chat with Azure AI Model Router
 
+This demo demonstrates:
+- Interactive console-based chat session with conversation history
+- Using Azure AI Foundry's model router to automatically select the best model for each turn
+- Maintaining context across multiple turns with a rolling history window
+- Displaying which underlying model was selected by the router for each response
+- Configurable parameters (temperature, max tokens, history size) via environment variables
+
+The model router intelligently selects from available models based on the request characteristics,
+and the response.model property reveals which specific model handled each turn.
+"""
+
+import os
+from typing import List, Dict
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 
 
 def main():
-    """Run an interactive, multi-turn console chat using Azure OpenAI model router.
-
-    - Maintains conversation history (system + rolling window of recent turns)
-    - Sends full history each turn for context
-    - Type 'exit' or 'quit' to end the session
-    """
-
     load_dotenv()
 
     # Load environment variables
     project_endpoint = os.environ["PROJECT_ENDPOINT"]
-    router_model = os.environ["ROUTER_MODEL"]
+    router_model = os.environ["MODEL_ROUTER"]
     
     # System prompt can be customized via env
     system_prompt = os.getenv("SYSTEM_PROMPT", "You are a helpful assistant.")
@@ -77,7 +82,10 @@ def main():
         assistant_message = response.choices[0].message.content or ""
         routed_model = getattr(response, "model", "<unknown>")
 
-        print(f"\n[model: {routed_model}]\nAssistant: {assistant_message}\n")
+        print("=" * 50)
+        print(f"Model chosen by the router: {routed_model}")
+        print("=" * 50)
+        print(f"Assistant: {assistant_message}\n")
 
         # Append assistant turn to the full history
         messages.append({"role": "assistant", "content": assistant_message})

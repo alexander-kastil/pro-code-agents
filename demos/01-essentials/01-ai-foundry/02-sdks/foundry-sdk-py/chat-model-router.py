@@ -7,7 +7,7 @@ load_dotenv()
 
 # Load environment variables
 project_endpoint = os.environ["PROJECT_ENDPOINT"]
-router_model = os.environ["ROUTER_MODEL"]
+router_model = os.environ["MODEL_ROUTER"]
 
 project_client = AIProjectClient(
     endpoint=project_endpoint,
@@ -35,5 +35,7 @@ response = client.chat.completions.create(
     model=router_model
 )
 
-print("Model chosen by the router: ", response.model)
+print("=" * 50)
+print(f"Model chosen by the router: {response.model}")
+print("=" * 50)
 print(response.choices[0].message.content)
