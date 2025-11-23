@@ -4,10 +4,10 @@ This demo shows how to use Azure AI Foundry SDK with Python.
 
 ## Chat Demos
 
-| Demo | Description |
-|------|-------------|
-| `chat-foundry.py` | Basic single-turn chat completion using a specific model with a custom system prompt |
-| `chat-model-router.py` | Single-turn chat using Azure AI model router to automatically select the best model based on request characteristics |
+| Demo                             | Description                                                                                                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `chat-foundry.py`                | Basic single-turn chat completion using a specific model with a custom system prompt                                                                         |
+| `chat-model-router.py`           | Single-turn chat using Azure AI model router to automatically select the best model based on request characteristics                                         |
 | `chat-model-router-multiturn.py` | Interactive multi-turn chat session with model router, maintaining conversation history with configurable parameters (temperature, max tokens, history size) |
 
 ## Setup
