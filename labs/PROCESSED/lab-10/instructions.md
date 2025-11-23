@@ -33,9 +33,9 @@ Let's start by installing and setting up the VS Code extension.
 
 1. After installation is complete, verify the extension appears in the primary navigation bar on the left side of Visual Studio Code.
 
-## Sign in to Azure and create a project
+## Sign in to Azure and access the project
 
-Now you'll connect to your Azure resources and create a new AI Foundry project.
+You'll use the existing Foundry project that has been pre-configured for this lab.
 
 1. In the VS Code sidebar, select the **Microsoft Foundry** extension icon.
 
@@ -43,50 +43,9 @@ Now you'll connect to your Azure resources and create a new AI Foundry project.
 
    > **Note**: You won't see this option if you're already signed in.
 
-1. Create a new Foundry project by selecting the **+** (plus) icon next to **Resources** in the Foundry Extension view.
+1. After signing in, locate and select the **pro-code-agents-student** project in the Resources section.
 
-1. Select your Azure subscription from the dropdown.
-
-1. Choose whether to create a new resource group or use an existing one:
-
-   **To create a new resource group:**
-
-   - Select **Create new resource group** and press Enter
-   - Enter a name for your resource group (e.g., "rg-ai-agents-lab") and press Enter
-   - Select a location from the available options and press Enter
-
-   **To use an existing resource group:**
-
-   - Select the resource group you want to use from the list and press Enter
-
-1. Enter a name for your Foundry project (e.g., "ai-agents-project") in the textbox and press Enter.
-
-1. Wait for the project deployment to complete. A popup will appear with the message "Project deployed successfully."
-
-## Deploy a model
-
-You'll need a deployed model to use with your agent.
-
-1. When the "Project deployed successfully" popup appears, select the **Deploy a model** button. This opens the Model Catalog.
-
-   > **Tip**: You can also access the Model Catalog by selecting the **+** icon next to **Models** in the Resources section, or by pressing **F1** and running the command **Microsoft Foundry: Open Model Catalog**.
-
-1. In the Model Catalog, locate the **gpt-4** model (you can use the search bar to find it quickly).
-
-   ![Screenshot of the Model Catalog in the Foundry VS Code extension.](../Media/vs-code-model.png)
-
-1. Select **Deploy** next to the gpt-4 model.
-
-1. Configure the deployment settings:
-
-   - **Deployment name**: Enter a name like "gpt-4-deployment"
-   - **Deployment type**: Select **Global Standard** (or **Standard** if Global Standard is not available)
-   - **Model version**: Leave as default
-   - **Tokens per minute**: Leave as default
-
-1. Select **Deploy in Microsoft Foundry** in the bottom-left corner.
-
-1. In the confirmation dialog, select **Deploy** to deploy the model.
+The project has several pre-deployed models available for use, including **gpt-4o**, **gpt-4o-mini**, **gpt-4.1-mini**, **gpt-5-mini**, and **text-embedding-ada-002**.
 
 1. Wait for the deployment to complete. Your deployed model will appear under the **Models** section in the Resources view.
 
@@ -196,29 +155,3 @@ You can use this code as a starting point for building applications that leverag
 ## Summary
 
 In this exercise, you used the Foundry VS Code extension to create an AI agent with MCP server tools. The agent can access external data sources and APIs through the Model Context Protocol, enabling it to provide up-to-date information and interact with various services. You also learned how to test the agent in the playground and generate sample code for programmatic interaction.
-
-## Clean up
-
-When you've finished exploring the Foundry VS Code extension, you should clean up the resources to avoid incurring unnecessary Azure costs.
-
-### Delete your agents
-
-1. In the Foundry portal, select **Agents** from the navigation menu.
-
-1. Select your agent and then select the **Delete** button.
-
-### Delete your models
-
-1. In VS Code, refresh the **Azure Resources** view.
-
-1. Expand the **Models** subsection.
-
-1. Right-click on your deployed model and select **Delete**.
-
-### Delete other resources
-
-1. Open the [Azure portal](https://portal.azure.com).
-
-1. Navigate to the resource group containing your AI Foundry resources.
-
-1. Select **Delete resource group** and confirm the deletion.
