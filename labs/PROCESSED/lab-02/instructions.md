@@ -14,69 +14,43 @@ This exercise should take approximately **30** minutes to complete.
 
 > **Note**: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.
 
-## Create a Foundry project
+## Access the existing Foundry project
 
-Let's start by creating a Foundry project.
+You'll use an existing Foundry project that has been pre-configured for this lab.
 
 1. In a web browser, open the [Foundry portal](https://ai.azure.com) at `https://ai.azure.com` and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in, and if necessary use the **Foundry** logo at the top left to navigate to the home page, which looks similar to the following image (close the **Help** pane if it's open):
 
-    ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)   > **Important**: Make sure the **New Foundry** toggle is _Off_ for this lab.
+    ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)
 
-1. In the home page, select **Create an agent**.
-1. When prompted to create a project, enter a valid name for your project and expand **Advanced options**.
-1. Confirm the following settings for your project:
+   > **Important**: Make sure the **New Foundry** toggle is _Off_ for this lab.
 
-   - **Foundry resource**: _A valid name for your Foundry resource_
-   - **Subscription**: _Your Azure subscription_
-   - **Resource group**: _Create or select a resource group_
-   - **Region**: \*Select any **AI Foundry recommended\***\*
-
-   > \* Some Azure AI resources are constrained by regional model quotas. In the event of a quota limit being exceeded later in the exercise, there's a possibility you may need to create another resource in a different region.
-
-1. Select **Create** and wait for your project to be created.
-1. If prompted, deploy a **gpt-4o** model using either the _Global Standard_ or _Standard_ deployment option (depending on your quota availability).
-
-   > **Note**: If quota is available, a GPT-4o base model may be deployed automatically when creating your Agent and project.
-
-1. When your project is created, the Agents playground will be opened.
-
+1. In the home page, select **All resources** from the left navigation pane.
+1. Locate and select the project named **pro-code-agents-student**.
 1. In the navigation pane on the left, select **Overview** to see the main page for your project; which looks like this:
 
-    ![Screenshot of a Foundry project overview page.](./_images/ai-foundry-project.png)1. Copy the **Foundry project endpoint** values to a notepad, as you'll use them to connect to your project in a client application.
+    ![Screenshot of a Foundry project overview page.](./_images/ai-foundry-project.png)
+
+1. Copy the **Foundry project endpoint** values to a notepad, as you'll use them to connect to your project in a client application.
+
+The project has several pre-deployed models available for use, including **gpt-4o**, **gpt-4o-mini**, **gpt-4.1-mini**, **gpt-5-mini**, and **text-embedding-ada-002**.
 
 ## Create an agent client app
 
-Now you're ready to create a client app that uses an agent. Some code has been provided for you in a GitHub repository.
+Now you're ready to create a client app that uses an agent. The code files are provided in the labfiles folder.
 
-### Clone the repo containing the application code
+### Prepare your development environment
 
-1. Open a new browser tab (keeping the Foundry portal open in the existing tab). Then in the new tab, browse to the [Azure portal](https://portal.azure.com) at `https://portal.azure.com`; signing in with your Azure credentials if prompted.
+You have three options for your development environment:
+- **GitHub Codespaces**: A cloud-based development environment
+- **Local Development in Dev Containers**: Using Docker and VS Code
+- **Fallback VM**: Provided by your instructor if the above options are not available
 
-   Close any welcome notifications to see the Azure portal home page.
+Open a terminal in your chosen environment and navigate to the lab files.
 
-1. Use the **[\>_]** button to the right of the search bar at the top of the page to create a new Cloud Shell in the Azure portal, selecting a **_PowerShell_** environment with no storage in your subscription.
-
-   The cloud shell provides a command-line interface in a pane at the bottom of the Azure portal. You can resize or maximize this pane to make it easier to work in.
-
-   > **Note**: If you have previously created a cloud shell that uses a _Bash_ environment, switch it to **_PowerShell_**.
-
-1. In the cloud shell toolbar, in the **Settings** menu, select **Go to Classic version** (this is required to use the code editor).
-
-   **<font color="red">Ensure you've switched to the classic version of the cloud shell before continuing.</font>**
-
-1. In the cloud shell pane, enter the following commands to clone the GitHub repo containing the code files for this exercise (type the command, or copy it to the clipboard and then right-click in the command line and paste as plain text):
+1. Change to the working directory containing the code files for this lab:
 
    ```
-   rm -r ai-agents -f
-   git clone https://github.com/MicrosoftLearning/mslearn-ai-agents ai-agents
-   ```
-
-   > **Tip**: As you enter commands into the cloudshell, the output may take up a large amount of the screen buffer and the cursor on the current line may be obscured. You can clear the screen by entering the `cls` command to make it easier to focus on each task.
-
-1. Enter the following command to change the working directory to the folder containing the code files and list them all.
-
-   ```
-   cd labfiles/Python
+   cd /workspaces/pro-code-agents/labs/PROCESSED/lab-02/labfiles/Python
    ls -a -l
    ```
 
@@ -84,11 +58,11 @@ Now you're ready to create a client app that uses an agent. Some code has been p
 
 ### Configure the application settings
 
-1. In the cloud shell command-line pane, enter the following command to install the libraries you'll use:
+1. In the terminal, enter the following command to install the libraries you'll use:
 
    ```
    python -m venv labenv
-   ./labenv/bin/Activate.ps1
+   source labenv/bin/activate  # On Windows: labenv\Scripts\activate
    pip install -r requirements.txt azure-ai-projects azure-ai-agents
    ```
 
@@ -100,8 +74,8 @@ Now you're ready to create a client app that uses an agent. Some code has been p
 
    The file is opened in a code editor.
 
-1. In the code file, replace the **your_project_endpoint** placeholder with the endpoint for your project (copied from the project **Overview** page in the Foundry portal) and ensure that the MODEL_DEPLOYMENT_NAME variable is set to your model deployment name (which should be _gpt-4o_).
-1. After you've replaced the placeholder, use the **CTRL+S** command to save your changes and then use the **CTRL+Q** command to close the code editor while keeping the cloud shell command line open.
+1. In the code file, replace the **your_project_endpoint** placeholder with the endpoint for your project (copied from the project **Overview** page in the Foundry portal) and ensure that the MODEL_DEPLOYMENT_NAME variable is set to **gpt-4o**.
+1. After you've replaced the placeholder, save your changes and close the code editor.
 
 ### Write code for an agent app
 
@@ -158,13 +132,15 @@ Now you're ready to create a client app that uses an agent. Some code has been p
    # Define an agent that uses the CodeInterpreterTool
    agent = agent_client.create_agent(
        model=model_deployment,
-       name="data-agent",
+       name="data-agent-xxx",
        instructions="You are an AI agent that analyzes the data in the file that has been uploaded. Use Python to calculate statistical metrics as necessary.",
        tools=code_interpreter.definitions,
        tool_resources=code_interpreter.resources,
    )
    print(f"Using agent: {agent.name}")
    ```
+
+   > **Note**: To avoid naming conflicts with other students, use "data-agent-xxx" where `xxx` is the first three letters of your first name (e.g., "data-agent-ali" for Alice).
 
 1. Find the comment **Create a thread for the conversation** and add the following code to start a thread on which the chat session with the agent will run:
 
@@ -238,28 +214,17 @@ Now you're ready to create a client app that uses an agent. Some code has been p
    - Displays the conversation history
    - Deletes the agent and thread when they're no longer required.
 
-1. Save the code file (_CTRL+S_) when you have finished. You can also close the code editor (_CTRL+Q_); though you may want to keep it open in case you need to make any edits to the code you added. In either case, keep the cloud shell command-line pane open.
+1. Save the code file when you have finished. You can also close the code editor; though you may want to keep it open in case you need to make any edits to the code you added.
 
-### Sign into Azure and run the app
+### Run the app
 
-1. In the cloud shell command-line pane, enter the following command to sign into Azure.
-
-   ```
-   az login
-   ```
-
-   **<font color="red">You must sign into Azure - even though the cloud shell session is already authenticated.</font>**
-
-   > **Note**: In most scenarios, just using _az login_ will be sufficient. However, if you have subscriptions in multiple tenants, you may need to specify the tenant by using the _--tenant_ parameter. See [Sign into Azure interactively using the Azure CLI](https://learn.microsoft.com/cli/azure/authenticate-azure-cli-interactively) for details.
-
-1. When prompted, follow the instructions to open the sign-in page in a new tab and enter the authentication code provided and your Azure credentials. Then complete the sign in process in the command line, selecting the subscription containing your Foundry hub if prompted.
-1. After you have signed in, enter the following command to run the application:
+1. In the terminal, enter the following command to run the application:
 
    ```
    python agent.py
    ```
 
-   The application runs using the credentials for your authenticated Azure session to connect to your project and create and run the agent.
+   The application runs using your Azure credentials to connect to your project and create and run the agent.
 
 1. When prompted, view the data that the app has loaded from the _data.txt_ text file. Then enter a prompt such as:
 
@@ -289,11 +254,3 @@ Now you're ready to create a client app that uses an agent. Some code has been p
 ## Summary
 
 In this exercise, you used the Azure AI Agent Service SDK to create a client application that uses an AI agent. The agent can use the built-in Code Interpreter tool to run dynamic Python code to perform statistical analyses.
-
-## Clean up
-
-If you've finished exploring Azure AI Agent Service, you should delete the resources you have created in this exercise to avoid incurring unnecessary Azure costs.
-
-1. Return to the browser tab containing the Azure portal (or re-open the [Azure portal](https://portal.azure.com) at `https://portal.azure.com` in a new browser tab) and view the contents of the resource group where you deployed the resources used in this exercise.
-1. On the toolbar, select **Delete resource group**.
-1. Enter the resource group name and confirm that you want to delete it.

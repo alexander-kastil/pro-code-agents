@@ -12,43 +12,33 @@ This exercise takes approximately **30** minutes.
 
 > **Note**: Some of the technologies used in this exercise are in preview or in active development. You may experience some unexpected behavior, warnings, or errors.
 
-## Create a Foundry project and agent
+## Access the existing Foundry project
 
-Let's start by creating a Foundry project.
+You'll use an existing Foundry project that has been pre-configured for this lab.
 
 1. In a web browser, open the [Foundry portal](https://ai.azure.com) at `https://ai.azure.com` and sign in using your Azure credentials. Close any tips or quick start panes that are opened the first time you sign in, and if necessary use the **Foundry** logo at the top left to navigate to the home page, which looks similar to the following image (close the **Help** pane if it's open):
 
-    ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)   > **Important**: Make sure the **New Foundry** toggle is _Off_ for this lab.
+    ![Screenshot of Foundry portal.](./_images/ai-foundry-home.png)
 
-1. In the home page, select **Create an agent**.
-1. When prompted to create a project, enter a valid name for your project.
-1. Expand **Advanced options** and specify the following settings:
+   > **Important**: Make sure the **New Foundry** toggle is _Off_ for this lab.
 
-   - **Foundry resource**: _A valid name for your Foundry resource_
-   - **Subscription**: _Your Azure subscription_
-   - **Resource group**: _Select your resource group, or create a new one_
-   - **Region**: \*Select any **AI Foundry recommended\***\*\*
+1. In the home page, select **All resources** from the left navigation pane.
+1. Locate and select the project named **pro-code-agents-student**.
+1. In the project, navigate to the **Agents** page and select **Create an agent** to open the Agents playground.
 
-   > \* Some Azure AI resources are constrained by regional model quotas. In the event of a quota limit being exceeded later in the exercise, there's a possibility you may need to create another resource in a different region.
+    ![Screenshot of a Foundry project Agents playground.](./_images/ai-foundry-agents-playground.png)
 
-1. Select **Create** and wait for your project to be created.
-1. If prompted, deploy a **gpt-4o** model using the **Global standard** or **Standard** deployment type (depending on quota availability) and customize the deployment details to set a **Tokens per minute rate limit** of 50K (or the maximum available if less than 50K).
-
-   > **Note**: Reducing the TPM helps avoid over-using the quota available in the subscription you are using. 50,000 TPM should be sufficient for the data used in this exercise. If your available quota is lower than this, you will be able to complete the exercise but you may experience errors if the rate limit is exceeded.
-
-1. When your project is created, the Agents playground will be opened automatically so you can select or deploy a model:
-
-    ![Screenshot of a Foundry project Agents playground.](./_images/ai-foundry-agents-playground.png)   > **Note**: A GPT-4o base model is automatically deployed when creating your Agent and project.
-
-You'll see that an agent with a default name has been created for you, along with your base model deployment.
+The project has several pre-deployed models available for use, including **gpt-4o**, **gpt-4o-mini**, **gpt-4.1-mini**, **gpt-5-mini**, and **text-embedding-ada-002**.
 
 ## Create your agent
 
-Now that you have a model deployed, you're ready to build an AI agent. In this exercise, you'll build a simple agent that answers questions based on a corporate expenses policy. You'll download the expenses policy document, and use it as _grounding_ data for the agent.
+Now you're ready to build an AI agent. In this exercise, you'll build a simple agent that answers questions based on a corporate expenses policy. You'll use the expenses policy document from the labfiles folder as _grounding_ data for the agent.
 
-1. Open another browser tab, and download [Expenses_policy.docx](https://raw.githubusercontent.com/MicrosoftLearning/mslearn-ai-agents/main/PROCESSED/lab-01/labfiles/Expenses_Policy.docx) from `https://raw.githubusercontent.com/MicrosoftLearning/mslearn-ai-agents/main/PROCESSED/lab-01/labfiles/Expenses_Policy.docx` and save it locally. This document contains details of the expenses policy for the fictional Contoso corporation.
-1. Return to the browser tab containing the Foundry Agents playground, and find the **Setup** pane (it may be to the side or below the chat window).
-1. Set the **Agent name** to `ExpensesAgent`, ensure that the gpt-4o model deployment you created previously is selected, and set the **Instructions** to:
+> **Note**: To avoid naming conflicts with other students, append the first three letters of your first name to agent names. For example, if your name is Alice, name your agent `ExpensesAgent-ali`.
+
+1. Locate the **Expenses_Policy.docx** file in the `labs/PROCESSED/lab-01/labfiles/` folder in your development environment. This document contains details of the expenses policy for the fictional Contoso corporation.
+1. In the Foundry Agents playground, find the **Setup** pane (it may be to the side or below the chat window).
+1. Set the **Agent name** to `ExpensesAgent-xxx` (where `xxx` is the first three letters of your first name), ensure that the **gpt-4o** model deployment is selected, and set the **Instructions** to:
 
    ```prompt
    You are an AI assistant for corporate expenses.
@@ -56,8 +46,10 @@ Now that you have a model deployed, you're ready to build an AI agent. In this e
    If a user wants to submit an expense claim, you get their email address, a description of the claim, and the amount to be claimed and write the claim details to a text file that the user can download.
    ```
 
-    ![Screenshot of the AI agent setup page in Foundry portal.](./_images/ai-agent-setup.png)1. Further down in the **Setup** pane, next to the **Knowledge** header, select **+ Add**. Then in the **Add knowledge** dialog box, select **Files**.
-1. In the **Adding files** dialog box, create a new vector store named `Expenses_Vector_Store`, uploading and saving the **Expenses_policy.docx** local file that you downloaded previously.
+    ![Screenshot of the AI agent setup page in Foundry portal.](./_images/ai-agent-setup.png)
+
+1. Further down in the **Setup** pane, next to the **Knowledge** header, select **+ Add**. Then in the **Add knowledge** dialog box, select **Files**.
+1. In the **Adding files** dialog box, create a new vector store named `Expenses_Vector_Store`, uploading and saving the **Expenses_policy.docx** file from the labfiles folder.
 1. In the **Setup** pane, in the **Knowledge** section, verify that **Expenses_Vector_Store** is listed and shown as containing 1 file.
 1. Below the **Knowledge** section, next to **Actions**, select **+ Add**. Then in the **Add action** dialog box, select **Code interpreter** and then select **Save** (you do not need to upload any files for the code interpreter).
 
@@ -76,12 +68,6 @@ Now that you've created an agent, you can test it in the playground chat.
 1. Submit a prompt that describes the claim and the amount; for example, `Breakfast cost me $20`.
 1. The agent should use the code interpreter to prepare the expense claim text file, and provide a link so you can download it.
 
-    ![Screenshot of the Agent Playground in Foundry portal.](./_images/ai-agent-playground.png)1. Download and open the text document to see the expense claim details.
+    ![Screenshot of the Agent Playground in Foundry portal.](./_images/ai-agent-playground.png)
 
-## Clean up
-
-Now that you've finished the exercise, you should delete the cloud resources you've created to avoid unnecessary resource usage.
-
-1. Open the [Azure portal](https://portal.azure.com) at `https://portal.azure.com` and view the contents of the resource group where you deployed the hub resources used in this exercise.
-1. On the toolbar, select **Delete resource group**.
-1. Enter the resource group name and confirm that you want to delete it.
+1. Download and open the text document to see the expense claim details.
