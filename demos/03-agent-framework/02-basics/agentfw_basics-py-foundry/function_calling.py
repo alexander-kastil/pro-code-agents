@@ -38,8 +38,32 @@ def get_weather(city: str) -> str:
 
 def calculate(expression: str) -> str:
     """Calculate a mathematical expression safely."""
+    import ast
+    import operator
+    
+    # Supported operators for safe evaluation
+    ops = {
+        ast.Add: operator.add,
+        ast.Sub: operator.sub,
+        ast.Mult: operator.mul,
+        ast.Div: operator.truediv,
+        ast.Pow: operator.pow,
+        ast.USub: operator.neg,
+    }
+    
+    def eval_expr(node):
+        if isinstance(node, ast.Constant):
+            return node.value
+        elif isinstance(node, ast.BinOp):
+            return ops[type(node.op)](eval_expr(node.left), eval_expr(node.right))
+        elif isinstance(node, ast.UnaryOp):
+            return ops[type(node.op)](eval_expr(node.operand))
+        else:
+            raise ValueError(f"Unsupported operation: {type(node)}")
+    
     try:
-        result = eval(expression, {"__builtins__": {}}, {})
+        tree = ast.parse(expression, mode='eval')
+        result = eval_expr(tree.body)
         return f"Result: {result}"
     except Exception as e:
         return f"Calculation error: {str(e)}"
@@ -198,7 +222,8 @@ Type 'quit' to exit
                                 
                                 for tool_call in tool_calls:
                                     function_name = tool_call.function.name
-                                    function_args = eval(tool_call.function.arguments)
+                                    import json
+                                    function_args = json.loads(tool_call.function.arguments)
                                     
                                     print(f"\n[FUNCTION] Calling: {function_name}")
                                     print(f"[FUNCTION] Arguments: {function_args}")
