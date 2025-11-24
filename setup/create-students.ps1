@@ -58,7 +58,7 @@ $password = $passwordPlain
 
 # Create 8 users
 for ($i = 1; $i -le 8; $i++) {
-    $userPrincipal = "student{0:D2}@{1}" -f $i, $domain
+    $userPrincipal = "studentx{0:D2}@{1}" -f $i, $domain
     $displayName = "Student $i"
 
     Write-Host "Creating user: $userPrincipal"
@@ -97,7 +97,7 @@ for ($i = 1; $i -le 8; $i++) {
 
     # Assign Azure AI Developer role at project scope (for project-level operations)
     Write-Host "Assigning Azure AI Developer role at project scope to $userPrincipal..."
-    az role assignment create --assignee $userPrincipal --role $azureAIDeveloperRoleId --scope $ProjectResourceIdrojectResourceId
+    az role assignment create --assignee $userPrincipal --role $azureAIDeveloperRoleId --scope $ProjectResourceId
     if ($LASTEXITCODE -ne 0) {
         Write-Host "Failed to assign project-scope role to $userPrincipal"
     } else {
