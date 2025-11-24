@@ -15,6 +15,6 @@ content-type: application/json
 {
     "from": "EUR",
     "to": "THB",
-    "amount": 1000,
+    "amount": 100550,
     "date": "2023-10-01"
 }
