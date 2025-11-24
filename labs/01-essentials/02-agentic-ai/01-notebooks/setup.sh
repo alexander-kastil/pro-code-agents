@@ -1,21 +1,21 @@
-#!/bin/bash
+echo "Setting up Python virtual environment for Jupyter Notebooks ..."
 
-# Script to set up the Python virtual environment and install dependencies
-
-echo "Setting up Python virtual environment for Prompt Engineering demo..."
-
-# Create virtual environment
-python3 -m venv .venv
+# Create virtual environment if it doesn't exist
+if [ ! -d ".venv" ]; then
+    python3 -m venv .venv
+    echo "Virtual environment created."
+else
+    echo "Virtual environment already exists."
+fi
 
 # Activate virtual environment
 source .venv/bin/activate
-
-# Upgrade pip
-pip install --upgrade pip
-
 # Install dependencies
 pip install -r requirements.txt
 
+echo ""
 echo "Setup complete! Virtual environment created and dependencies installed."
-echo "To activate the virtual environment, run: source .venv/bin/activate"
-echo "To run the notebook, execute: jupyter notebook prompt-engineering.ipynb"
+echo "Virtual environment is now ACTIVE in your current shell."
+echo ""
+echo "To deactivate later, run: deactivate"
+echo "To activate in a new shell, run: source .venv/bin/activate"
