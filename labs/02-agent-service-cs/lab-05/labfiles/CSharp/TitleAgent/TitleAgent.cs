@@ -14,6 +14,12 @@ var config = builder.Configuration.Get<AppConfig>()
 var host = config.ServerUrl;
 var port = config.TitleAgentPort;
 
+// Create the agents client
+
+
+// Create the title agent
+
+
 // Define agent skills
 
 

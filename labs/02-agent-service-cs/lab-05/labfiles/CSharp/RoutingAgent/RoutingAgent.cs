@@ -21,6 +21,15 @@ var app = builder.Build();
 // Health check endpoint
 app.MapGet("/health", () => "Routing Agent is running!");
 
+// Retrieve the remote agent's A2A client
+
+
+// Construct the payload
+
+
+// Send the message
+
+
 // Message endpoint - TODO: Initialize routing agent and add message handling
 
 Console.WriteLine($"Routing Agent starting on http://{host}:{port}");

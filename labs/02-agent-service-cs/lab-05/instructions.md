@@ -123,7 +123,7 @@ In this task, you create the title agent that helps writers create trendy headli
 
    ```csharp
    // Create the agents client
-   _agentsClient = new PersistentAgentsClient(
+   var agentsClient = new PersistentAgentsClient(
        config.ProjectConnectionString,
        new DefaultAzureCredential(new DefaultAzureCredentialOptions
        {
@@ -137,7 +137,7 @@ In this task, you create the title agent that helps writers create trendy headli
 
    ```csharp
    // Create the title agent
-   _agent = await _agentsClient.Administration.CreateAgentAsync(
+   var agent = await agentsClient.Administration.CreateAgentAsync(
        model: config.Model,
        name: "title-agent-xxx",
        instructions: """
@@ -145,44 +145,10 @@ In this task, you create the title agent that helps writers create trendy headli
            Given a topic the user wants to write about, suggest a single clear and catchy blog post title.
            """
    );
-   Console.WriteLine($"Title Agent created with ID: {_agent.Id}");
+   Console.WriteLine($"Title Agent created with ID: {agent.Id}");
    ```
 
    > **Note**: Replace "xxx" with the first three letters of your name to avoid conflicts.
-
-1. Find the comment **Create a thread for the chat session** and add the following code:
-
-   ```csharp
-   // Create a thread for the chat session
-   var thread = await _agentsClient.Threads.CreateThreadAsync();
-   ```
-
-1. Locate the comment **Send user message** and add this code:
-
-   ```csharp
-   // Send user message
-   await _agentsClient.Messages.CreateMessageAsync(
-       threadId: thread.Id,
-       role: MessageRole.User,
-       content: userMessage
-   );
-   ```
-
-1. Under the comment **Create and run the agent**, add the following code:
-
-   ```csharp
-   // Create and run the agent
-   var run = await _agentsClient.Runs.CreateRunAsync(
-       thread: thread,
-       agent: _agent
-   );
-
-   while (run.Status == RunStatus.Queued || run.Status == RunStatus.InProgress)
-   {
-       await Task.Delay(1000);
-       run = await _agentsClient.Runs.GetRunAsync(thread.Id, run.Id);
-   }
-   ```
 
 1. Save the code file.
 
@@ -237,14 +203,14 @@ In this task, you use the A2A protocol to enable the routing agent to send messa
 1. Find the comment **Retrieve the remote agent's A2A client** and add the following code:
 
    ```csharp
-   // Retrieve the remote agent's A2A client using the agent name
-   var client = _remoteAgentConnections[agentName];
+   // Retrieve the remote agent's A2A client
+   var client = remoteAgentConnections[agentName];
    ```
 
 1. Locate the comment **Construct the payload** and add the following code:
 
    ```csharp
-   // Construct the payload to send to the remote agent
+   // Construct the payload
    var messageId = Guid.NewGuid().ToString();
    var payload = new MessageSendParams
    {
