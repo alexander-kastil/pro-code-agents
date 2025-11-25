@@ -46,7 +46,8 @@
         "ms-graph.kiota",
         "TeamsDevApp.vscode-adaptive-cards",
         "vstirbu.vscode-mermaid-preview",
-        "digitarald.agent-memory"
+        "digitarald.agent-memory",
+        "bierner.markdown-mermaid"
       ],
       "settings": {
         "editor.formatOnSave": true,
