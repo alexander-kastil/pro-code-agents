@@ -22,7 +22,7 @@ public sealed class AgentRunnerResponseFormat(AppConfig config)
 
         PersistentAgent agent = await agentsClient.Administration.CreateAgentAsync(
             model: config.Model,
-            name: "my-agent",
+            name: "response-agent",
             instructions: "You are helpful agent. You will respond with a JSON object."
         );
         Console.WriteLine($"Created agent, agent ID: {agent.Id}");

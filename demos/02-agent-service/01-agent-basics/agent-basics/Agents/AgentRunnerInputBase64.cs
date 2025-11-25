@@ -21,9 +21,8 @@ public sealed class AgentRunnerInputBase64(AppConfig config)
     {
         Console.WriteLine($"Using project endpoint: {config.ProjectConnectionString}");
         Console.WriteLine($"Using model: {config.Model}\n");
-        Console.WriteLine("Note: The Azure.AI.Agents.Persistent API does not support multimodal");
-        Console.WriteLine("messages with Base64-encoded images in the same way as the Python SDK.");
-        Console.WriteLine("We'll demonstrate Base64 encoding but send a text message.\n");
+        Console.WriteLine("Note: This demo sends a Base64-encoded image as a data URL to the agent.");
+        Console.WriteLine("The agent should be able to analyze the image if using a vision-capable model (e.g., gpt-4o).\n");
 
         var agentsClient = new PersistentAgentsClient(
             config.ProjectConnectionString,
@@ -48,12 +47,20 @@ public sealed class AgentRunnerInputBase64(AppConfig config)
         string imageBase64 = ImageToBase64(assetFilePath);
         Console.WriteLine($"Converted image to Base64 (length: {imageBase64.Length} characters)");
 
-        string inputMessage = "Hello, can you tell me about encoding images as Base64 data URLs?";
+        // Create data URL with base64-encoded image
+        string dataUrl = $"data:image/jpeg;base64,{imageBase64}";
+
+        // Create message content blocks with text and base64 image
+        var contentBlocks = new List<MessageInputContentBlock>
+        {
+            new MessageInputTextBlock("Can you describe what you see in this image?"),
+            new MessageInputImageUriBlock(new MessageImageUriParam(dataUrl))
+        };
 
         PersistentThreadMessage message = await agentsClient.Messages.CreateMessageAsync(
             threadId: thread.Id,
             role: MessageRole.User,
-            content: inputMessage
+            contentBlocks: contentBlocks
         );
         Console.WriteLine($"Created message, message ID: {message.Id}");
 

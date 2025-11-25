@@ -10,9 +10,8 @@ public sealed class AgentRunnerInputUrl(AppConfig config)
     {
         Console.WriteLine($"Using project endpoint: {config.ProjectConnectionString}");
         Console.WriteLine($"Using model: {config.Model}\n");
-        Console.WriteLine("Note: The Azure.AI.Agents.Persistent API does not support multimodal");
-        Console.WriteLine("messages with image URLs in the same way as the Python SDK.");
-        Console.WriteLine("We'll send a text message with the URL reference.\n");
+        Console.WriteLine("Note: This demo sends an image URL to the agent for analysis.");
+        Console.WriteLine("The agent should be able to analyze the image if using a vision-capable model (e.g., gpt-4o).\n");
 
         var agentsClient = new PersistentAgentsClient(
             config.ProjectConnectionString,
@@ -34,12 +33,19 @@ public sealed class AgentRunnerInputUrl(AppConfig config)
         Console.WriteLine($"Created thread, thread ID: {thread.Id}");
 
         string imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg";
-        string inputMessage = $"Hello, can you describe what might be in a nature boardwalk image from this URL: {imageUrl}?";
+        Console.WriteLine($"Using image URL: {imageUrl}");
+
+        // Create message content blocks with text and image URL
+        var contentBlocks = new List<MessageInputContentBlock>
+        {
+            new MessageInputTextBlock("Can you describe what you see in this image?"),
+            new MessageInputImageUriBlock(new MessageImageUriParam(imageUrl))
+        };
 
         PersistentThreadMessage message = await agentsClient.Messages.CreateMessageAsync(
             threadId: thread.Id,
             role: MessageRole.User,
-            content: inputMessage
+            contentBlocks: contentBlocks
         );
         Console.WriteLine($"Created message, message ID: {message.Id}");
 

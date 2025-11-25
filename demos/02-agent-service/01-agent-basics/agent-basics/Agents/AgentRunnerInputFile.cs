@@ -10,9 +10,8 @@ public sealed class AgentRunnerInputFile(AppConfig config)
     {
         Console.WriteLine($"Using project endpoint: {config.ProjectConnectionString}");
         Console.WriteLine($"Using model: {config.Model}\n");
-        Console.WriteLine("Note: This demo uploads a file but the Azure.AI.Agents.Persistent API");
-        Console.WriteLine("does not support multimodal messages in the same way as the Python SDK.");
-        Console.WriteLine("We'll upload the file and reference it in the message text.\n");
+        Console.WriteLine("Note: This demo uploads an image file and attaches it to a message.");
+        Console.WriteLine("The agent should be able to analyze the image if using a vision-capable model (e.g., gpt-4o).\n");
 
         var agentsClient = new PersistentAgentsClient(
             config.ProjectConnectionString,
@@ -40,12 +39,17 @@ public sealed class AgentRunnerInputFile(AppConfig config)
         );
         Console.WriteLine($"Uploaded file, file ID: {imageFile.Id}");
 
-        string inputMessage = $"Hello, I've uploaded a file with ID {imageFile.Id}. Can you tell me about images?";
+        // Create message content blocks with text and image
+        var contentBlocks = new List<MessageInputContentBlock>
+        {
+            new MessageInputTextBlock("Can you describe what you see in this image?"),
+            new MessageInputImageFileBlock(new MessageImageFileParam(imageFile.Id))
+        };
 
         PersistentThreadMessage message = await agentsClient.Messages.CreateMessageAsync(
             threadId: thread.Id,
             role: MessageRole.User,
-            content: inputMessage
+            contentBlocks: contentBlocks
         );
         Console.WriteLine($"Created message, message ID: {message.Id}");
 
