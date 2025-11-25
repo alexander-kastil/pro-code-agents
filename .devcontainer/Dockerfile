@@ -8,10 +8,16 @@ ARG NODE_VERSION="22.18.0"
 # Install .NET 10 SDK on top of .NET 9 base image
 RUN curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh \
     && chmod +x dotnet-install.sh \
-    && ./dotnet-install.sh --channel 10.0 --install-dir /usr/local/dotnet \
+    && ./dotnet-install.sh --channel 10.0 --install-dir /usr/share/dotnet \
     && rm dotnet-install.sh \
+    && export DOTNET_ROOT=/usr/share/dotnet \
+    && export PATH="$PATH:/usr/share/dotnet" \
     && dotnet --list-sdks \
     && dotnet --list-runtimes
+
+# Set .NET environment variables globally
+ENV DOTNET_ROOT=/usr/share/dotnet
+ENV PATH="${PATH}:/usr/share/dotnet"
 
 # Install Node.js 22.18.0, Python 3.11, and GitHub CLI using a single apt transaction
 RUN --mount=type=cache,target=/var/cache/apt \
