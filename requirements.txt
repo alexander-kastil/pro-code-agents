@@ -5,7 +5,7 @@ azure-identity
 python-dotenv
 agent-framework
 ipykernel
-\n+# Multimodal PDF/image processing for invoice extraction demo
+# Multimodal PDF/image processing for invoice extraction demo
 pymupdf
 pillow
 pdf2image

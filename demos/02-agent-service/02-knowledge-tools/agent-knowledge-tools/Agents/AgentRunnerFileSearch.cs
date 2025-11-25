@@ -9,7 +9,8 @@ public sealed class AgentRunnerFileSearch(AppConfig config)
     public async Task RunAsync()
     {
         Console.WriteLine($"Using endpoint: {config.ProjectConnectionString}");
-        Console.WriteLine($"Using model: {config.Model}\n");
+        Console.WriteLine($"Using model: {config.Model}");
+        Console.WriteLine($"Using vector store: {config.VectorStoreId}\n");
 
         var agentsClient = new PersistentAgentsClient(
             config.ProjectConnectionString,
@@ -22,9 +23,17 @@ public sealed class AgentRunnerFileSearch(AppConfig config)
 
         PersistentAgent agent = await agentsClient.Administration.CreateAgentAsync(
             model: config.Model,
-            name: "basic-agent",
-            instructions: "You are a helpful agent",
-            description: "Demonstrates basic agent setup and message interaction without specialized tools - a simple conversational agent."
+            name: "file-search-agent",
+            instructions: "You are a helpful agent that can search through documents to answer questions. Use the file search tool to find relevant information.",
+            description: "Demonstrates file search capabilities using a vector store to answer questions about documents.",
+            tools: [new FileSearchToolDefinition()],
+            toolResources: new ToolResources
+            {
+                FileSearch = new FileSearchToolResource
+                {
+                    VectorStoreIds = { config.VectorStoreId }
+                }
+            }
         );
 
         Console.WriteLine($"Created agent: {agent.Name}, ID: {agent.Id}");
@@ -35,7 +44,7 @@ public sealed class AgentRunnerFileSearch(AppConfig config)
         PersistentThreadMessage message = await agentsClient.Messages.CreateMessageAsync(
             threadId: thread.Id,
             role: MessageRole.User,
-            content: "Hello, tell me a joke"
+            content: "Tell me about Equinox Gold"
         );
         Console.WriteLine($"Created message, message ID: {message.Id}");
 
@@ -75,12 +84,10 @@ public sealed class AgentRunnerFileSearch(AppConfig config)
         {
             if (msg.ContentItems.Count > 0)
             {
-                foreach (var content in msg.ContentItems)
+                var lastTextContent = msg.ContentItems.OfType<MessageTextContent>().LastOrDefault();
+                if (lastTextContent != null)
                 {
-                    if (content is MessageTextContent textContent)
-                    {
-                        Console.WriteLine($"{msg.Role}: {textContent.Text.Trim()}");
-                    }
+                    Console.WriteLine($"{msg.Role}: {lastTextContent.Text.Trim()}");
                 }
             }
         }

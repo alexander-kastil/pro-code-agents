@@ -1,6 +1,7 @@
 using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 using AgentKnowledgeTools.Models;
+using AgentKnowledgeTools.Utilities;
 
 namespace AgentKnowledgeTools.Agents;
 
@@ -90,8 +91,15 @@ public sealed class AgentRunnerCodeInterpreter(AppConfig config)
                     else if (content is MessageImageFileContent imageContent)
                     {
                         Console.WriteLine($"Image file ID: {imageContent.FileId}");
-                        Console.WriteLine("Note: File download not implemented in this demo.");
-                        Console.WriteLine($"You can download the file using file ID: {imageContent.FileId}");
+                        var downloadedPath = await FileDownloadUtility.DownloadFileToDirectoryAsync(
+                            agentsClient,
+                            imageContent.FileId,
+                            "downloads"
+                        );
+                        if (downloadedPath != null)
+                        {
+                            Console.WriteLine($"Downloaded image to: {downloadedPath}");
+                        }
                     }
                 }
                 break;

@@ -20,6 +20,7 @@ public class AppConfig
     public string? OutputPath { get; set; }
     public bool DetailedLogging { get; set; }
     public bool DeleteAgentOnExit { get; set; }
+    public string? VectorStoreId { get; set; }
 
     public static AppConfig FromConfiguration(IConfiguration configuration)
     {
@@ -40,7 +41,8 @@ public class AppConfig
             OnVistaUrl = configuration["OnVistaUrl"],
             OutputPath = configuration["OutputPath"],
             DetailedLogging = bool.TryParse(configuration["DetailedLogging"], out var detailedLogging) && detailedLogging,
-            DeleteAgentOnExit = bool.TryParse(configuration["DeleteAgentOnExit"], out var deleteOnExit) && deleteOnExit
+            DeleteAgentOnExit = bool.TryParse(configuration["DeleteAgentOnExit"], out var deleteOnExit) && deleteOnExit,
+            VectorStoreId = configuration["VECTOR_STORE_ID"]
         };
 
         return cfg;

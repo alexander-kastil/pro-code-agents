@@ -4,7 +4,7 @@ import sys
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import ListSortOrder
+from azure.ai.agents.models import ListSortOrder, FileSearchToolResource, ToolResources, FileSearchToolDefinition
 
 # Set UTF-8 encoding for console output
 if sys.platform == 'win32':
@@ -20,9 +20,11 @@ def main():
     load_dotenv()
     endpoint = os.getenv("PROJECT_ENDPOINT")
     model = os.getenv("MODEL_DEPLOYMENT")
+    vector_store_id = os.getenv("VECTOR_STORE_ID")
 
     print(f"Using endpoint: {endpoint}")
     print(f"Using model: {model}")
+    print(f"Using vector store: {vector_store_id}")
 
     # Connect to the Azure AI Agents service
     agents_client = AgentsClient(
@@ -33,9 +35,15 @@ def main():
 
         agent = agents_client.create_agent(
             model=model,
-            name="basic-agent",
-            instructions="You are helpful agent",
-            description="Demonstrates basic agent setup and message interaction without specialized tools - a simple conversational agent."
+            name="file-search-agent",
+            instructions="You are a helpful agent that can search through documents to answer questions. Use the file search tool to find relevant information.",
+            description="Demonstrates file search capabilities using a vector store to answer questions about documents.",
+            tools=[FileSearchToolDefinition()],
+            tool_resources=ToolResources(
+                file_search=FileSearchToolResource(
+                    vector_store_ids=[vector_store_id]
+                )
+            )
         )
 
         print(f"Created agent: {agent.name}, ID: {agent.id}")
@@ -48,7 +56,7 @@ def main():
         message = agents_client.messages.create(
             thread_id=thread.id,
             role="user",
-            content="Hello, tell me a joke"
+            content="Tell me about Equinox Gold"
         )
         # [END create_message]
         print(f"Created message, message ID: {message.id}")
