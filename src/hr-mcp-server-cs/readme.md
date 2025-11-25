@@ -1,6 +1,6 @@
-## HR MCP Server
+# HR MCP Server
 
-### Run the server
+## Run the server
 
 ```powershell
 dotnet run

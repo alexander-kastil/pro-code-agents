@@ -9,6 +9,11 @@
             "type": "streamable-http",
             "url": "https://human-resource-mcp-dev.azurewebsites.net",
             "note": "Dev deployment hosted on Azure App Service"
+        },
+        "hr-codespace": {
+            "type": "streamable-http",
+            "url": "http://127.0.0.1:47002",
+            "note": "HR MCP Server running in Codespaces"
         }
     }
 }
