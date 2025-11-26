@@ -4,8 +4,9 @@ import io
 import sys
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import ListSortOrder
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
+from openai import OpenAI  # type: ignore
 import qrcode
 from datetime import datetime
 from azure.storage.blob import BlobServiceClient
@@ -25,55 +26,55 @@ def main():
     storage_connection_string = os.getenv("STORAGE_CONNECTION_STRING")
     storage_container_name = os.getenv("STORAGE_CONTAINER_NAME")
 
+    delete_resources = os.getenv("DELETE", "true").lower() == "true"
     print(f"Using endpoint: {endpoint}")
     print(f"Using model: {model}")
+    print(f"Delete resources: {delete_resources}")
 
-    # Use AgentsClient directly
-    agents_client = AgentsClient(endpoint=endpoint, credential=DefaultAzureCredential())
-    with agents_client:
-
-        agent = agents_client.create_agent(
-            model=model,
-            name="basic-agent",
-            instructions="You are helpful agent"
+    # Initialize new project + responses client (no threads/runs now)
+    project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    openai_client: OpenAI = project_client.get_openai_client()
+    with project_client:
+        start = time.time()
+        agent = project_client.agents.create_version(
+            agent_name="output-agent",
+            definition=PromptAgentDefinition(model=model, instructions="You are helpful agent")
         )
-        print(f"Created agent: {agent.name}, ID: {agent.id}")
+        print(f"Created agent: {agent.name} (version {agent.version})")
 
-        thread = agents_client.threads.create()
-        print(f"Created thread, thread ID: {thread.id}")
+        try:
+            response = openai_client.responses.create(
+                input="Hello",
+                extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
+            )
+        except Exception as e:
+            print(f"Response creation failed: {e}")
+            if delete_resources:
+                project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+                print("Deleted agent version after failure")
+            response = None
+        duration = time.time() - start
+        print(f"Response status: {response.status} (took {duration:.2f}s)")
+        if response.error:
+            print(f"Response error: {response.error}")
 
-        message = agents_client.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content="Hello"
-        )
-        print(f"Created message, message ID: {message.id}")
-
-        run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            time.sleep(1)
-            run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
-            print(f"Run status: {run.status}")
-
-        if run.status == "failed":
-            print(f"Run error: {run.last_error}")
-
-        messages = agents_client.messages.list(
-            thread_id=thread.id,
-            order=ListSortOrder.ASCENDING
-        )
         agent_response = ""
-        for msg in messages:
-            if msg.text_messages:
-                last_text = msg.text_messages[-1]
-                print(f"{msg.role}: {last_text.text.value}")
-                if msg.role == "assistant":
-                    agent_response = last_text.text.value
+        if response:
+            for item in response.output:
+                if item.type == "message":
+                    for block in item.content:
+                        if block.type == "output_text":
+                            text_val = block.text
+                            print(f"assistant: {text_val}")
+                            agent_response += text_val + "\n"
 
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
+        if delete_resources:
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted agent version")
+        else:
+            print(f"Preserved agent: {agent.name}:{agent.version}")
 
-        # Ask for QR code content
+        # Ask for QR code content (after agent interaction)
         user_input = input("What do you want to encode? Press Enter for default: https://www.integrations.at\n")
         qr_content = user_input if user_input.strip() else "https://www.integrations.at"
 

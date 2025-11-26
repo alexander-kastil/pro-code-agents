@@ -2,17 +2,10 @@ import os
 import io
 import sys
 from dotenv import load_dotenv
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from typing import Any, Optional
-from azure.ai.agents.models import (
-    AgentEventHandler,
-    ListSortOrder,
-    MessageDeltaChunk,
-    ThreadMessage,
-    ThreadRun,
-    RunStep,
-)
 
 # Configure UTF-8 encoding for Windows console (fixes emoji display issues)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -24,77 +17,69 @@ os.system('cls' if os.name == 'nt' else 'clear')
 load_dotenv()
 endpoint = os.getenv("PROJECT_ENDPOINT")
 model = os.getenv("MODEL_DEPLOYMENT")
+delete_enabled = os.getenv("DELETE", "false").lower() == "true"
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential(),
 )
 
+with project_client:
+    try:
+        # Get the OpenAI client for conversations and responses
+        openai_client = project_client.get_openai_client()
 
-# [START stream_event_handler]
-# With AgentEventHandler[str], the return type for each event functions is optional string.
-class MyEventHandler(AgentEventHandler[str]):
+        # Create an agent
+        agent = project_client.agents.create_version(
+            agent_name="event-handler-agent",
+            definition=PromptAgentDefinition(
+                model=model,
+                instructions="You are a helpful agent",
+            )
+        )
+        print(f"Created agent: {agent.name}, Version: {agent.version}")
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[str]:
-        return f"Text delta received: {delta.text}"
+        # Create a streaming response
+        print("\n[START create_stream]")
+        response = openai_client.responses.create(
+            input=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": "Hello, tell me a joke"}
+                    ]
+                }
+            ],
+            extra_body={
+                "agent": {
+                    "type": "agent_reference",
+                    "name": agent.name,
+                    "version": agent.version
+                }
+            }
+        )
 
-    def on_thread_message(self, message: "ThreadMessage") -> Optional[str]:
-        return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
+        # Process the response
+        print(f"Response status: {response.status}")
+        if response.status == "completed":
+            for output_item in response.output:
+                if output_item.type == "message":
+                    print(f"{output_item.role}: {output_item.content[0].text}")
+        else:
+            print(f"Response failed with status: {response.status}")
 
-    def on_thread_run(self, run: "ThreadRun") -> Optional[str]:
-        return f"ThreadRun status: {run.status}"
+        print("[END create_stream]\n")
 
-    def on_run_step(self, step: "RunStep") -> Optional[str]:
-        return f"RunStep type: {step.type}, Status: {step.status}"
-
-    def on_error(self, data: str) -> Optional[str]:
-        return f"An error occurred. Data: {data}"
-
-    def on_done(self) -> Optional[str]:
-        return "Stream completed."
-
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> Optional[str]:
-        return f"Unhandled Event Type: {event_type}, Data: {event_data}"
-
-
-# [END stream_event_handler]
-
-
-with agents_client:
-
-    # Create an agent and run stream with event handler
-    agent = agents_client.create_agent(
-        model=model, name="event-handler-agent", instructions="You are a helpful agent"
-    )
-    print(f"Created agent: {agent.name}, ID: {agent.id}")
-
-    # Create a thread for the conversation
-    thread = agents_client.threads.create()
-    print(f"Created thread, thread ID {thread.id}")
-
-    message = agents_client.messages.create(
-        thread_id=thread.id, role="user", content="Hello, tell me a joke"
-    )
-    print(f"Created message, message ID {message.id}")
-
-    # [START create_stream]
-    with agents_client.runs.stream(
-        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
-    ) as stream:
-        for event_type, event_data, func_return in stream:
-            print("Received data.")
-            print(f"Streaming receive Event Type: {event_type}")
-            print(f"Event Data: {str(event_data)[:100]}...")
-            print(f"Event Function return: {func_return}\n")
-    # [END create_stream]
-
-    agents_client.delete_agent(agent.id)
-    print("Deleted agent")
-
-    messages = agents_client.messages.list(
-        thread_id=thread.id, order=ListSortOrder.ASCENDING
-    )
-    for msg in messages:
-        if msg.text_messages:
-            last_text = msg.text_messages[-1]
-            print(f"{msg.role}: {last_text.text.value}")
+        # Cleanup
+        if delete_enabled:
+            project_client.agents.delete_version(
+                agent_name=agent.name,
+                agent_version=agent.version
+            )
+            print("Deleted agent")
+        else:
+            print(f"Skipping cleanup (DELETE={delete_enabled}). Agent {agent.name} version {agent.version} still exists.")
+    except Exception as e:
+        print(f"Error occurred: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()

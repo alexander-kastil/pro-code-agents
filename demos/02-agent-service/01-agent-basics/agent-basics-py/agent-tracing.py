@@ -1,21 +1,11 @@
 import os
 import io
 import sys
+import base64
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import (
-    ListSortOrder,
-    MessageTextContent,
-    MessageInputContentBlock,
-    MessageImageFileParam,
-    MessageInputTextBlock,
-    MessageInputImageFileBlock,
-    FilePurpose,
-    RunStatus,
-)
-from typing import List
+from azure.ai.projects.models import PromptAgentDefinition
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
 from opentelemetry import trace
@@ -32,9 +22,11 @@ os.system('cls' if os.name == 'nt' else 'clear')
 load_dotenv()
 endpoint = os.getenv("PROJECT_ENDPOINT")
 model = os.getenv("MODEL_DEPLOYMENT")
+delete_resources = os.getenv("DELETE", "true").lower() == "true"
 
 print(f"Using endpoint: {endpoint}")
 print(f"Using model: {model}")
+print(f"Delete resources: {delete_resources}")
 
 # Initialize the AI Project Client to get Application Insights connection string
 project_client = AIProjectClient(
@@ -55,102 +47,67 @@ OpenAIInstrumentor().instrument()
 # Get a tracer instance for custom spans
 tracer = trace.get_tracer(__name__)
 
-# Connect to the Azure AI Foundry project
-agents_client = AgentsClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential()
-)
+project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
+openai_client = project_client.get_openai_client()
 
-with agents_client:
-    # Create agent with custom span
+with project_client:
+    # Create agent span
     with tracer.start_as_current_span("create_agent"):
-        agent = agents_client.create_agent(
-            model=model,
-            name="my-agent",
-            instructions="You are helpful agent",
+        agent = project_client.agents.create_version(
+            agent_name="my-agent-tracing",
+            definition=PromptAgentDefinition(model=model, instructions="You are helpful agent")
         )
-        print(f"Created agent, agent ID: {agent.id}")
-        
-        # Add custom attribute to span
-        current_span = trace.get_current_span()
-        current_span.set_attribute("agent.id", agent.id)
-        current_span.set_attribute("agent.model", model)
+        print(f"Created agent {agent.name}:{agent.version}")
+        span = trace.get_current_span()
+        span.set_attribute("agent.name", agent.name)
+        span.set_attribute("agent.version", agent.version)
+        span.set_attribute("agent.model", model)
 
-    # Create thread with custom span
-    with tracer.start_as_current_span("create_thread"):
-        thread = agents_client.threads.create()
-        print(f"Created thread, thread ID: {thread.id}")
-        
-        current_span = trace.get_current_span()
-        current_span.set_attribute("thread.id", thread.id)
+    # Encode image with span
+    with tracer.start_as_current_span("encode_image"):
+        with open(asset_file_path, "rb") as f:
+            base64_image = base64.b64encode(f.read()).decode("utf-8")
+        span = trace.get_current_span()
+        span.set_attribute("image.path", asset_file_path)
+        span.set_attribute("image.size.bytes", len(base64_image))
 
-    # Upload file with custom span
-    with tracer.start_as_current_span("upload_file"):
-        image_file = agents_client.files.upload_and_poll(
-            file_path=asset_file_path, 
-            purpose=FilePurpose.AGENTS
-        )
-        print(f"Uploaded file, file ID: {image_file.id}")
-        
-        current_span = trace.get_current_span()
-        current_span.set_attribute("file.id", image_file.id)
-        current_span.set_attribute("file.path", asset_file_path)
-
-    # Create message with image
-    with tracer.start_as_current_span("create_message"):
+    # Create response with span
+    with tracer.start_as_current_span("create_response"):
         input_message = "Hello, what is in the image?"
-        file_param = MessageImageFileParam(file_id=image_file.id, detail="high")
-        content_blocks: List[MessageInputContentBlock] = [
-            MessageInputTextBlock(text=input_message),
-            MessageInputImageFileBlock(image_file=file_param),
-        ]
-        message = agents_client.messages.create(
-            thread_id=thread.id, 
-            role="user", 
-            content=content_blocks
+        data_url = f"data:image/jpeg;base64,{base64_image}"
+        response = openai_client.responses.create(
+            input=[{
+                "role": "user",
+                "content": [
+                    {"type": "input_text", "text": input_message},
+                    {"type": "input_image", "image_url": data_url}
+                ]
+            }],
+            extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
         )
-        print(f"Created message, message ID: {message.id}")
-        
-        current_span = trace.get_current_span()
-        current_span.set_attribute("message.id", message.id)
-        current_span.set_attribute("message.content", input_message)
+        span = trace.get_current_span()
+        span.set_attribute("response.status", response.status)
+        if response.error:
+            span.set_attribute("response.error", str(response.error))
 
-    # Run agent with custom span
-    with tracer.start_as_current_span("run_agent"):
-        run = agents_client.runs.create_and_process(
-            thread_id=thread.id, 
-            agent_id=agent.id
-        )
-        
-        current_span = trace.get_current_span()
-        current_span.set_attribute("run.id", run.id)
-        current_span.set_attribute("run.status", run.status)
-        
-        if run.status != RunStatus.COMPLETED:
-            print(f"The run did not succeed: {run.status=}.")
-            current_span.set_attribute("run.success", False)
-        else:
-            current_span.set_attribute("run.success", True)
-
-    # Clean up
-    agents_client.delete_agent(agent.id)
-    print("Deleted agent")
-
-    # Retrieve and display messages
-    with tracer.start_as_current_span("retrieve_messages"):
-        messages = agents_client.messages.list(
-            thread_id=thread.id, 
-            order=ListSortOrder.ASCENDING
-        )
-        
+    # Output handling span
+    with tracer.start_as_current_span("output_parse"):
         message_count = 0
-        for msg in messages:
-            message_count += 1
-            last_part = msg.content[-1]
-            if isinstance(last_part, MessageTextContent):
-                print(f"{msg.role}: {last_part.text.value}")
-        
-        current_span = trace.get_current_span()
-        current_span.set_attribute("messages.count", message_count)
+        for item in response.output:
+            if item.type == "message" and item.content and item.content[0].type == "output_text":
+                print(f"assistant: {item.content[0].text}")
+                message_count += 1
+        span = trace.get_current_span()
+        span.set_attribute("messages.count", message_count)
+
+    # Cleanup span
+    with tracer.start_as_current_span("cleanup"):
+        if delete_resources:
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted agent version")
+            trace.get_current_span().set_attribute("cleanup.deleted", True)
+        else:
+            print(f"Preserved agent {agent.name}:{agent.version}")
+            trace.get_current_span().set_attribute("cleanup.deleted", False)
 
 print("\nTracing complete. View traces in Azure AI Foundry portal under Tracing section.")

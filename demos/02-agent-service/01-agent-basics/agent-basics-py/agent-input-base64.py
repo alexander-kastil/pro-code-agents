@@ -3,17 +3,8 @@ import io
 import sys
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import (
-    ListSortOrder,
-    MessageTextContent,
-    MessageInputContentBlock,
-    MessageImageUrlParam,
-    MessageInputTextBlock,
-    MessageInputImageUrlBlock,
-    RunStatus,
-)
-from typing import List
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
 
 # Configure UTF-8 encoding for Windows console (fixes emoji display issues)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -43,52 +34,52 @@ def image_to_base64(image_path: str) -> str:
 # Clear the console to keep the output focused on the agent interaction
 os.system('cls' if os.name == 'nt' else 'clear')
 
-# Load environment variables from .env file
 load_dotenv()
 endpoint = os.getenv("PROJECT_ENDPOINT")
 model = os.getenv("MODEL_DEPLOYMENT")
+delete_resources = os.getenv("DELETE", "true").lower() == "true"
 
 print(f"Using endpoint: {endpoint}")
 print(f"Using model: {model}")
+print(f"Delete resources: {delete_resources}")
 
-# Connect to the Azure AI Foundry project
-agents_client = AgentsClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential()
-)
-with agents_client:
+project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
+openai_client = project_client.get_openai_client()
 
-    agent = agents_client.create_agent(
-        model=model,
-        name="my-agent",
-        instructions="You are helpful agent",
+with project_client:
+    agent = project_client.agents.create_version(
+        agent_name="my-agent-base64",
+        definition=PromptAgentDefinition(
+            model=model,
+            instructions="You are helpful agent"
+        )
     )
-    print(f"Created agent, agent ID: {agent.id}")
-
-    thread = agents_client.threads.create()
-    print(f"Created thread, thread ID: {thread.id}")
+    print(f"Created agent: {agent.name}:{agent.version}")
 
     input_message = "Hello, what is in the image ?"
     image_base64 = image_to_base64(asset_file_path)
-    img_url = f"data:image/png;base64,{image_base64}"
-    url_param = MessageImageUrlParam(url=img_url, detail="high")
-    content_blocks: List[MessageInputContentBlock] = [
-        MessageInputTextBlock(text=input_message),
-        MessageInputImageUrlBlock(image_url=url_param),
-    ]
-    message = agents_client.messages.create(thread_id=thread.id, role="user", content=content_blocks)
-    print(f"Created message, message ID: {message.id}")
+    data_url = f"data:image/jpeg;base64,{image_base64}"
 
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+    response = openai_client.responses.create(
+        input=[{
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": input_message},
+                {"type": "input_image", "image_url": data_url}
+            ]
+        }],
+        extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
+    )
+    print(f"Response status: {response.status}")
+    if response.error:
+        print(f"Error: {response.error}")
 
-    if run.status != RunStatus.COMPLETED:
-        print(f"The run did not succeed: {run.status=}.")
+    for item in response.output:
+        if item.type == "message" and item.content and item.content[0].type == "output_text":
+            print(f"assistant: {item.content[0].text}")
 
-    agents_client.delete_agent(agent.id)
-    print("Deleted agent")
-
-    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-    for msg in messages:
-        last_part = msg.content[-1]
-        if isinstance(last_part, MessageTextContent):
-            print(f"{msg.role}: {last_part.text.value}")
+    if delete_resources:
+        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        print("Deleted agent version")
+    else:
+        print(f"Preserved agent: {agent.name}:{agent.version}")

@@ -19,18 +19,9 @@ def main():
     endpoint = os.getenv("PROJECT_ENDPOINT")
 
     print(f"{'='*70}")
-    print("🗑️  DELETE ALL AGENTS UTILITY")
+    print("🗑️  AGENT DELETION UTILITY")
     print(f"{'='*70}")
     print(f"Endpoint: {endpoint}")
-    print()
-
-    # Confirm deletion with user
-    confirmation = input("⚠️  This will DELETE ALL agents. Are you sure? (yes/no): ").strip().lower()
-    
-    if confirmation not in ['yes', 'y']:
-        print("\n✅ Cancelled. No agents were deleted.")
-        return
-
     print()
 
     agents_client = AgentsClient(
@@ -59,9 +50,45 @@ def main():
         
         print(f"{'─'*70}")
         print()
+        print("Select agents to delete:")
+        print("  - Enter numbers separated by commas (e.g., 1,3,5)")
+        print("  - Enter 'all' to delete all agents")
+        print("  - Enter 'q' to quit")
+        print()
         
-        # Final confirmation
-        final_confirm = input(f"⚠️  Proceed to delete all {len(agent_list)} agent(s)? (yes/no): ").strip().lower()
+        selection = input("Your selection: ").strip().lower()
+        
+        if selection == 'q':
+            print("\n✅ Cancelled. No agents were deleted.")
+            return
+        
+        # Determine which agents to delete
+        agents_to_delete = []
+        
+        if selection == 'all':
+            agents_to_delete = agent_list
+        else:
+            try:
+                indices = [int(x.strip()) for x in selection.split(',')]
+                for idx in indices:
+                    if 1 <= idx <= len(agent_list):
+                        agents_to_delete.append(agent_list[idx - 1])
+                    else:
+                        print(f"⚠️  Invalid selection: {idx} (out of range)")
+            except ValueError:
+                print("❌ Invalid input format. Please enter numbers separated by commas.")
+                return
+        
+        if not agents_to_delete:
+            print("\n✅ No agents selected. Nothing to delete.")
+            return
+        
+        print(f"\n🗑️  Selected {len(agents_to_delete)} agent(s) for deletion:")
+        for agent in agents_to_delete:
+            print(f"  - {agent.name} (ID: {agent.id})")
+        
+        print()
+        final_confirm = input(f"⚠️  Proceed to delete {len(agents_to_delete)} agent(s)? (yes/no): ").strip().lower()
         
         if final_confirm not in ['yes', 'y']:
             print("\n✅ Cancelled. No agents were deleted.")
@@ -74,13 +101,13 @@ def main():
         deleted_count = 0
         failed_count = 0
         
-        for i, agent in enumerate(agent_list, 1):
+        for i, agent in enumerate(agents_to_delete, 1):
             try:
                 agents_client.delete_agent(agent.id)
-                print(f"✓ [{i}/{len(agent_list)}] Deleted: {agent.name} (ID: {agent.id})")
+                print(f"✓ [{i}/{len(agents_to_delete)}] Deleted: {agent.name} (ID: {agent.id})")
                 deleted_count += 1
             except Exception as e:
-                print(f"✗ [{i}/{len(agent_list)}] Failed to delete {agent.name} (ID: {agent.id}): {e}")
+                print(f"✗ [{i}/{len(agents_to_delete)}] Failed to delete {agent.name} (ID: {agent.id}): {e}")
                 failed_count += 1
         
         print(f"{'─'*70}")
