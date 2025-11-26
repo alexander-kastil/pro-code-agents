@@ -1,19 +1,12 @@
 import os
 import io
 import sys
+import time
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import (
-    ListSortOrder,
-    MessageTextContent,
-    MessageInputContentBlock,
-    MessageImageUrlParam,
-    MessageInputTextBlock,
-    MessageInputImageUrlBlock,
-    RunStatus,
-)
-from typing import List
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
+from openai import OpenAI  # type: ignore
 
 # Configure UTF-8 encoding for Windows console (fixes emoji display issues)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -24,51 +17,61 @@ os.system('cls' if os.name == 'nt' else 'clear')
 # Load environment variables from .env file
 load_dotenv()
 endpoint = os.getenv("PROJECT_ENDPOINT")
-model = os.getenv("IMG_MODEL_DEPLOYMENT")
+model = os.getenv("IMG_MODEL_DEPLOYMENT")  # image-capable model deployment name
+delete_resources = os.getenv("DELETE", "true").lower() == "true"
 
 print(f"Using endpoint: {endpoint}")
 print(f"Using model: {model}")
+print(f"Delete resources: {delete_resources}")
 
 # Connect to the Azure AI Foundry project
-agents_client = AgentsClient(
-    endpoint=endpoint,
-    credential=DefaultAzureCredential()
-)
-with agents_client:
-
-    agent = agents_client.create_agent(
-        model=model,
-        name="my-agent",
-        instructions="You are helpful agent",
+project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
+openai_client: OpenAI = project_client.get_openai_client()
+with project_client:
+    start = time.time()
+    agent = project_client.agents.create_version(
+        agent_name="image-url-agent",
+        definition=PromptAgentDefinition(model=model, instructions="You are a helpful vision agent.")
     )
-    print(f"Created agent, agent ID: {agent.id}")
+    print(f"Created agent: {agent.name} (version {agent.version})")
 
-    thread = agents_client.threads.create()
-    print(f"Created thread, thread ID: {thread.id}")
-
-    # Try a simpler, more reliable image URL
     image_url = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/landmark.jpg"
-    input_message = "Hello, what is in the image ?"
-    url_param = MessageImageUrlParam(url=image_url, detail="high")
-    content_blocks: List[MessageInputContentBlock] = [
-        MessageInputTextBlock(text=input_message),
-        MessageInputImageUrlBlock(image_url=url_param),
+    user_text = "Describe the landmark and its location."
+
+    # Responses API vision input structure using image_url block
+    vision_input = [
+        {"role": "user", "content": [
+            {"type": "input_text", "text": user_text},
+            {"type": "input_image", "image_url": image_url}
+        ]}
     ]
-    message = agents_client.messages.create(thread_id=thread.id, role="user", content=content_blocks)
-    print(f"Created message, message ID: {message.id}")
 
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+    try:
+        response = openai_client.responses.create(
+            input=vision_input,
+            extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
+        )
+    except Exception as e:
+        print(f"Vision response failed: {e}")
+        if delete_resources:
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted agent version after failure")
+        response = None
 
-    if run.status != RunStatus.COMPLETED:
-        print(f"The run did not succeed: {run.status=}.")
-        if run.last_error:
-            print(f"Error details: {run.last_error}")
+    duration = time.time() - start
+    print(f"Response status: {getattr(response, 'status', 'unknown')} (took {duration:.2f}s)")
+    if response and response.error:
+        print(f"Response error: {response.error}")
 
-    agents_client.delete_agent(agent.id)
-    print("Deleted agent")
+    if response:
+        for item in response.output:
+            if item.type == "message":
+                for block in item.content:
+                    if block.type == "output_text":
+                        print(f"assistant: {block.text}")
 
-    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-    for msg in messages:
-        last_part = msg.content[-1]
-        if isinstance(last_part, MessageTextContent):
-            print(f"{msg.role}: {last_part.text.value}")
+    if delete_resources:
+        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        print("Deleted agent version")
+    else:
+        print(f"Preserved agent: {agent.name}:{agent.version}")

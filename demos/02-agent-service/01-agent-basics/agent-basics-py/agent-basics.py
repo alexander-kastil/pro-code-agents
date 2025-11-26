@@ -4,81 +4,66 @@ import sys
 import time
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import ListSortOrder
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
+from openai import OpenAI  # type: ignore
 
 # Configure UTF-8 encoding for Windows console (fixes emoji display issues)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def main():
-
-    # Clear the console to keep the output focused on the agent interaction
+    # Clear console
     os.system('cls' if os.name == 'nt' else 'clear')
 
-    # Load environment variables from .env file
     load_dotenv()
     endpoint = os.getenv("PROJECT_ENDPOINT")
     model = os.getenv("MODEL_DEPLOYMENT")
+    delete_resources = os.getenv("DELETE", "true").lower() == "true"
 
     print(f"Using endpoint: {endpoint}")
     print(f"Using model: {model}")
+    print(f"Delete resources: {delete_resources}")
 
-    # Create separate AgentsClient for agent operations
-    agents_client = AgentsClient(
-        endpoint=endpoint,
-        credential=DefaultAzureCredential()
-    )
-    
-    with agents_client:
+    # Initialize project client and OpenAI responses client
+    project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    openai_client = project_client.get_openai_client()
 
-        agent = agents_client.create_agent(
-            model=model,
-            name="basic-agent",
-            instructions="You are helpful agent"
+    with project_client:
+        start = time.time()
+        # Create versioned agent (prompt kind)
+        agent = project_client.agents.create_version(
+            agent_name="basic-agent",
+            definition=PromptAgentDefinition(
+                model=model,
+                instructions="You are helpful agent"
+            )
+        )
+        print(f"Created agent: {agent.name} (version {agent.version})")
+
+        # Create response with user input (no separate thread/run needed now)
+        user_input = "Hello, tell me a joke"
+        response = openai_client.responses.create(
+            input=user_input,
+            extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
         )
 
-        print(f"Created agent: {agent.name}, ID: {agent.id}")
+        # Status / timing
+        duration = time.time() - start
+        print(f"Response status: {response.status} (took {duration:.2f}s)")
+        if response.error:
+            print(f"Response error: {response.error}")
 
-        # Create a thread for the conversation
-        thread = agents_client.threads.create()
-        print(f"Created thread, thread ID: {thread.id}")
+        # Output items
+        for item in response.output:
+            if item.type == "message" and item.content and item.content[0].type == "output_text":
+                print(f"assistant: {item.content[0].text}")
 
-        # [START create_message]
-        message = agents_client.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content="Hello, tell me a joke"
-        )
-        # [END create_message]
-        print(f"Created message, message ID: {message.id}")
-
-        # [START create_run]
-        run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
-
-        # Poll the run as long as run status is queued or in progress
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # Wait for a second between status checks
-            time.sleep(1)
-            run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
-            # [END create_run]
-            print(f"Run status: {run.status}")
-
-        if run.status == "failed":
-            print(f"Run error: {run.last_error}")
-
-        agents_client.delete_agent(agent.id)
-        print("Deleted agent")
-
-        # [START list_messages]
-        messages = agents_client.messages.list(
-            thread_id=thread.id,
-            order=ListSortOrder.ASCENDING
-        )
-        for msg in messages:
-            if msg.text_messages:
-                last_text = msg.text_messages[-1]
-                print(f"{msg.role}: {last_text.text.value}")
-        # [END list_messages]
+        # Cleanup based on DELETE flag
+        if delete_resources:
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted agent version")
+        else:
+            print(f"Preserved agent: {agent.name}:{agent.version}")
 
 
 if __name__ == '__main__':

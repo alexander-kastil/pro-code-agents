@@ -1,20 +1,11 @@
 import os
 import io
 import sys
+import base64
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import (
-    ListSortOrder,
-    MessageTextContent,
-    MessageInputContentBlock,
-    MessageImageFileParam,
-    MessageInputTextBlock,
-    MessageInputImageFileBlock,
-    FilePurpose,
-    RunStatus,
-)
-from typing import List
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
 
 # Configure UTF-8 encoding for Windows console (fixes emoji display issues)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -28,49 +19,77 @@ os.system('cls' if os.name == 'nt' else 'clear')
 load_dotenv()
 endpoint = os.getenv("PROJECT_ENDPOINT")
 model = os.getenv("MODEL_DEPLOYMENT")
+delete_resources = os.getenv("DELETE", "true").lower() == "true"
 
 print(f"Using endpoint: {endpoint}")
 print(f"Using model: {model}")
+print(f"Delete resources: {delete_resources}")
 
 # Connect to the Azure AI Foundry project
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=endpoint,
     credential=DefaultAzureCredential()
 )
-with agents_client:
 
-    agent = agents_client.create_agent(
-        model=model,
-        name="my-agent",
-        instructions="You are helpful agent",
-    )
-    print(f"Created agent, agent ID: {agent.id}")
+# Get the OpenAI client for conversations and responses
+openai_client = project_client.get_openai_client()
 
-    thread = agents_client.threads.create()
-    print(f"Created thread, thread ID: {thread.id}")
+with project_client:
+    try:
+        # Create agent using new create_version API
+        agent = project_client.agents.create_version(
+            agent_name="file-search-agent-mig",
+            definition=PromptAgentDefinition(
+                model=model,
+                instructions="You are helpful agent",
+            )
+        )
+        print(f"Created agent, agent ID: {agent.id}, name: {agent.name}, version: {agent.version}")
 
-    image_file = agents_client.files.upload_and_poll(file_path=asset_file_path, purpose=FilePurpose.AGENTS)
-    print(f"Uploaded file, file ID: {image_file.id}")
+        # Encode image as base64
+        with open(asset_file_path, "rb") as image_file:
+            base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+        print(f"Encoded image as base64")
 
-    input_message = "Hello, what is in the image ?"
-    file_param = MessageImageFileParam(file_id=image_file.id, detail="high")
-    content_blocks: List[MessageInputContentBlock] = [
-        MessageInputTextBlock(text=input_message),
-        MessageInputImageFileBlock(image_file=file_param),
-    ]
-    message = agents_client.messages.create(thread_id=thread.id, role="user", content=content_blocks)
-    print(f"Created message, message ID: {message.id}")
+        # Create conversation with message containing image
+        input_message = "Hello, what is in the image ?"
+        
+        # Create response with input containing base64 image
+        response = openai_client.responses.create(
+            input=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": input_message},
+                        {
+                            "type": "input_image",
+                            "image_url": f"data:image/jpeg;base64,{base64_image}"
+                        }
+                    ]
+                }
+            ],
+            extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
+        )
+        print(f"Response created with ID: {response.id}")
 
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+        # Check response status
+        if response.status != "completed":
+            print(f"The response did not succeed: {response.status}")
+            if response.error:
+                print(f"Error: {response.error}")
+        else:
+            # Print output
+            for output_item in response.output:
+                if output_item.type == "message":
+                    print(f"{output_item.role}: {output_item.content[0].text}")
 
-    if run.status != RunStatus.COMPLETED:
-        print(f"The run did not succeed: {run.status=}.")
-
-    agents_client.delete_agent(agent.id)
-    print("Deleted agent")
-
-    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-    for msg in messages:
-        last_part = msg.content[-1]
-        if isinstance(last_part, MessageTextContent):
-            print(f"{msg.role}: {last_part.text.value}")
+        # Delete the agent version based on DELETE setting
+        if delete_resources:
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted agent")
+        else:
+            print(f"Agent preserved: {agent.name}:{agent.version}")
+    except Exception as e:
+        print(f"Error occurred: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
