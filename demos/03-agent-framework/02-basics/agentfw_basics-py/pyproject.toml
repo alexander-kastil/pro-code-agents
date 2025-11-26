@@ -1,15 +1,13 @@
 [project]
-name = "agent-framework-demos-part1"
-version = "0.1.0"
-description = "Microsoft Agent Framework demos with Azure AI Foundry and Azure OpenAI"
+name = "foundry-agents-demos"
+version = "0.2.0"
+description = "Microsoft Foundry Agents demos using Azure AI Foundry Responses API"
 requires-python = ">=3.11"
 dependencies = [
-    "agent-framework==1.0.0b251111",
     "azure-identity==1.25.1",
     "python-dotenv==1.2.1",
-    "azure-ai-projects==2.0.0b1",
-    "azure-ai-agents==1.2.0b5",
-    "pdf2image==1.17.0",
-    "pillow==12.0.0",
-    "pymupdf==1.24.14",
+    "azure-ai-projects==2.0.0b2",
+    "pydantic>=2.0.0",
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
 ]
