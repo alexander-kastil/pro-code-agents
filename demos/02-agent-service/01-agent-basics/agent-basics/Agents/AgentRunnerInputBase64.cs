@@ -35,7 +35,7 @@ public sealed class AgentRunnerInputBase64(AppConfig config)
 
         PersistentAgent agent = await agentsClient.Administration.CreateAgentAsync(
             model: config.Model,
-            name: "my-agent",
+            name: "base64-agent-cs",
             instructions: "You are helpful agent"
         );
         Console.WriteLine($"Created agent, agent ID: {agent.Id}");
