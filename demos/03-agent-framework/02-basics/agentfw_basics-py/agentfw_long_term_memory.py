@@ -1,29 +1,35 @@
 import os
-import asyncio
 import json
 from datetime import datetime
 from dotenv import load_dotenv
-from agent_framework.azure import AzureOpenAIChatClient
-from agent_framework import ContextProvider, Context, ChatMessage
-from openai import AsyncAzureOpenAI
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
 
 # Load environment
 load_dotenv('.env')
+
+endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
+model = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
+delete_resources = os.getenv("DELETE", "true").lower() == "true"
 
 # File for persisting memory profile only
 OUTPUT_PATH = os.getenv("OUTPUT_PATH", "./output")
 MEMORY_FILE = os.path.join(OUTPUT_PATH, "ai_memory_profile.json")
 
-class AIMemoryExtractor(ContextProvider):
+
+class AIMemoryExtractor:
     """
     AI-powered memory: Let the AI decide what's important to remember!
     No hardcoded patterns - the AI analyzes conversations intelligently.
     With persistent file storage!
     """
     
-    def __init__(self, ai_client, memory_file=MEMORY_FILE):
+    def __init__(self, openai_client, agent_name, agent_version, memory_file=MEMORY_FILE):
         self.user_profile = {}  # Long-term memory storage
-        self.ai_client = ai_client
+        self.openai_client = openai_client
+        self.agent_name = agent_name
+        self.agent_version = agent_version
         self.memory_file = memory_file
         
         # Load existing profile from file
@@ -63,10 +69,10 @@ class AIMemoryExtractor(ContextProvider):
         except Exception as e:
             print(f"   ⚠️  [SAVE ERROR] Could not save to {self.memory_file}: {e}")
     
-    async def invoking(self, messages, **kwargs) -> Context:
-        """Inject profile BEFORE agent processes request."""
+    def get_profile_context(self) -> str:
+        """Get profile context to inject before agent processes request."""
         
-        # If we have profile data, inject it as context
+        # If we have profile data, create context
         if self.user_profile:
             profile_text = "\n".join([f"- {k}: {v}" for k, v in self.user_profile.items()])
             
@@ -79,21 +85,12 @@ class AIMemoryExtractor(ContextProvider):
 IMPORTANT: This is information about the user that persists across all conversations.
 Reference this naturally when relevant, and be enthusiastic when recognizing the user!"""
             
-            return Context(instructions=instructions)
+            return instructions
         
-        return Context()
+        return ""
     
-    async def invoked(self, request_messages, response_messages, **kwargs) -> None:
+    def extract_and_learn(self, user_message: str):
         """Let AI extract important information AFTER conversation."""
-        
-        # Get the last user message
-        user_message = ""
-        if isinstance(request_messages, (list, tuple)):
-            for msg in reversed(list(request_messages)):
-                if hasattr(msg, 'contents') and isinstance(msg.contents, list):
-                    if len(msg.contents) > 0 and hasattr(msg.contents[0], 'text'):
-                        user_message = str(msg.contents[0].text)
-                        break
         
         if not user_message or len(user_message) < 3:
             return
@@ -122,15 +119,18 @@ JSON only, no explanation:"""
 
         try:
             # Use AI to analyze the message
-            response = await self.ai_client.chat.completions.create(
-                model="gpt-4o",
-                messages=[{"role": "user", "content": analysis_prompt}],
-                temperature=0.1,  # Low temperature for consistent extraction
-                max_tokens=200
+            response = self.openai_client.responses.create(
+                input=[{"role": "user", "content": analysis_prompt}],
+                extra_body={"agent": {"type": "agent_reference", "name": self.agent_name, "version": self.agent_version}}
             )
             
             # Parse AI response
-            ai_response = response.choices[0].message.content.strip()
+            ai_response = ""
+            if response.status == "completed":
+                for item in response.output:
+                    if item.type == "message" and item.content and item.content[0].type == "output_text":
+                        ai_response = item.content[0].text.strip()
+                        break
             
             # Try to extract JSON
             if "{" in ai_response and "}" in ai_response:
@@ -138,7 +138,6 @@ JSON only, no explanation:"""
                 end = ai_response.rindex("}") + 1
                 json_str = ai_response[start:end]
                 
-                import json
                 extracted = json.loads(json_str)
                 
                 # Update profile with extracted information
@@ -154,7 +153,7 @@ JSON only, no explanation:"""
             print(f"   ⚠️  [AI EXTRACTION ERROR]: {e}")
 
 
-async def main():
+def main():
     print("\n" + "="*70)
     print("AI-POWERED LONG-TERM MEMORY with FILE PERSISTENCE")
     print("="*70)
@@ -162,110 +161,150 @@ async def main():
     print(f"Memory File: {MEMORY_FILE}")
     print("="*70)
     
-    # Create OpenAI client for AI analysis
-    chat_client = AsyncAzureOpenAI(
-        api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-        api_version="2024-10-21",
-        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-    )
+    # Initialize project client and OpenAI responses client
+    project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    openai_client = project_client.get_openai_client()
     
-    print("\n🔧 Creating agent with AI-powered memory...")
-    
-    # Create AI-powered memory provider
-    ai_memory = AIMemoryExtractor(chat_client)
-    print("   AI memory analyzer initialized")
-    
-    # Create Azure OpenAI agent
-    agent_client = AzureOpenAIChatClient(
-        endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-        api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-        api_version="2024-10-21",
-        deployment_name="gpt-4o"
-    )
-    
-    agent = agent_client.create_agent(
-        model="gpt-4o",
-        instructions="""You are a helpful, friendly assistant with long-term memory.
+    with project_client:
+        print("\n🔧 Creating agent with AI-powered memory...")
         
+        # Create main chat agent
+        chat_agent = project_client.agents.create_version(
+            agent_name="memory-chat-agent",
+            definition=PromptAgentDefinition(
+                model=model,
+                instructions="""You are a helpful, friendly assistant with long-term memory.
+
 When you recognize information about the user from their profile:
 - Reference it naturally in conversation
 - Be enthusiastic when you recognize them
 - Provide personalized responses based on what you know
 
-Be conversational and warm!""",
-        context_providers=[ai_memory]  # Add AI memory provider to agent
-    )
-    print("Agent created with AI-powered memory\n")
-    
-    print("="*70)
-    print("COMMANDS:")
-    print("="*70)
-    print("  • Chat naturally - AI extracts & saves info to file")
-    print("  • 'new' - Create new thread (test cross-thread memory)")
-    print("  • 'profile' - Show what AI learned about you")
-    print("  • 'quit' - Exit")
-    print("="*70)
-    
-    # Start conversation loop
-    thread_num = 0
-    thread = None
-    
-    try:
-        while True:
-            # Create new thread if needed
-            if thread is None:
-                thread_num += 1
-                thread = agent.get_new_thread()
-                print(f"\n🆕 THREAD #{thread_num} created\n")
-            
-            # Get user input
-            try:
-                user_input = input("You: ").strip()
-            except (EOFError, KeyboardInterrupt):
-                print("\nSee you again soon.")
-                break
-            
-            if not user_input:
-                continue
-            
-            # Handle commands
-            if user_input.lower() == 'quit':
-                print("\nDemo ended!")
-                if ai_memory.user_profile:
-                    print("\n📊 Final AI-Learned Profile:")
-                    for key, value in ai_memory.user_profile.items():
-                        print(f"   • {key}: {value}")
-                else:
-                    print("   (No profile data learned)")
-                break
-            
-            if user_input.lower() == 'new':
-                thread = None  # Will create new thread on next iteration
-                continue
-            
-            if user_input.lower() == 'profile':
-                print("\nAI-LEARNED PROFILE:")
-                if ai_memory.user_profile:
-                    for key, value in ai_memory.user_profile.items():
-                        print(f"   • {key}: {value}")
-                else:
-                    print("   (AI hasn't learned anything about you yet)")
+Be conversational and warm!"""
+            )
+        )
+        
+        # Create memory extractor agent (lightweight)
+        memory_agent = project_client.agents.create_version(
+            agent_name="memory-extractor-agent",
+            definition=PromptAgentDefinition(
+                model=model,
+                instructions="You are an information extractor. Extract factual information about users."
+            )
+        )
+        
+        print(f"   Chat agent created: {chat_agent.name} (version {chat_agent.version})")
+        print(f"   Memory agent created: {memory_agent.name} (version {memory_agent.version})")
+        
+        # Create AI-powered memory provider
+        ai_memory = AIMemoryExtractor(openai_client, memory_agent.name, memory_agent.version)
+        print("   AI memory analyzer initialized\n")
+        
+        print("="*70)
+        print("COMMANDS:")
+        print("="*70)
+        print("  • Chat naturally - AI extracts & saves info to file")
+        print("  • 'new' - Start new conversation (test cross-conversation memory)")
+        print("  • 'profile' - Show what AI learned about you")
+        print("  • 'quit' - Exit")
+        print("="*70)
+        
+        # Start conversation loop
+        conversation_num = 0
+        conversation_history = []
+        
+        try:
+            while True:
+                # Create new conversation if needed
+                if not conversation_history:
+                    conversation_num += 1
+                    conversation_history = []
+                    print(f"\n🆕 CONVERSATION #{conversation_num} started\n")
+                
+                # Get user input
+                try:
+                    user_input = input("You: ").strip()
+                except (EOFError, KeyboardInterrupt):
+                    print("\nSee you again soon.")
+                    break
+                
+                if not user_input:
+                    continue
+                
+                # Handle commands
+                if user_input.lower() == 'quit':
+                    print("\nDemo ended!")
+                    if ai_memory.user_profile:
+                        print("\n📊 Final AI-Learned Profile:")
+                        for key, value in ai_memory.user_profile.items():
+                            print(f"   • {key}: {value}")
+                    else:
+                        print("   (No profile data learned)")
+                    break
+                
+                if user_input.lower() == 'new':
+                    conversation_history = []  # Will create new conversation on next iteration
+                    continue
+                
+                if user_input.lower() == 'profile':
+                    print("\nAI-LEARNED PROFILE:")
+                    if ai_memory.user_profile:
+                        for key, value in ai_memory.user_profile.items():
+                            print(f"   • {key}: {value}")
+                    else:
+                        print("   (AI hasn't learned anything about you yet)")
+                    print()
+                    continue
+                
+                # Get profile context to inject
+                profile_context = ai_memory.get_profile_context()
+                
+                # Add user message to history
+                conversation_history.append({"role": "user", "content": user_input})
+                
+                # Build messages with profile context if available
+                messages_to_send = []
+                if profile_context:
+                    messages_to_send.append({"role": "system", "content": profile_context})
+                messages_to_send.extend(conversation_history)
+                
+                # Send message to agent
+                print(f"Agent (Conversation #{conversation_num}): ", end="", flush=True)
+                response = openai_client.responses.create(
+                    input=messages_to_send,
+                    extra_body={"agent": {"type": "agent_reference", "name": chat_agent.name, "version": chat_agent.version}}
+                )
+                
+                assistant_text = ""
+                if response.status == "completed":
+                    for item in response.output:
+                        if item.type == "message" and item.content and item.content[0].type == "output_text":
+                            assistant_text = item.content[0].text
+                            print(assistant_text)
+                
+                # Add assistant response to history
+                if assistant_text:
+                    conversation_history.append({"role": "assistant", "content": assistant_text})
+                
                 print()
-                continue
-            
-            # Send message (AI memory automatically injected by agent)
-            print(f"Agent (Thread #{thread_num}): ", end="", flush=True)
-            async for chunk in agent.run_stream(user_input, thread=thread):
-                print(chunk, end="", flush=True)
-            print("\n")
-    
-    finally:
-        # Cleanup
-        print("\nCleaning up...")
+                
+                # Extract and learn from user message (AI memory automatically learns)
+                ai_memory.extract_and_learn(user_input)
+                print()
+        
+        finally:
+            # Cleanup
+            print("\nCleaning up...")
+            if delete_resources:
+                project_client.agents.delete_version(agent_name=chat_agent.name, agent_version=chat_agent.version)
+                project_client.agents.delete_version(agent_name=memory_agent.name, agent_version=memory_agent.version)
+                print("Deleted agent versions")
+            else:
+                print(f"Agents preserved: {chat_agent.name}:{chat_agent.version}, {memory_agent.name}:{memory_agent.version}")
 
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        main()
     except KeyboardInterrupt:
         print("\nSee you again soon.")

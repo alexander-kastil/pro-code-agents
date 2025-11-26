@@ -5,7 +5,8 @@ This module provides reusable classes for managing chat history:
 - SimpleMessage: a lightweight message representation
 - ChatReducer: base class for reducers
 - MessageCountingChatReducer: keeps only the most recent N messages
-- SummarizingChatReducer: summarizes old messages using an LLM
+- SummarizingChatReducer: summarizes old messages using an LLM (async, for Agent Framework)
+- SummarizingChatReducerFoundry: summarizes old messages using Foundry Responses API (sync)
 - InMemoryChatMessageStore: message store with JSON serialization support
 """
 
@@ -26,7 +27,11 @@ class ChatReducer:
     """Base reducer interface."""
 
     async def reduce(self, messages: List[SimpleMessage]) -> List[SimpleMessage]:
-        """Return a reduced list of messages."""
+        """Return a reduced list of messages (async version)."""
+        return messages
+
+    def reduce_sync(self, messages: List[SimpleMessage]) -> List[SimpleMessage]:
+        """Return a reduced list of messages (sync version)."""
         return messages
 
 
@@ -42,9 +47,15 @@ class MessageCountingChatReducer(ChatReducer):
         # Keep the most recent target_count messages
         return messages[-self.target_count:]
 
+    def reduce_sync(self, messages: List[SimpleMessage]) -> List[SimpleMessage]:
+        if len(messages) <= self.target_count:
+            return messages
+        # Keep the most recent target_count messages
+        return messages[-self.target_count:]
+
 
 class SummarizingChatReducer(ChatReducer):
-    """Summarizes older messages into a single assistant summary message.
+    """Summarizes older messages into a single assistant summary message (async).
 
     This reducer calls a provided summarizer agent to generate a short summary
     of messages older than the `retain_last` messages when the total count is
@@ -94,6 +105,67 @@ class SummarizingChatReducer(ChatReducer):
         return new_history
 
 
+class SummarizingChatReducerFoundry(ChatReducer):
+    """Summarizes older messages using Foundry Responses API (sync).
+
+    This reducer calls a provided OpenAI client with an agent reference to generate 
+    a short summary of messages older than the `retain_last` messages when the 
+    total count is >= `threshold`.
+    """
+
+    def __init__(self, openai_client, agent_name: str, agent_version: str, threshold: int = 8, retain_last: int = 4):
+        self.openai_client = openai_client
+        self.agent_name = agent_name
+        self.agent_version = agent_version
+        self.threshold = threshold
+        self.retain_last = retain_last
+
+    def reduce_sync(self, messages: List[SimpleMessage]) -> List[SimpleMessage]:
+        if len(messages) < self.threshold:
+            return messages
+
+        # Split messages into old and recent
+        keep_recent = messages[-self.retain_last :]
+        to_summarize = messages[: -self.retain_last]
+
+        # Build a prompt for summarization
+        text_to_summarize = "\n\n".join(
+            f"{m.role.upper()}: {m.text}" for m in to_summarize
+        )
+
+        summary_prompt = (
+            "Summarize the following conversation history into a concise "
+            "bullet-style summary that preserves key facts, decisions, and "
+            "entities. Keep it short (one or two sentences) and suitable to be "
+            "included as a single assistant message in the conversation history.\n\n"
+            f"Conversation to summarize:\n{text_to_summarize}"
+        )
+
+        # Call summarizer using Foundry Responses API
+        try:
+            response = self.openai_client.responses.create(
+                input=[{"role": "user", "content": summary_prompt}],
+                extra_body={"agent": {"type": "agent_reference", "name": self.agent_name, "version": self.agent_version}}
+            )
+            
+            summary_text = "(no summary generated)"
+            if response.status == "completed":
+                for item in response.output:
+                    if item.type == "message" and item.content and item.content[0].type == "output_text":
+                        summary_text = item.content[0].text.strip()
+                        break
+        except Exception as e:
+            # If summarization fails, fall back to a synthetic note
+            summary_text = f"[Summary failed: {e}]"
+
+        # Create a single assistant message containing the summary
+        summary_message = SimpleMessage(role="assistant", text=f"Summary: {summary_text}")
+
+        # New history = summary + recent messages
+        new_history = [summary_message] + keep_recent
+        return new_history
+
+
 class InMemoryChatMessageStore:
     """In-memory message store with JSON serialization support."""
 
@@ -103,7 +175,7 @@ class InMemoryChatMessageStore:
         self.auto_save_path = auto_save_path
 
     async def add_message(self, message: SimpleMessage):
-        """Add a message and apply reducers, then auto-save if configured."""
+        """Add a message and apply reducers (async), then auto-save if configured."""
         self._messages.append(message)
         # Apply reducers (in order) after each addition
         for reducer in self.reducers:
@@ -121,8 +193,31 @@ class InMemoryChatMessageStore:
                 # Auto-save is best-effort; don't crash on failure
                 pass
 
+    def add_message_sync(self, message: SimpleMessage):
+        """Add a message and apply reducers (sync), then auto-save if configured."""
+        self._messages.append(message)
+        # Apply reducers (in order) after each addition
+        for reducer in self.reducers:
+            try:
+                self._messages = reducer.reduce_sync(self._messages)
+            except Exception:
+                # Reducers are best-effort for demos
+                pass
+        
+        # Auto-save after each message if path is configured
+        if self.auto_save_path:
+            try:
+                self.save_to_file(self.auto_save_path)
+            except Exception:
+                # Auto-save is best-effort; don't crash on failure
+                pass
+
     async def get_messages(self) -> List[SimpleMessage]:
-        """Return all messages in the store."""
+        """Return all messages in the store (async version)."""
+        return list(self._messages)
+
+    def get_messages_sync(self) -> List[SimpleMessage]:
+        """Return all messages in the store (sync version)."""
         return list(self._messages)
 
     def save_to_file(self, file_path: str):
