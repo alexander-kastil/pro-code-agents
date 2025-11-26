@@ -54,7 +54,7 @@ with project_client:
     # Create agent span
     with tracer.start_as_current_span("create_agent"):
         agent = project_client.agents.create_version(
-            agent_name="my-agent-tracing",
+            agent_name="agent-tracing",
             definition=PromptAgentDefinition(model=model, instructions="You are helpful agent")
         )
         print(f"Created agent {agent.name}:{agent.version}")

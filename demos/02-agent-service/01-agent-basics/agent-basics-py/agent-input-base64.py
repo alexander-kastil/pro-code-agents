@@ -48,7 +48,7 @@ openai_client = project_client.get_openai_client()
 
 with project_client:
     agent = project_client.agents.create_version(
-        agent_name="my-agent-base64",
+        agent_name="base64-agent",
         definition=PromptAgentDefinition(
             model=model,
             instructions="You are helpful agent"
