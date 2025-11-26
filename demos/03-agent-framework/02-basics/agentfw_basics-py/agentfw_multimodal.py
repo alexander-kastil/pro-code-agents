@@ -168,7 +168,7 @@ def main():
                                 print(f"   {i}. {inv_item.item}")
                                 if inv_item.description:
                                     print(f"      Description: {inv_item.description}")
-                                if inv_item.quantity is not None and inv_item.unit_price is not None:
+                                if inv_item.quantity is not None and inv_item.unit_price is not None and inv_item.total is not None:
                                     print(f"      Qty: {inv_item.quantity} x ${inv_item.unit_price:.2f} = ${inv_item.total:.2f}")
                         
                         print(f"\n💰 Totals:")
