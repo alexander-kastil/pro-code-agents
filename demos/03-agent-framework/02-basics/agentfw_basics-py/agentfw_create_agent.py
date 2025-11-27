@@ -19,16 +19,23 @@ def main():
     print("DEMO: Create Azure AI Foundry Agent (Interactive)")
     print("="*70)
     
-    # Initialize project client and OpenAI responses client
-    project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
-    openai_client = project_client.get_openai_client()
+    # Initialize project client with DefaultAzureCredential
+    # Note: Ensure you're logged in via Azure CLI: az login
+    credential = DefaultAzureCredential(
+        exclude_environment_credential=True,
+        exclude_managed_identity_credential=True
+    )
     
-    with project_client:
+    with (
+        credential,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        project_client.get_openai_client() as openai_client
+    ):
         print("\nCreating new agent in Azure AI Foundry...")
         
         # Create versioned agent (prompt kind)
         agent = project_client.agents.create_version(
-            agent_name="first-afw-agent",
+            agent_name="afw-first-agent",
             definition=PromptAgentDefinition(
                 model=model,
                 instructions="You are a helpful AI assistant. Be concise and friendly."
@@ -100,4 +107,17 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nSee you again soon.")
     except Exception as e:
+        error_msg = str(e)
         print(f"\nUnexpected error: {e}")
+        
+        # Provide helpful guidance for authentication errors
+        if "401" in error_msg or "Unauthorized" in error_msg:
+            print("\n" + "="*70)
+            print("Authentication Error - Please check:")
+            print("="*70)
+            print("1. Ensure you're logged in to Azure CLI:")
+            print("   Run: az login")
+            print("\n2. Verify you have access to the Azure AI Foundry project")
+            print("\n3. Check that your account has the required roles:")
+            print("   - Azure AI Developer or Cognitive Services OpenAI User")
+            print("="*70)
