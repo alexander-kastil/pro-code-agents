@@ -1,14 +1,13 @@
 import os
-import io
-import sys
 import base64
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
 
-# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# This demo demonstrates sending local image files as base64 to an Azure AI agent.
+# It encodes an image file, sends it with text input via streaming responses API,
+# and displays the agent's real-time analysis of the image content.
 
 asset_file_path = os.path.join(os.path.dirname(__file__), "assets/soi.jpg")
 
@@ -68,20 +67,23 @@ with project_client:
                     ]
                 }
             ],
+            stream=True,
             extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
         )
-        print(f"Response created with ID: {response.id}")
 
+        print("agent: ", end='', flush=True)
         # Check response status
-        if response.status != "completed":
-            print(f"The response did not succeed: {response.status}")
-            if response.error:
-                print(f"Error: {response.error}")
-        else:
-            # Print output
-            for output_item in response.output:
-                if output_item.type == "message":
-                    print(f"{output_item.role}: {output_item.content[0].text}")
+        for event in response:
+            if event.type == "response.output_text.delta":
+                print(event.delta, end='', flush=True)
+            elif event.type == "response.completed":
+                print()
+                print(f"Response completed with ID: {event.response.id}")
+                if event.response.status != "completed":
+                    print(f"The response did not succeed: {event.response.status}")
+                    if event.response.error:
+                        print(f"Error: {event.response.error}")
+                break
 
         # Delete the agent version based on DELETE setting
         if delete_resources:

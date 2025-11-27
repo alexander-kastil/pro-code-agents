@@ -354,3 +354,238 @@ No changes required to `requirements.txt`. The existing packages are correct:
 - [Migration Guide](https://learn.microsoft.com/en-gb/azure/ai-foundry/agents/how-to/migrate?view=foundry)
 - [Responses API Documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/how-to/responses?view=foundry-classic)
 - [Azure AI Projects SDK](https://learn.microsoft.com/en-us/python/api/overview/azure/ai-projects-readme?view=azure-python)
+
+---
+
+## Streaming Response Migration
+
+This section documents the migration of Azure AI agent demo scripts from synchronous responses to streaming responses using the Responses API. The migration enables real-time output display and improved user experience.
+
+### Overview
+
+All demo scripts were updated to use `stream=True` in the `responses.create()` call, enabling event-driven output processing instead of waiting for complete responses.
+
+### Common Changes Across All Scripts
+
+#### 1. Enable Streaming
+
+**Before:**
+
+```python
+response = client.responses.create(
+    model=deployment_name,
+    input=input_message,
+    extra_body={
+        "agent": {
+            "type": "agent_reference",
+            "name": agent.name,
+            "version": agent.version
+        }
+    }
+)
+```
+
+**After:**
+
+```python
+response = client.responses.create(
+    model=deployment_name,
+    input=input_message,
+    stream=True,  # Enable streaming
+    extra_body={
+        "agent": {
+            "type": "agent_reference",
+            "name": agent.name,
+            "version": agent.version
+        }
+    }
+)
+```
+
+#### 2. Event-Based Output Processing
+
+**Before:**
+
+```python
+if response.status == "completed":
+    for output_item in response.output:
+        if output_item.type == "message":
+            print(f"{output_item.role}: {output_item.content[0].text}")
+```
+
+**After:**
+
+```python
+for event in response:
+    if event.type == "output.delta":
+        if event.delta.type == "message":
+            if event.delta.content:
+                print(event.delta.content[0].text, end="", flush=True)
+    elif event.type == "output.completed":
+        print()  # New line after completion
+```
+
+#### 3. Code Cleanup
+
+Removed unnecessary imports that were no longer needed:
+
+- `import io`
+- `import sys`
+
+Added explanatory comments for better code readability.
+
+### Script-Specific Migrations
+
+#### agent-basics.py
+
+**Changes:**
+
+- Added `stream=True` parameter
+- Implemented event loop for real-time output
+- Added comments explaining streaming flow
+- Removed unused imports
+
+**Key Fix:** Initial streaming implementation revealed that response attributes like `status` are not accessible on streaming responses.
+
+#### agent-input-base64.py
+
+**Changes:**
+
+- Migrated to streaming responses
+- Maintained base64 image encoding for input
+- Updated output processing to event-based
+
+**Pattern:** Base64 encoding remains the same, only output handling changed.
+
+#### agent-input-file.py
+
+**Changes:**
+
+- Migrated to streaming
+- Fixed AttributeError: `'ResponseStream' object has no attribute 'id'`
+- Moved response attribute access outside the streaming loop
+
+**Bug Fix:** Attempting to access `response.id` during iteration caused errors. Solution: Access attributes after streaming completes.
+
+#### agent-input-url.py
+
+**Changes:**
+
+- Added streaming support
+- Maintained URL-based image input
+- Updated to event-driven output
+
+**Pattern:** URL inputs work seamlessly with streaming responses.
+
+#### agent-output.py
+
+**Changes:**
+
+- Implemented streaming for QR code generation
+- Added real-time output display
+- Maintained Azure Blob Storage integration
+
+**Integration:** Streaming works with external service calls (QR code API).
+
+#### agent-response-format.py
+
+**Changes:**
+
+- Migrated JSON response handling to streaming
+- Updated parsing logic for streaming events
+- Maintained structured output format
+
+**Pattern:** JSON parsing adapted to accumulate content from streaming deltas.
+
+#### agent-tracing.py
+
+**Changes:**
+
+- Added streaming support with OpenTelemetry tracing
+- Fixed tracing attribute access on streaming responses
+- Updated span creation and management
+
+**Bug Fix:** Tracing attributes like `response.id` not available during streaming. Solution: Use alternative identifiers or defer tracing until completion.
+
+### Code Patterns for Reuse
+
+#### Basic Streaming Loop
+
+```python
+response = client.responses.create(
+    model=deployment_name,
+    input=input_message,
+    stream=True,
+    extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
+)
+
+for event in response:
+    if event.type == "output.delta":
+        if event.delta.type == "message":
+            if event.delta.content:
+                print(event.delta.content[0].text, end="", flush=True)
+    elif event.type == "output.completed":
+        print()  # Final newline
+```
+
+#### Agent Creation with Versioning
+
+```python
+agent = project_client.agents.create_version(
+    agent_name="demo-agent",
+    version="1.0",
+    model="gpt-4o-mini",
+    instructions="You are a helpful assistant.",
+    tools=[]
+)
+```
+
+#### Error Handling with Streaming
+
+```python
+try:
+    response = client.responses.create(...)
+    for event in response:
+        # Process events
+        pass
+except Exception as e:
+    print(f"Error during streaming: {e}")
+```
+
+### Testing and Validation
+
+All scripts were tested after migration:
+
+- ✅ Real-time output display working
+- ✅ No streaming errors
+- ✅ Agent responses accurate
+- ✅ External integrations (QR codes, blob storage) functional
+- ✅ Tracing spans properly created
+
+### Benefits of Streaming Migration
+
+1. **Real-Time User Experience**: Users see responses as they're generated
+2. **Improved Responsiveness**: No waiting for complete responses
+3. **Better Error Visibility**: Issues appear immediately during generation
+4. **Resource Efficiency**: Reduced memory usage for long responses
+5. **Modern API Usage**: Aligns with latest Azure AI patterns
+
+### Migration Checklist for Streaming
+
+- [x] Add `stream=True` to all `responses.create()` calls
+- [x] Replace batch output processing with event loops
+- [x] Remove response attribute access during iteration
+- [x] Update error handling for streaming context
+- [x] Test real-time output display
+- [x] Verify external integrations work with streaming
+- [x] Clean up unused imports and add comments
+
+### Lessons Learned
+
+1. **Response Object Changes**: Streaming responses don't have the same attributes as synchronous responses
+2. **Event-Driven Processing**: All output handling must be event-based
+3. **Attribute Access Timing**: Response metadata only available after streaming completes
+4. **Import Cleanup**: Remove legacy imports that are no longer needed
+5. **Testing Importance**: Each script requires individual testing due to different input/output patterns
+
+This migration ensures all demo scripts use modern streaming responses while maintaining their specific functionality (image processing, tracing, output formatting, etc.).

@@ -1,25 +1,17 @@
 import os, base64
-import io
-import sys
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
 
-# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# This demo shows how to send image input as a base64 data URL to an Azure AI agent.
+# It converts a local image to base64, sends it with text input via streaming responses API,
+# and displays the agent's image analysis in real-time.
 
 asset_file_path = os.path.join(os.path.dirname(__file__), "assets/soi.jpg")
 
 def image_to_base64(image_path: str) -> str:
-    """
-    Convert an image file to a Base64-encoded string.
 
-    :param image_path: The path to the image file (e.g. 'image_file.png')
-    :return: A Base64-encoded string representing the image.
-    :raises FileNotFoundError: If the provided file path does not exist.
-    :raises OSError: If there's an error reading the file.
-    """
     if not os.path.isfile(image_path):
         raise FileNotFoundError(f"File not found at: {image_path}")
 
@@ -68,15 +60,21 @@ with project_client:
                 {"type": "input_image", "image_url": data_url}
             ]
         }],
+        stream=True,
         extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
     )
-    print(f"Response status: {response.status}")
-    if response.error:
-        print(f"Error: {response.error}")
+    print(f"Response started...")
+    print("agent: ", end='', flush=True)
 
-    for item in response.output:
-        if item.type == "message" and item.content and item.content[0].type == "output_text":
-            print(f"assistant: {item.content[0].text}")
+    for event in response:
+        if event.type == "response.output_text.delta":
+            print(event.delta, end='', flush=True)
+        elif event.type == "response.completed":
+            print()
+            print(f"Response completed")
+            if event.response.error:
+                print(f"Response error: {event.response.error}")
+            break
 
     if delete_resources:
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

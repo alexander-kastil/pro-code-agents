@@ -1,7 +1,6 @@
 import os
 import time
 import io
-import sys
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -11,8 +10,9 @@ import qrcode
 from datetime import datetime
 from azure.storage.blob import BlobServiceClient
 
-# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# This demo shows post-processing of agent responses and external integration.
+# It creates an agent, streams its response, captures the output, generates a QR code
+# from user input, and uploads it to Azure Blob Storage.
 
 def main():
 
@@ -45,6 +45,7 @@ def main():
         try:
             response = openai_client.responses.create(
                 input="Hello",
+                stream=True,
                 extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
             )
         except Exception as e:
@@ -53,20 +54,22 @@ def main():
                 project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
                 print("Deleted agent version after failure")
             response = None
-        duration = time.time() - start
-        print(f"Response status: {response.status} (took {duration:.2f}s)")
-        if response.error:
-            print(f"Response error: {response.error}")
 
         agent_response = ""
         if response:
-            for item in response.output:
-                if item.type == "message":
-                    for block in item.content:
-                        if block.type == "output_text":
-                            text_val = block.text
-                            print(f"assistant: {text_val}")
-                            agent_response += text_val + "\n"
+            print("agent: ", end='', flush=True)
+            for event in response:
+                if event.type == "response.output_text.delta":
+                    delta = event.delta
+                    print(delta, end='', flush=True)
+                    agent_response += delta
+                elif event.type == "response.completed":
+                    print()
+                    duration = time.time() - start
+                    print(f"Response completed (took {duration:.2f}s)")
+                    if event.response.error:
+                        print(f"Response error: {event.response.error}")
+                    break
 
         if delete_resources:
             project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

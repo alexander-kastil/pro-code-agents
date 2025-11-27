@@ -1,15 +1,13 @@
 import os
-import io
-import sys
 import time
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
-from openai import OpenAI  # type: ignore
 
-# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# This demo creates a basic Azure AI agent and demonstrates streaming responses.
+# It creates an agent, sends a user input via the responses API with streaming enabled,
+# prints the agent's response in real-time, and cleans up resources.
 
 def main():
     # Clear console
@@ -40,23 +38,29 @@ def main():
         )
         print(f"Created agent: {agent.name} (version {agent.version})")
 
-        # Create response with user input (no separate thread/run needed now)
+        # Create response with user input (streaming enabled)
         user_input = "Hello, tell me a joke"
         response = openai_client.responses.create(
             input=user_input,
+            stream=True,
             extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
         )
 
         # Status / timing
-        duration = time.time() - start
-        print(f"Response status: {response.status} (took {duration:.2f}s)")
-        if response.error:
-            print(f"Response error: {response.error}")
+        print(f"Response started...")
+        print("agent: ", end='', flush=True)
 
-        # Output items
-        for item in response.output:
-            if item.type == "message" and item.content and item.content[0].type == "output_text":
-                print(f"assistant: {item.content[0].text}")
+        # Stream output items
+        for event in response:
+            if event.type == "response.output_text.delta":
+                print(event.delta, end='', flush=True)
+            elif event.type == "response.completed":
+                print()  # newline after completion
+                duration = time.time() - start
+                print(f"Response completed (took {duration:.2f}s)")
+                if event.response.error:
+                    print(f"Response error: {event.response.error}")
+                break
 
         # Cleanup based on DELETE flag
         if delete_resources:

@@ -1,6 +1,4 @@
 import os
-import io
-import sys
 import time
 import json
 from openai import AuthenticationError  # type: ignore
@@ -10,8 +8,9 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
 from openai import OpenAI  # type: ignore
 
-# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# This demo demonstrates structured output from Azure AI agents.
+# It creates an agent configured for JSON responses, sends a structured query,
+# streams the JSON response in real-time, and parses the output for further processing.
 
 def main():
     # Clear console for focused output
@@ -48,6 +47,7 @@ def main():
         try:
             response = openai_client.responses.create(
                 input=user_input,
+                stream=True,
                 extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
             )
         except AuthenticationError as auth_err:
@@ -57,22 +57,22 @@ def main():
                 print("Deleted agent version after auth failure")
             return
 
-        duration = time.time() - start
-        print(f"Response status: {response.status} (took {duration:.2f}s)")
-        if response.error:
-            print(f"Response error: {response.error}")
-
-        raw_json_text = None
-        for item in response.output:
-            if item.type == "message":
-                for content_block in item.content:
-                    if content_block.type == "output_text":
-                        raw_json_text = content_block.text
-                        break
-            if raw_json_text:
+        raw_json_text = ""
+        print("agent: ", end='', flush=True)
+        for event in response:
+            if event.type == "response.output_text.delta":
+                delta = event.delta
+                print(delta, end='', flush=True)
+                raw_json_text += delta
+            elif event.type == "response.completed":
+                print()
+                duration = time.time() - start
+                print(f"Response completed (took {duration:.2f}s)")
+                if event.response.error:
+                    print(f"Response error: {event.response.error}")
                 break
 
-        if raw_json_text is None:
+        if not raw_json_text:
             print("No JSON text found in response output.")
         else:
             print("Raw JSON text:")

@@ -18,3 +18,7 @@ dependencies = [
     "httpx==0.28.1",
     "openai==2.8.1"
 ]
+
+[tool.pip]
+# Allow installation of prerelease and development versions
+pre = true

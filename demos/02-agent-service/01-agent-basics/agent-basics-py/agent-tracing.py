@@ -1,6 +1,4 @@
 import os
-import io
-import sys
 import base64
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
@@ -10,8 +8,9 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
 from opentelemetry import trace
 
-# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# This demo shows how to add tracing and observability to Azure AI agent interactions.
+# It configures OpenTelemetry with Azure Monitor, creates an agent, sends image input
+# via streaming responses API, records tracing spans, and demonstrates monitoring capabilities.
 
 asset_file_path = os.path.join(os.path.dirname(__file__), "assets/soi.jpg")
 
@@ -83,22 +82,26 @@ with project_client:
                     {"type": "input_image", "image_url": data_url}
                 ]
             }],
+            stream=True,
             extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
         )
-        span = trace.get_current_span()
-        span.set_attribute("response.status", response.status)
-        if response.error:
-            span.set_attribute("response.error", str(response.error))
 
     # Output handling span
     with tracer.start_as_current_span("output_parse"):
         message_count = 0
-        for item in response.output:
-            if item.type == "message" and item.content and item.content[0].type == "output_text":
-                print(f"assistant: {item.content[0].text}")
-                message_count += 1
+        print("agent: ", end='', flush=True)
+        for event in response:
+            if event.type == "response.output_text.delta":
+                print(event.delta, end='', flush=True)
+                message_count += 1  # Count deltas as messages for simplicity
+            elif event.type == "response.completed":
+                print()
+                break
         span = trace.get_current_span()
         span.set_attribute("messages.count", message_count)
+        span.set_attribute("response.status", event.response.status)
+        if event.response.error:
+            span.set_attribute("response.error", str(event.response.error))
 
     # Cleanup span
     with tracer.start_as_current_span("cleanup"):

@@ -1,6 +1,4 @@
 import os
-import io
-import sys
 import time
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
@@ -8,8 +6,9 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
 from openai import OpenAI  # type: ignore
 
-# Configure UTF-8 encoding for Windows console (fixes emoji display issues)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# This demo shows how to send public image URLs to an Azure AI agent for analysis.
+# It sends a URL-based image with text input via streaming responses API,
+# and displays the agent's real-time description of the image.
 
 # Clear the console to keep the output focused on the agent interaction
 os.system('cls' if os.name == 'nt' else 'clear')
@@ -49,6 +48,7 @@ with project_client:
     try:
         response = openai_client.responses.create(
             input=vision_input,
+            stream=True,
             extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
         )
     except Exception as e:
@@ -58,17 +58,18 @@ with project_client:
             print("Deleted agent version after failure")
         response = None
 
-    duration = time.time() - start
-    print(f"Response status: {getattr(response, 'status', 'unknown')} (took {duration:.2f}s)")
-    if response and response.error:
-        print(f"Response error: {response.error}")
-
     if response:
-        for item in response.output:
-            if item.type == "message":
-                for block in item.content:
-                    if block.type == "output_text":
-                        print(f"assistant: {block.text}")
+        print("agent: ", end='', flush=True)
+        for event in response:
+            if event.type == "response.output_text.delta":
+                print(event.delta, end='', flush=True)
+            elif event.type == "response.completed":
+                print()
+                duration = time.time() - start
+                print(f"Response completed (took {duration:.2f}s)")
+                if event.response.error:
+                    print(f"Response error: {event.response.error}")
+                break
 
     if delete_resources:
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
