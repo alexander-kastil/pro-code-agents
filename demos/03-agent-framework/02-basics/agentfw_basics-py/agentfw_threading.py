@@ -1,31 +1,23 @@
-import asyncio
 import os
 import json
 from datetime import datetime
 from dotenv import load_dotenv
-
-from agent_framework.azure import AzureOpenAIChatClient
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
 
 # Load environment variables
 load_dotenv('.env')
 
+endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
+model = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
+delete_resources = os.getenv("DELETE", "true").lower() == "true"
+
 # File to save thread history
 THREAD_FILE = "thread_history.json"
 
-# Custom JSON encoder for Pydantic models
-class PydanticEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, 'model_dump'):
-            return obj.model_dump(mode='json')
-        return super().default(obj)
 
-ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
-DEPLOYMENT = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME")
-API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
-API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION")
-
-
-async def main():
+def main():
     """Interactive demo with automatic serialization after every message."""
     
     print("\n" + "="*70)
@@ -33,171 +25,155 @@ async def main():
     print("="*70)
     print("Demo Guide:")
     print("  1. Type a message (e.g. 'I am Alex')")
-    print("  2. Agent responds using current thread context")
+    print("  2. Agent responds using current conversation context")
     print("  3. State auto-serializes to 'thread_history.json'")
     print("  4. File reloads (deserialization) for next turn")
     print("  5. Type 'quit' to exit the demo")
     print("="*70)
     
-    # Create agent
-    agent = AzureOpenAIChatClient(
-        endpoint=ENDPOINT,
-        deployment_name=DEPLOYMENT,
-        api_key=API_KEY,
-        api_version=API_VERSION
-    ).create_agent(
-        instructions="You are a helpful assistant. Remember everything the user tells you and refer back to it.",
-        name="MemoryBot"
-    )
+    # Initialize project client and OpenAI responses client
+    project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    openai_client = project_client.get_openai_client()
     
-    print("\nAgent created")
-    
-    # Try to load existing thread from file, or create new one
-    print("Checking for existing thread...")
-    thread = None
-    message_count = 0
-    
-    if os.path.exists(THREAD_FILE):
-        try:
-            print(f"   Found {THREAD_FILE}. Loading previous conversation...")
+    with project_client:
+        # Create agent
+        agent = project_client.agents.create_version(
+            agent_name="memory-bot",
+            definition=PromptAgentDefinition(
+                model=model,
+                instructions="You are a helpful assistant. Remember everything the user tells you and refer back to it."
+            )
+        )
+        
+        print(f"\nAgent created: {agent.name} (version {agent.version})")
+        
+        # Try to load existing conversation from file, or create new one
+        print("Checking for existing thread...")
+        conversation_history = []
+        message_count = 0
+        
+        if os.path.exists(THREAD_FILE):
+            try:
+                print(f"   Found {THREAD_FILE}. Loading previous conversation...")
+                with open(THREAD_FILE, 'r', encoding='utf-8') as f:
+                    loaded_data = json.load(f)
+                
+                conversation_history = loaded_data.get('conversation_history', [])
+                message_count = loaded_data.get('message_number', 0)
+                
+                print(f"   Restored previous session with {message_count} messages.")
+                print(f"   Continuing from where you left off...\n")
+            except Exception as e:
+                print(f"   Could not load previous thread: {e}")
+                print(f"   Creating new conversation instead...\n")
+                conversation_history = []
+        else:
+            print("   Creating new conversation...")
+            print("   New conversation started\n")
+        
+        print("="*70)
+        print("Interactive Chat with Auto-Serialization")
+        print("="*70)
+        print("After each message:")
+        print("   1. Agent responds")
+        print("   2. Conversation automatically serializes (saves)")
+        print("   3. Conversation automatically deserializes (restores)")
+        print("   4. Next message uses restored conversation")
+        print("\nType 'quit' to exit")
+        print("="*70 + "\n")
+        
+        while True:
+            try:
+                user_input = input("You: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print("\nSee you again soon.")
+                break
+            
+            if user_input.lower() in ['quit', 'exit', 'q']:
+                print("\nDemo completed.")
+                print(f"\nTotal messages: {message_count}")
+                print(f"Total serialization cycles: {message_count}")
+                break
+            
+            if not user_input:
+                continue
+            
+            message_count += 1
+            print(f"\n[Message #{message_count}]")
+            
+            # Add user message to conversation
+            conversation_history.append({"role": "user", "content": user_input})
+            
+            # Step 1: Agent responds using current conversation
+            print("Agent: ", end="", flush=True)
+            response = openai_client.responses.create(
+                input=conversation_history,
+                extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
+            )
+            
+            assistant_text = ""
+            if response.status == "completed":
+                for item in response.output:
+                    if item.type == "message" and item.content and item.content[0].type == "output_text":
+                        assistant_text = item.content[0].text
+                        print(assistant_text)
+            else:
+                print(f"Response failed: {response.status}")
+            
+            # Add assistant response to history
+            if assistant_text:
+                conversation_history.append({"role": "assistant", "content": assistant_text})
+            
+            # Step 2: Serialize the conversation (save state)
+            print("\n[Auto-Serializing conversation state...]")
+            serialized = {
+                'timestamp': datetime.now().isoformat(),
+                'message_number': message_count,
+                'conversation_history': conversation_history
+            }
+            print(f"   Serialized: {len(str(serialized))} bytes")
+            print(f"   Contains: {list(serialized.keys())}")
+            
+            # Save to JSON file
+            print(f"\n[Saving to {THREAD_FILE}...]")
+            with open(THREAD_FILE, 'w', encoding='utf-8') as f:
+                json.dump(serialized, f, indent=2)
+            print(f"   Saved to disk: {THREAD_FILE}")
+            
+            # Step 3: Load from JSON file and deserialize
+            print(f"\n[Loading from {THREAD_FILE}...]")
             with open(THREAD_FILE, 'r', encoding='utf-8') as f:
                 loaded_data = json.load(f)
+            print(f"   Loaded from disk (message #{loaded_data['message_number']})")
             
-            # Convert dicts back to ChatMessage objects
-            from agent_framework._types import ChatMessage
-            thread_data = loaded_data['thread_data']
-            if 'chat_message_store_state' in thread_data and thread_data['chat_message_store_state']:
-                store_state = thread_data['chat_message_store_state']
-                if 'messages' in store_state:
-                    store_state['messages'] = [
-                        ChatMessage.from_dict(msg) if isinstance(msg, dict) else msg
-                        for msg in store_state['messages']
-                    ]
+            print("\n[Deserializing conversation state...]")
+            conversation_history = loaded_data['conversation_history']
+            print("   Conversation restored from file")
+            print("   Next message will use this restored conversation\n")
             
-            # Restore thread
-            thread = await agent.deserialize_thread(thread_data)
-            message_count = loaded_data.get('message_number', 0)
-            
-            print(f"   Restored previous session with {message_count} messages.")
-            print(f"   Continuing from where you left off...\n")
-        except Exception as e:
-            print(f"   Could not load previous thread: {e}")
-            print(f"   Creating new thread instead...\n")
-            thread = None
-    
-    if thread is None:
-        print("   Creating new thread...")
-        thread = agent.get_new_thread()
-        print("   New thread created\n")
-    
-    print("="*70)
-    print("Interactive Chat with Auto-Serialization")
-    print("="*70)
-    print("After each message:")
-    print("   1. Agent responds")
-    print("   2. Thread automatically serializes (saves)")
-    print("   3. Thread automatically deserializes (restores)")
-    print("   4. Next message uses restored thread")
-    print("\nType 'quit' to exit")
-    print("="*70 + "\n")
-    
-    # message_count already set above when loading thread
-    
-    while True:
-        try:
-            user_input = input("You: ").strip()
-        except (EOFError, KeyboardInterrupt):
-            print("\nSee you again soon.")
-            break
+            print("-" * 70 + "\n")
         
-        if user_input.lower() in ['quit', 'exit', 'q']:
-            print("\nDemo completed.")
-            print(f"\nTotal messages: {message_count}")
-            print(f"Total serialization cycles: {message_count}")
-            break
+        print("\n" + "="*70)
+        print("DEMO COMPLETE")
+        print("="*70)
+        print("What you saw:")
+        print("   • Conversation automatically saved to JSON file after each message")
+        print("   • Conversation automatically restored from JSON file")
+        print("   • Agent maintained full conversation history")
+        print("   • Each cycle proved file persistence works")
+        print(f"\nCheck the file: {THREAD_FILE}")
+        print("="*70 + "\n")
         
-        if not user_input:
-            continue
-        
-        message_count += 1
-        print(f"\n[Message #{message_count}]")
-        
-        # Step 1: Agent responds using current thread
-        print("Agent: ", end="", flush=True)
-        async for chunk in agent.run_stream(user_input, thread=thread):
-            print(chunk, end="", flush=True)
-        print()
-        
-        # Step 2: Serialize the thread (save state)
-        print("\n[Auto-Serializing thread state...]")
-        serialized = await thread.serialize()
-        print(f"   Serialized: {len(str(serialized))} bytes")
-        print(f"   Contains: {list(serialized.keys())}")
-        
-        # NEW: Save to JSON file (following Microsoft documentation)
-        print(f"\n[Saving to {THREAD_FILE}...]")
-        
-        # Manually convert the chat_message_store_state which contains ChatMessage objects
-        json_serialized = dict(serialized)
-        if 'chat_message_store_state' in json_serialized and json_serialized['chat_message_store_state']:
-            store_state = json_serialized['chat_message_store_state']
-            if 'messages' in store_state:
-                # Convert ChatMessage objects to dicts using to_dict() method
-                store_state['messages'] = [
-                    msg.to_dict() if hasattr(msg, 'to_dict') else msg
-                    for msg in store_state['messages']
-                ]
-        
-        save_data = {
-            'timestamp': datetime.now().isoformat(),
-            'message_number': message_count,
-            'thread_data': json_serialized
-        }
-        
-        with open(THREAD_FILE, 'w', encoding='utf-8') as f:
-            json.dump(save_data, f, indent=2)
-        print(f"   Saved to disk: {THREAD_FILE}")
-        
-        # Step 3: Load from JSON file and deserialize (following Microsoft documentation)
-        print(f"\n[Loading from {THREAD_FILE}...]")
-        with open(THREAD_FILE, 'r', encoding='utf-8') as f:
-            loaded_data = json.load(f)
-        print(f"   Loaded from disk (message #{loaded_data['message_number']})")
-        
-        print("\n[Deserializing thread state...]")
-        # Convert dicts back to ChatMessage objects
-        from agent_framework._types import ChatMessage
-        thread_data = loaded_data['thread_data']
-        if 'chat_message_store_state' in thread_data and thread_data['chat_message_store_state']:
-            store_state = thread_data['chat_message_store_state']
-            if 'messages' in store_state:
-                # Convert dicts back to ChatMessage objects using from_dict()
-                store_state['messages'] = [
-                    ChatMessage.from_dict(msg) if isinstance(msg, dict) else msg
-                    for msg in store_state['messages']
-                ]
-        
-        # Deserialize from the restored data
-        thread = await agent.deserialize_thread(thread_data)
-        print("   Thread restored from file")
-        print("   Next message will use this restored thread\n")
-        
-        print("-" * 70 + "\n")
-    
-    print("\n" + "="*70)
-    print("DEMO COMPLETE")
-    print("="*70)
-    print("What you saw:")
-    print("   • Thread automatically saved to JSON file after each message")
-    print("   • Thread automatically restored from JSON file")
-    print("   • Agent maintained full conversation history")
-    print("   • Each cycle proved file persistence works")
-    print(f"\nCheck the file: {THREAD_FILE}")
-    print("="*70 + "\n")
+        # Cleanup based on DELETE flag
+        if delete_resources:
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted agent version")
+        else:
+            print(f"Agent preserved: {agent.name}:{agent.version}")
 
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        main()
     except KeyboardInterrupt:
         print("\nSee you again soon.")

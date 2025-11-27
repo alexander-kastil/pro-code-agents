@@ -1,11 +1,11 @@
-import asyncio
 import os
 import json
 from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
-from agent_framework.azure import AzureOpenAIChatClient
-from agent_framework.observability import setup_observability
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition
 
 # OpenTelemetry imports
 from opentelemetry import trace
@@ -16,10 +16,9 @@ from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 
 load_dotenv('.env')
 
-ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
-API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
-DEPLOYMENT = "gpt-4o"
-API_VERSION = "2024-10-21"
+endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT")
+model = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
+delete_resources = os.getenv("DELETE", "true").lower() == "true"
 
 
 class CompleteTelemetryCollector(SpanExporter):
@@ -314,22 +313,22 @@ class CompleteTelemetryCollector(SpanExporter):
         """Generate detailed trace information"""
         html = "<h2>🔬 Detailed Traces (Everything Captured)</h2>"
         
-        for i, trace in enumerate(self.all_data, 1):
-            attrs = trace['attributes']
+        for i, trace_data in enumerate(self.all_data, 1):
+            attrs = trace_data['attributes']
             
             html += f"""
             <div class="trace-container">
                 <div class="trace-header">
                     <div class="trace-title">
-                        {i}. {trace['span_name']}
-                        <span class="badge badge-success">{trace['status']}</span>
-                        <span class="badge badge-info">{trace['duration_ms']}ms</span>
+                        {i}. {trace_data['span_name']}
+                        <span class="badge badge-success">{trace_data['status']}</span>
+                        <span class="badge badge-info">{trace_data['duration_ms']}ms</span>
                     </div>
                     <div class="trace-meta">
-                        <div>🆔 Trace: <code>{trace['trace_id']}</code></div>
-                        <div>🔗 Span: <code>{trace['span_id']}</code></div>
-                        <div>⏱️ Start: {trace['start_time']}</div>
-                        <div>🏁 End: {trace['end_time']}</div>
+                        <div>🆔 Trace: <code>{trace_data['trace_id']}</code></div>
+                        <div>🔗 Span: <code>{trace_data['span_id']}</code></div>
+                        <div>⏱️ Start: {trace_data['start_time']}</div>
+                        <div>🏁 End: {trace_data['end_time']}</div>
                     </div>
                 </div>
             """
@@ -343,7 +342,7 @@ class CompleteTelemetryCollector(SpanExporter):
                 html += self._format_messages(attrs['gen_ai.output.messages'], "📤 Output Messages")
             
             # Tool Call Details
-            if 'execute_tool' in trace['span_name']:
+            if 'execute_tool' in trace_data['span_name']:
                 html += f"""
                 <div class="section">
                     <div class="section-title">🔧 Tool Execution</div>
@@ -510,7 +509,7 @@ def search(query: str) -> str:
     return f"No results for '{query}'"
 
 
-async def main():
+def main():
     print("\n" + "="*75)
     print("COMPLETE OBSERVABILITY - EVERYTHING CAPTURED")
     print("="*75)
@@ -540,73 +539,109 @@ This shows EVERY piece of data OpenTelemetry captures:
     tracer_provider.add_span_processor(BatchSpanProcessor(collector))
     trace.set_tracer_provider(tracer_provider)
     
-    setup_observability(enable_sensitive_data=True)
-    
     print("✅ Complete telemetry collector ready\n")
     
-    # Create agent
-    print("Creating agent...")
-    agent = AzureOpenAIChatClient(
-        endpoint=ENDPOINT,
-        deployment_name=DEPLOYMENT,
-        api_key=API_KEY,
-        api_version=API_VERSION
-    ).create_agent(
-        model="gpt-4o",
-        instructions="You are a helpful assistant.",
-        tools=[get_weather, calculate, search]
-    )
-    print("✅ Agent ready!\n")
+    # Initialize project client and OpenAI responses client
+    project_client = AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    openai_client = project_client.get_openai_client()
     
-    print("="*75)
-    print("INTERACTIVE MODE")
-    print("="*75)
-    print("Try: 'tell me a joke' or 'weather in Tokyo' or 'calculate 50*50'")
-    print("Type 'quit' to generate complete report\n")
-    
-    thread = agent.get_new_thread()
-    
-    try:
-        while True:
-            user_input = input("You: ").strip()
-            
-            if not user_input:
-                continue
-            
-            if user_input.lower() in ['quit', 'exit']:
-                break
-            
-            print("\nAgent: ", end="", flush=True)
-            async for chunk in agent.run_stream(user_input, thread=thread):
-                print(chunk, end="", flush=True)
-            print()
-            
-            tracer_provider.force_flush()
-            
-    except KeyboardInterrupt:
-        print("\n")
-    
-    # Generate complete report
-    print("\n" + "="*75)
-    print("GENERATING COMPLETE REPORT...")
-    print("="*75 + "\n")
-    
-    tracer_provider.force_flush()
-    
-    html_file = collector.generate_complete_html()
-    
-    print(f"✅ Complete Report: {html_file}")
-    print(f"📊 Total Operations: {len(collector.all_data)}")
-    
-    print(f"\n🌐 Opening report in browser...")
-    
-    import webbrowser
-    try:
-        webbrowser.open(f"file:///{Path(html_file).absolute()}")
-        print("✅ Report opened! Check your browser for EVERYTHING!")
-    except:
-        print("⚠️  Please open the HTML file manually")
+    with project_client:
+        # Create agent
+        print("Creating agent...")
+        agent = project_client.agents.create_version(
+            agent_name="observability-demo-agent",
+            definition=PromptAgentDefinition(
+                model=model,
+                instructions="You are a helpful assistant."
+            )
+        )
+        print(f"✅ Agent ready: {agent.name} (version {agent.version})\n")
+        
+        print("="*75)
+        print("INTERACTIVE MODE")
+        print("="*75)
+        print("Try: 'tell me a joke' or 'weather in Tokyo' or 'calculate 50*50'")
+        print("Type 'quit' to generate complete report\n")
+        
+        # Conversation history for multi-turn support
+        conversation_history = []
+        
+        # Custom tracer for manual spans
+        tracer = trace.get_tracer(__name__)
+        
+        try:
+            while True:
+                user_input = input("You: ").strip()
+                
+                if not user_input:
+                    continue
+                
+                if user_input.lower() in ['quit', 'exit']:
+                    break
+                
+                # Create a span for this interaction
+                with tracer.start_as_current_span("chat_interaction") as span:
+                    span.set_attribute("user.input", user_input)
+                    
+                    # Add user message to history
+                    conversation_history.append({"role": "user", "content": user_input})
+                    
+                    print("\nAgent: ", end="", flush=True)
+                    
+                    # Create response using Foundry Responses API
+                    response = openai_client.responses.create(
+                        input=conversation_history,
+                        extra_body={"agent": {"type": "agent_reference", "name": agent.name, "version": agent.version}}
+                    )
+                    
+                    assistant_text = ""
+                    if response.status == "completed":
+                        for item in response.output:
+                            if item.type == "message" and item.content and item.content[0].type == "output_text":
+                                assistant_text = item.content[0].text
+                                print(assistant_text)
+                    
+                    # Add to history
+                    if assistant_text:
+                        conversation_history.append({"role": "assistant", "content": assistant_text})
+                    
+                    span.set_attribute("assistant.response", assistant_text)
+                
+                print()
+                
+                tracer_provider.force_flush()
+                
+        except KeyboardInterrupt:
+            print("\n")
+        
+        # Generate complete report
+        print("\n" + "="*75)
+        print("GENERATING COMPLETE REPORT...")
+        print("="*75 + "\n")
+        
+        tracer_provider.force_flush()
+        
+        html_file = collector.generate_complete_html()
+        
+        print(f"✅ Complete Report: {html_file}")
+        print(f"📊 Total Operations: {len(collector.all_data)}")
+        
+        print(f"\n🌐 Opening report in browser...")
+        
+        import webbrowser
+        try:
+            webbrowser.open(f"file:///{Path(html_file).absolute()}")
+            print("✅ Report opened! Check your browser for EVERYTHING!")
+        except:
+            print("⚠️  Please open the HTML file manually")
+        
+        # Cleanup based on DELETE flag
+        if delete_resources:
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted agent version")
+        else:
+            print(f"Agent preserved: {agent.name}:{agent.version}")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
