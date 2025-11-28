@@ -11,6 +11,7 @@
 ## Current Implementation (Legacy API)
 
 This sample uses:
+
 - **API:** `azure.ai.agents.AgentsClient`
 - **Tool:** `McpTool` (lowercase 'c')
 - **Pattern:** Thread/Run with manual tool approval
@@ -40,12 +41,14 @@ agent = agents_client.create_agent(
 ### Step 1: Update Imports
 
 **Before:**
+
 ```python
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import McpTool, ListSortOrder, RequiredMcpToolCall, SubmitToolApprovalAction, ToolApproval
 ```
 
 **After:**
+
 ```python
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, MCPTool  # Capitalized
@@ -54,6 +57,7 @@ from azure.ai.projects.models import PromptAgentDefinition, MCPTool  # Capitaliz
 ### Step 2: Update Client Initialization
 
 **Before:**
+
 ```python
 agents_client = AgentsClient(
     endpoint=endpoint,
@@ -62,6 +66,7 @@ agents_client = AgentsClient(
 ```
 
 **After:**
+
 ```python
 project_client = AIProjectClient(
     endpoint=endpoint,
@@ -73,6 +78,7 @@ openai_client = project_client.get_openai_client()
 ### Step 3: Update MCP Tool Creation
 
 **Before:**
+
 ```python
 mcp_tool = McpTool(  # lowercase 'c'
     server_label="github",
@@ -83,6 +89,7 @@ mcp_tool.allow_tool("search_azure_rest_api_code")
 ```
 
 **After:**
+
 ```python
 mcp_tool = MCPTool(  # uppercase 'CP'
     server_label="github",
@@ -95,6 +102,7 @@ mcp_tool = MCPTool(  # uppercase 'CP'
 ### Step 4: Update Agent Creation
 
 **Before:**
+
 ```python
 agent = agents_client.create_agent(
     model=model,
@@ -105,6 +113,7 @@ agent = agents_client.create_agent(
 ```
 
 **After:**
+
 ```python
 agent = project_client.agents.create_version(
     agent_name="mcp-agent",
@@ -119,6 +128,7 @@ agent = project_client.agents.create_version(
 ### Step 5: Replace Thread/Run with Streaming Responses
 
 **Before:**
+
 ```python
 thread = agents_client.threads.create()
 message = agents_client.messages.create(
@@ -140,6 +150,7 @@ messages = agents_client.messages.list(thread_id=thread.id)
 ```
 
 **After:**
+
 ```python
 response = openai_client.responses.create(
     input="Please summarize the Azure REST API specifications Readme",
@@ -165,6 +176,7 @@ for event in response:
 ### Step 6: Update Cleanup
 
 **Before:**
+
 ```python
 delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
 if delete_on_exit:
@@ -174,6 +186,7 @@ else:
 ```
 
 **After:**
+
 ```python
 delete_resources = os.getenv("DELETE", "true").lower() == "true"
 if delete_resources:
@@ -203,7 +216,7 @@ from azure.identity import DefaultAzureCredential
 def main():
     os.system('cls' if os.name == 'nt' else 'clear')
     load_dotenv()
-    
+
     endpoint = os.getenv("PROJECT_ENDPOINT")
     model = os.getenv("MODEL_DEPLOYMENT")
     mcp_server_url = os.getenv("MCP_SERVER_URL", "https://gitmcp.io/Azure/azure-rest-api-specs")
@@ -221,7 +234,7 @@ def main():
 
     with project_client:
         start = time.time()
-        
+
         # Create MCP tool
         mcp_tool = MCPTool(
             server_label=mcp_server_label,
@@ -288,11 +301,13 @@ if __name__ == '__main__':
 Update `.env` file:
 
 **Before:**
+
 ```env
 DELETE_AGENT_ON_EXIT=true
 ```
 
 **After:**
+
 ```env
 DELETE=true
 ```

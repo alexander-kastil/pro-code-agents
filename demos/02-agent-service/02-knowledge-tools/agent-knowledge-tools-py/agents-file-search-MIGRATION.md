@@ -13,6 +13,7 @@
 ## Current Implementation (Legacy API)
 
 This sample uses:
+
 - **API:** `azure.ai.agents.AgentsClient`
 - **Tool:** `FileSearchToolDefinition` with `FileSearchToolResource`
 - **Pattern:** Thread/Run with polling

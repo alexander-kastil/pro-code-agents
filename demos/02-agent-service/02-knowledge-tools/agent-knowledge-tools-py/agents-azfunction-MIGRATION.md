@@ -13,6 +13,7 @@
 ## Current Implementation (Legacy API)
 
 This sample uses:
+
 - **API:** `azure.ai.agents.AgentsClient`
 - **Tool:** `FunctionTool` with custom functions
 - **Pattern:** Thread/Run with automatic function execution
@@ -98,6 +99,7 @@ Add this note at the top of the file:
 While waiting for tool support:
 
 1. **Remove UTF-8 encoding handling:**
+
 ```python
 # Remove these lines:
 import sys, io
@@ -105,6 +107,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 ```
 
 2. **Update environment variable convention:**
+
 ```python
 # Before:
 delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
@@ -114,6 +117,7 @@ delete_resources = os.getenv("DELETE", "true").lower() == "true"
 ```
 
 3. **Update comments:**
+
 ```python
 # Before:
 print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
@@ -127,6 +131,7 @@ print(f"Agent {agent.id} preserved for examination in Microsoft Foundry")
 ## When to Migrate
 
 Monitor the `azure-ai-projects` package for:
+
 - Addition of `FunctionTool` in `azure.ai.projects.models`
 - Support for external API calls
 - Documentation on integrating Azure Functions

@@ -13,6 +13,7 @@
 ## Current Implementation (Legacy API)
 
 This sample uses:
+
 - **API:** `azure.ai.agents.AgentsClient`
 - **Tool:** `CodeInterpreterTool`
 - **Pattern:** Thread/Run with `create_and_process()`
@@ -45,6 +46,7 @@ agent = agents_client.create_agent(
 ## No Alternative in New API
 
 Code Interpreter provides unique capabilities:
+
 - Execute Python code in a sandboxed environment
 - Analyze uploaded CSV/Excel files
 - Generate data visualizations (charts, graphs)
@@ -72,6 +74,7 @@ Add this note at the top of the file:
 While waiting for tool support:
 
 1. **Remove UTF-8 encoding handling:**
+
 ```python
 # Remove these lines:
 if sys.platform == 'win32':
@@ -80,6 +83,7 @@ if sys.platform == 'win32':
 ```
 
 2. **Update environment variable convention:**
+
 ```python
 # Before:
 delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
@@ -89,6 +93,7 @@ delete_resources = os.getenv("DELETE", "true").lower() == "true"
 ```
 
 3. **Update comments:**
+
 ```python
 # Before:
 print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
@@ -102,6 +107,7 @@ print(f"Agent {agent.id} preserved for examination in Microsoft Foundry")
 ## When to Migrate
 
 Monitor the `azure-ai-projects` package for:
+
 - Addition of `CodeInterpreterTool` in `azure.ai.projects.models`
 - File upload/management support in new API
 - Sandbox execution capabilities

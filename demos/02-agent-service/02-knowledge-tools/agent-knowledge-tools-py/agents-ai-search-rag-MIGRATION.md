@@ -13,6 +13,7 @@
 ## Current Implementation (Legacy API)
 
 This sample uses:
+
 - **API:** `azure.ai.agents.AgentsClient`
 - **Tool:** `AzureAISearchTool`
 - **Pattern:** Thread/Run with `create_and_process()`

@@ -1,4 +1,5 @@
 # Azure AI Agent Service - Composite Migration Guide
+
 ## Knowledge Tools Samples: Legacy API → Microsoft Foundry API
 
 **Last Updated:** November 27, 2025
@@ -11,11 +12,11 @@ This document provides a comprehensive migration strategy for all samples in `de
 
 ### Current Migration Status
 
-| Status | Count | Samples |
-|--------|-------|---------|
-| ✅ **Can Migrate** | 2 | `agents-foundry-iq.py` (done), `agents-mcp.py` |
-| ⚠️ **Alternative Available** | 2 | `agents-ai-search-rag.py`, `agents-sharepoint.py` |
-| 🚫 **Blocked** | 8 | All other samples |
+| Status                       | Count | Samples                                           |
+| ---------------------------- | ----- | ------------------------------------------------- |
+| ✅ **Can Migrate**           | 2     | `agents-foundry-iq.py` (done), `agents-mcp.py`    |
+| ⚠️ **Alternative Available** | 2     | `agents-ai-search-rag.py`, `agents-sharepoint.py` |
+| 🚫 **Blocked**               | 8     | All other samples                                 |
 
 ### Key Findings
 
@@ -28,20 +29,20 @@ This document provides a comprehensive migration strategy for all samples in `de
 
 ## Tool Compatibility Matrix
 
-| Tool | Legacy API | New API | Status | Migration Path |
-|------|-----------|---------|--------|----------------|
-| **Basic Agent** | ✅ | ✅ | **READY** | Direct migration |
-| **MCP** | ✅ `McpTool` | ✅ `MCPTool` | **READY** | Update capitalization |
-| **Foundry IQ** | ❌ | ✅ `MCPTool` | **NEW** | Use MCP with KB endpoint |
-| **File Search** | ✅ `FileSearchTool` | ❌ | **BLOCKED** | Wait or use Foundry IQ |
-| **Azure AI Search** | ✅ `AzureAISearchTool` | ❌ | **BLOCKED** | Use Foundry IQ alternative |
-| **Bing Grounding** | ✅ `BingGroundingTool` | ❌ | **BLOCKED** | Wait for tool support |
-| **SharePoint** | ✅ `SharepointTool` | ❌ | **BLOCKED** | Use Foundry IQ with SP source |
-| **Code Interpreter** | ✅ `CodeInterpreterTool` | ❌ | **BLOCKED** | Wait for tool support |
-| **Function Calling** | ✅ `FunctionTool` | ❌ | **BLOCKED** | Wait or MCP wrapper |
-| **Browser Automation** | ✅ `BrowserAutomationTool` | ❌ | **BLOCKED** | Wait for tool support |
-| **Computer Use** | ✅ `ComputerUseTool` | ❌ | **BLOCKED** | Wait for tool support |
-| **OpenAPI/REST** | ✅ `OpenApiTool` | ❌ | **BLOCKED** | Wait for tool support |
+| Tool                   | Legacy API                 | New API      | Status      | Migration Path                |
+| ---------------------- | -------------------------- | ------------ | ----------- | ----------------------------- |
+| **Basic Agent**        | ✅                         | ✅           | **READY**   | Direct migration              |
+| **MCP**                | ✅ `McpTool`               | ✅ `MCPTool` | **READY**   | Update capitalization         |
+| **Foundry IQ**         | ❌                         | ✅ `MCPTool` | **NEW**     | Use MCP with KB endpoint      |
+| **File Search**        | ✅ `FileSearchTool`        | ❌           | **BLOCKED** | Wait or use Foundry IQ        |
+| **Azure AI Search**    | ✅ `AzureAISearchTool`     | ❌           | **BLOCKED** | Use Foundry IQ alternative    |
+| **Bing Grounding**     | ✅ `BingGroundingTool`     | ❌           | **BLOCKED** | Wait for tool support         |
+| **SharePoint**         | ✅ `SharepointTool`        | ❌           | **BLOCKED** | Use Foundry IQ with SP source |
+| **Code Interpreter**   | ✅ `CodeInterpreterTool`   | ❌           | **BLOCKED** | Wait for tool support         |
+| **Function Calling**   | ✅ `FunctionTool`          | ❌           | **BLOCKED** | Wait or MCP wrapper           |
+| **Browser Automation** | ✅ `BrowserAutomationTool` | ❌           | **BLOCKED** | Wait for tool support         |
+| **Computer Use**       | ✅ `ComputerUseTool`       | ❌           | **BLOCKED** | Wait for tool support         |
+| **OpenAPI/REST**       | ✅ `OpenApiTool`           | ❌           | **BLOCKED** | Wait for tool support         |
 
 ---
 
@@ -68,6 +69,7 @@ Each sample has a detailed migration guide:
 ### Phase 1: Immediate Actions (This Week)
 
 **✅ COMPLETED:**
+
 - Individual migration guides created
 - Composite migration guide created
 - Tool compatibility matrix documented
@@ -75,14 +77,17 @@ Each sample has a detailed migration guide:
 **TODO:**
 
 1. **Migrate agents-mcp.py**
+
    - Follow `agents-mcp-MIGRATION.md`
    - Update to use `MCPTool` (capitalized)
    - Replace thread/run with streaming responses
    - Test thoroughly
 
 2. **Add Migration Notes to Blocked Samples**
+
    - Add header comment to each blocked sample file
    - Format:
+
    ```python
    # NOTE: This sample uses the legacy AgentsClient API because [ToolName]
    # is not yet available in the new Microsoft Foundry API (AIProjectClient).
@@ -99,6 +104,7 @@ Each sample has a detailed migration guide:
 If Foundry IQ infrastructure is available:
 
 1. **Migrate agents-ai-search-rag.py**
+
    - Create knowledge base with insurance documents
    - Follow `agents-ai-search-rag-MIGRATION.md`
    - Keep original as reference
@@ -221,6 +227,7 @@ Also update these samples to use the new env var convention (DELETE instead of D
 ## Success Criteria
 
 ### Phase 1 Complete When:
+
 - ✅ All individual migration guides created
 - ✅ Composite migration guide created
 - ⏳ `agents-mcp.py` migrated and tested
@@ -228,6 +235,7 @@ Also update these samples to use the new env var convention (DELETE instead of D
 - ⏳ Main readme updated with compatibility matrix
 
 ### Phase 2 Complete When:
+
 - ⏳ Foundry IQ infrastructure created
 - ⏳ At least one RAG sample using Foundry IQ
 - ⏳ Comparison documentation available
@@ -243,6 +251,7 @@ Also update these samples to use the new env var convention (DELETE instead of D
 3. **2 samples have alternatives** (`agents-ai-search-rag.py` and `agents-sharepoint.py`) via Foundry IQ, but require additional infrastructure setup
 
 4. **Main migration pattern:**
+
    - `AgentsClient` → `AIProjectClient`
    - `create_agent()` → `create_version()` with `PromptAgentDefinition`
    - Thread/Run → Streaming Responses

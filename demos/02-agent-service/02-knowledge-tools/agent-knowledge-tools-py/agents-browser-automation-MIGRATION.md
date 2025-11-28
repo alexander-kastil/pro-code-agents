@@ -13,6 +13,7 @@
 ## Current Implementation (Legacy API)
 
 This sample uses:
+
 - **API:** `azure.ai.agents.AgentsClient`
 - **Tool:** `BrowserAutomationTool` (Playwright-based)
 - **Pattern:** Thread/Run with `create_and_process()`
@@ -38,6 +39,7 @@ agent = agents_client.create_agent(
 ## No Alternative in New API
 
 Browser Automation provides unique capabilities:
+
 - Navigate to URLs and interact with web pages
 - Extract information from websites
 - Fill forms and click buttons
@@ -65,6 +67,7 @@ Add this note at the top of the file:
 While waiting for tool support:
 
 1. **Remove UTF-8 encoding handling:**
+
 ```python
 # Remove these lines:
 import sys, io
@@ -72,6 +75,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 ```
 
 2. **Update environment variable convention:**
+
 ```python
 # Before:
 delete_on_exit = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
@@ -81,6 +85,7 @@ delete_resources = os.getenv("DELETE", "true").lower() == "true"
 ```
 
 3. **Update comments:**
+
 ```python
 # Before:
 print(f"Agent {agent.id} preserved for examination in Azure AI Foundry")
@@ -94,6 +99,7 @@ print(f"Agent {agent.id} preserved for examination in Microsoft Foundry")
 ## When to Migrate
 
 Monitor the `azure-ai-projects` package for:
+
 - Addition of `BrowserAutomationTool` in `azure.ai.projects.models`
 - Playwright/browser integration support
 - Documentation on web automation capabilities
