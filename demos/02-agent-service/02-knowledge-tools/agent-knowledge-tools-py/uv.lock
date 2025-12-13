@@ -2,6 +2,9 @@ version = 1
 revision = 3
 requires-python = ">=3.11"
 
+[options]
+prerelease-mode = "allow"
+
 [[package]]
 name = "agent-knowledge-tools-py"
 version = "0.1.0"
@@ -11,14 +14,16 @@ dependencies = [
     { name = "azure-ai-projects" },
     { name = "azure-identity" },
     { name = "python-dotenv" },
+    { name = "requests" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "azure-ai-agents", specifier = ">=1.2.0b2" },
-    { name = "azure-ai-projects", specifier = ">=1.0.0b4" },
+    { name = "azure-ai-agents", specifier = ">=1.2.0b6" },
+    { name = "azure-ai-projects", specifier = ">=2.0.0b2" },
     { name = "azure-identity", specifier = ">=1.16.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
+    { name = "requests", specifier = ">=2.31.0" },
 ]
 
 [[package]]
@@ -37,18 +42,17 @@ wheels = [
 
 [[package]]
 name = "azure-ai-projects"
-version = "1.1.0b2"
+version = "2.0.0b2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "azure-ai-agents" },
     { name = "azure-core" },
     { name = "azure-storage-blob" },
     { name = "isodate" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/26/17/33664227381ff59690e16a8d3261c9edeb80d88acdb24b717733d63529bb/azure_ai_projects-1.1.0b2.tar.gz", hash = "sha256:79432e2de8b27f01aaad6d3f12e1549396f1c2a022665a859c45b179bf6ff228", size = 144848, upload-time = "2025-08-05T22:18:45.351Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f2/96/ec17f99f5ced3d82876e89b4f950d8c7466c84d79016c5905b1c03b6c484/azure_ai_projects-2.0.0b2.tar.gz", hash = "sha256:4444cc49c799359b9c25d7f59c126862053cb591b63e69ffc640774b4ceb2b73", size = 369393, upload-time = "2025-11-15T06:17:46.312Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/26/2b/98f928ea41c03c78c02e1a72fc5e9c900d2e6e472cb51f9272cb0d4ba3bf/azure_ai_projects-1.1.0b2-py3-none-any.whl", hash = "sha256:3a4ecc6de6ab27a75b4c8228cd8162c9853fd1432e77746792b0ee2088c775db", size = 125301, upload-time = "2025-08-05T22:18:46.577Z" },
+    { url = "https://files.pythonhosted.org/packages/a9/41/d9a2b3eb33b4ffd9acfaa115cfd456e32d0c754227d6d78ec5d039ff75c2/azure_ai_projects-2.0.0b2-py3-none-any.whl", hash = "sha256:642496fdf9846c91f3557d39899d3893f0ce8f910334320686fc8f617492351d", size = 234023, upload-time = "2025-11-15T06:17:48.141Z" },
 ]
 
 [[package]]

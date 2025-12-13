@@ -3,11 +3,7 @@ import time
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import FileSearchToolResource, ToolResources, FileSearchToolDefinition, ListSortOrder
-
-# Demonstrates file search capabilities using Azure AI Agent Service with a vector store.
-# The agent searches through uploaded documents to answer questions using the file search tool.
-# Requires a pre-configured vector store with documents in Microsoft Foundry.
+from azure.ai.agents.models import FileSearchToolDefinition, FileSearchToolResource, ToolResources
 
 def main():
 
@@ -19,14 +15,14 @@ def main():
     endpoint = os.getenv("PROJECT_ENDPOINT")
     model = os.getenv("MODEL_DEPLOYMENT")
     vector_store_id = os.getenv("VECTOR_STORE_ID")
-    delete_resources = os.getenv("DELETE", "true").lower() == "true"
+    delete_resources = os.getenv("DELETE_AGENT_ON_EXIT", "true").lower() == "true"
 
     print(f"Using endpoint: {endpoint}")
     print(f"Using model: {model}")
     print(f"Using vector store: {vector_store_id}")
     print(f"Delete resources: {delete_resources}")
 
-    # Connect to the Azure AI Agent Service in Microsoft Foundry
+    # Connect to Microsoft Foundry using legacy AgentsClient
     agents_client = AgentsClient(
         endpoint=endpoint,
         credential=DefaultAzureCredential()
@@ -48,6 +44,8 @@ def main():
             )
         )
         print(f"Created agent: {agent.name}, ID: {agent.id}")
+        print(f"✓ Agent is now visible in the Microsoft Foundry portal under 'Agents'")
+        print(f"  View at: {endpoint.replace('/api/projects/', '/projects/')}")
 
         # Create a thread for the conversation
         thread = agents_client.threads.create()
@@ -62,40 +60,32 @@ def main():
         print(f"Created message, message ID: {message.id}")
 
         # Create and poll run
-        run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
-        print(f"Run started, status: {run.status}")
-
-        # Poll the run until completion
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            time.sleep(1)
-            run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
-            print(f"Run status: {run.status}")
+        run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+        print(f"Run completed with status: {run.status}")
 
         duration = time.time() - start
-        print(f"Run completed (took {duration:.2f}s)")
+        print(f"Run took {duration:.2f}s")
 
         if run.status == "failed":
             print(f"Run error: {run.last_error}")
 
+        # List messages
+        messages = agents_client.messages.list(thread_id=thread.id)
+        
+        print("\n--- Conversation ---")
+        for data_point in reversed(list(messages)):
+            last_message_content = data_point.content[-1]
+            if isinstance(last_message_content, dict):
+                print(f"{data_point.role}: {last_message_content}")
+            else:
+                print(f"{data_point.role}: {last_message_content.text.value}")
+        
         # Cleanup based on DELETE flag
         if delete_resources:
             agents_client.delete_agent(agent.id)
-            print("Deleted agent")
+            print("\nDeleted agent")
         else:
-            print(f"Preserved agent: {agent.id}")
-
-        # List messages in ascending order
-        messages = agents_client.messages.list(
-            thread_id=thread.id,
-            order=ListSortOrder.ASCENDING
-        )
-        
-        print("\n--- Conversation ---")
-        for msg in messages:
-            if msg.text_messages:
-                last_text = msg.text_messages[-1]
-                print(f"{msg.role}: {last_text.text.value}\n")
-
+            print(f"\nPreserved agent: {agent.id}")
 
 if __name__ == '__main__':
     main()
